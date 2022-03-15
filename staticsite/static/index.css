@@ -49,11 +49,11 @@ body {
     top: 0;
     z-index: 1000;
     padding: 1rem 0;
+    /* background: #fafafa; */
+    background: rgba(250,250,250,.52);
+    border: 1px solid #eaeaea;
 }
-.introheader-btns {
-    border-bottom: 1px solid #efefef;
-    padding-bottom: 1rem;
-}
+.introheader-btns {}
 
 
 
@@ -123,24 +123,33 @@ body {
 }
 
 
-.btn {
-    font-size: 14px;
-    line-height: 20px;
-    padding: 0.5rem 1rem;
-    background: gray;
-    border: 1px solid gray;
-    border-radius: 2px;
-}
-.btn:hover {
-    background: lightgray;
-    border-color: lightgray;
-}
-.btn.__secondary {
-    background: white;
-}
-.btn:hover {
-    background: lightgoldenrodyellow;
-}
 .btn + .btn {
     margin-left: 1rem;
+}
+
+
+.icon-objectives {
+    width: 48px;
+    height: 48px;
+    --icon-color: #555656;
+}
+.icon-objectives.__icon3 > use,
+.icon-objectives.__icon1 > use {
+    fill: none;
+    stroke: var(--icon-color);
+    stroke-width:1px;
+}
+.icon-objectives.__icon4 > use,
+.icon-objectives.__icon5 > use,
+.icon-objectives.__icon8 > use,
+.icon-objectives.__icon7 > use,
+.icon-objectives.__icon2 > use {
+    fill: var(--icon-color);
+    stroke: none;
+}
+.objectives-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 4rem 8rem;
+    margin: 3rem 0;
 }

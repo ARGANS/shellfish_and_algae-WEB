@@ -96,11 +96,12 @@ details[open] > summary::before {
 }
 .btn {
     user-select: none;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding: .3rem 2rem;
     transition: background-color .2s, border-color .2s;
     appearance: none;
     border: 1px solid;
+	border-radius: 4px;
+	font-weight: 700;
 }
 .btn:active {
 	outline: none;
@@ -118,13 +119,13 @@ details[open] > summary::before {
 
 .btn.btn-secondary {
 	background-color: #fff;
-    color: #3076df;
-	border-color: #3076df;
+    color: #52535c;
+	border-color: #878080;
 }
 .btn.btn-secondary:focus,
 .btn.btn-secondary:hover {
 	border-color: #0366d6;
-	background-color: #dee5f9;
+	color: #0366d6;
 }
 
 

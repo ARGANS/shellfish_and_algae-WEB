@@ -1,5 +1,5 @@
 /* NORMALIZATION */
-body {margin:0;}
+body {margin:0;-webkit-font-smoothing: antialiased;}
 abbr {font-weight:bold;cursor:help;}
 img {max-width:100%;}
 ul {list-style:none;margin:0;padding:0;}
