@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  acproxy:
+    container_name: ac-proxy
+    stdin_open: true
+    build:
+      context: ../
+      dockerfile: ./proxy/${ENV}.Dockerfile
+      args:
+        WITH_UTILS: "true"
+    ports:
+      - "$HTTP_PORT:80"
+      - "$HTTPS_PORT:443"
+    networks:
+      - ac_net
+
+networks:
+  ac_net:

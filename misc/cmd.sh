@@ -11,8 +11,8 @@ function build {
         --build-arg WITH_UTILS=true \
 		-t $IMAGE_PROXY:1 \
 		-t $IMAGE_PROXY:latest \
-		-f ./proxy/main.Dockerfile \
-		./
+		-f ./proxy/dev.Dockerfile \
+		../
 
 }
 	
