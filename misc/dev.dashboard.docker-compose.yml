@@ -15,6 +15,7 @@ services:
     volumes:
       - ../dashboard/repo/:/opt/app/
       - ../dashboard/dshbrd.db:/opt/app/main.db
-
+    environment:
+      - DSHBRD_BASE_ROUTE=/api/v1
 networks:
   ac_net:
