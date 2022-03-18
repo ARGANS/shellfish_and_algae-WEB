@@ -1,0 +1,3 @@
+[submodule "dashboard/repo"]
+	path = dashboard/repo
+	url = https://gitlab.acri-cwa.fr/nmaltsev/dshbrd.git
