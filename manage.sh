@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 source misc/common.sh
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]:-$0}" )" &> /dev/null && pwd )"
-MAIN_DC_PATH="$DIR/misc/docker-compose.yml"
-DC_FLAG="-f $MAIN_DC_PATH"
+
+function get_dc_flags {
+	if [[ "$1" == 'dev' ]]; then
+		STAGE='dev'
+	else 
+		STAGE='prod'
+	fi
+
+	echo "-f $DIR/misc/proxy.docker-compose.yml -f $DIR/misc/$STAGE.dashboard.docker-compose.yml"
+}
 
 function start {
 	local ENV_PATH=$(get_env_path $1)
+	local DC_FLAG=$(get_dc_flags $1)
+	echo "DC_FLAG: $DC_FLAG"
 
 	# if [[ "$1" != 'int' && "$1" != 'dev' ]]; then
 	# 	# Verifying the creation of certificate files
@@ -37,20 +47,26 @@ function start {
 
 function logs {
 	local ENV_PATH=$(get_env_path $1)
+	local DC_FLAG=$(get_dc_flags $1)
+	echo "DC_FLAG: $DC_FLAG"
 	docker_logs "$DC_FLAG" "$ENV_PATH"
 }
 
 function ps {
 	local ENV_PATH=$(get_env_path $1)
+	local DC_FLAG=$(get_dc_flags $1)
 	docker_ps "$DC_FLAG" "$ENV_PATH"
 }
 
 function stop {
 	local ENV_PATH=$(get_env_path $1)
+	local DC_FLAG=$(get_dc_flags $1)
 	docker_down "$DC_FLAG" "$ENV_PATH"
 }
 
 function config {
+	local ENV_PATH=$(get_env_path $1)
+	local DC_FLAG=$(get_dc_flags $1)
 	bash -c "docker-compose $DC_FLAG --env-file=$ENV_PATH config"
 }
 
@@ -58,6 +74,7 @@ function help {
 	echo """Commands:
 'manage.sh help' - to see this help	
 'manage.sh connect'
+'manage.sh config - to see the dcoker-compose config'
 'manage.sh up [dev|prod|int]' - to start the applications
 'manage.sh down [dev|prod|int]' - to stop the applications
 'manage.sh ps [dev|prod|int]'
