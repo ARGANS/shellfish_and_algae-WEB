@@ -1,2 +1,3 @@
 *.tgz
 dashboard/dshbrd.db
+log.txt
