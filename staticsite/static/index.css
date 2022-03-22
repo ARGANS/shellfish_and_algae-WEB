@@ -11,7 +11,7 @@ body {
 
 
 
-.members-list {display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 1rem; margin: 0 0 1rem 0;}
+.members-list {display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 1rem; margin: 0 0 2rem 0;}
 .members-list > a:nth-child(2) {text-align: center;}
 .members-list > a:nth-child(3) {text-align: center;}
 .members-list > a > img {display: inline-block; vertical-align: top;}
@@ -152,4 +152,28 @@ body {
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 4rem 8rem;
     margin: 3rem 0;
+}
+.scroll-down-block {
+    margin: 0 0 1rem 0;
+}
+.scroll-down-block > svg {
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+    display: block;
+}
+.scroll-down-block use {
+    fill: none;
+    stroke: #A0A0A0;
+    stroke-width:8;
+    stroke-linecap:square;
+    stroke-linejoin:bevel;
+    stroke-miterlimit:10;
+}
+.scroll-down-block_text{
+    margin: 0;
+    font-weight: normal;
+    text-align: center;
+    color: #ddd;
+    text-transform: uppercase;
 }
