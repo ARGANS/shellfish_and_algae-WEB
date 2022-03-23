@@ -1,0 +1,142 @@
+.root {
+	width: fit-content;
+    height: fit-content;
+	background-color: #fff;
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+}
+
+
+.formCheckbox {
+	margin: 0;
+}
+.formCheckbox:after {
+	content: "";
+	width: 0;
+	height: 100%;
+}
+.formCheckbox > span,
+.formCheckbox > input,
+.formCheckbox:after {
+	display: inline-block;
+	vertical-align: middle;
+}
+.formCheckbox > input {
+	margin: 0 0.5rem 0 0;
+}
+.root > h4 {
+	text-align: center;
+}
+
+.root .formInput {
+	position: relative;
+}
+
+.root .formrow,
+.root > h4,
+/* .root > button, */
+.root > .formInput {
+	margin: 0 0 1rem 0;
+}
+.root .formrow:last-child,
+.root > h4:last-child,
+.root > button:last-child,
+.root > .formInput:last-child {
+	margin: 0;
+}
+
+.root > h4 {
+	color: #6a737d;
+	line-height: 1rem;
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.root .formInput > i {
+	display: flex;
+	position: absolute;
+	right: .5rem;
+	top: 0;
+    height: 100%;
+    align-items: center;
+	color: #666;
+}
+.root select,
+.root .formInput > input {
+	background-color: #fafbfc;
+    color: #24292e;
+    border: 1px solid #e1e4e8;
+}
+.root select,
+.root .formInput > input/*,
+.root button*/ {
+	line-height: 1.6rem;
+    font-size: 0.9rem;
+	height: auto;
+	padding: 0.2rem 1rem;
+    box-sizing: border-box;
+}
+
+.root .formInput > input {
+    width: 100%;
+	padding-right: 2rem;
+	padding-left: .5rem;
+}
+
+.root select:focus,
+/* .root button, */
+.root .formInput > input:focus {
+	outline: none;
+}
+.root .formInput > input:focus {
+	border-color: #a9a9a9;
+}
+.formrow {
+	display: flex;
+	justify-content: space-between;
+	align-content: center;
+}
+/* DEPRECATED */
+/* .root button {
+    user-select: none;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    transition: background-color .2s, border-color .2s;
+    appearance: none;
+    border: 1px solid;
+}
+
+.root button:active {
+	outline: none;
+}
+.root button[type="submit"] {
+	background-color: #3076df;
+    color: #fff;
+	border-color: #3076df;
+}
+.root button[type="submit"]:focus,
+.root button[type="submit"]:hover {
+	background-color: #0366d6;
+	border-color: #0366d6;
+}
+
+.root button[type="reset"] {
+	background-color: #fff;
+    color: #3076df;
+	border-color: #3076df;
+}
+.root button[type="reset"]:focus,
+.root button[type="reset"]:hover {
+	border-color: #0366d6;
+} */
+
+.root a {
+	font-size: 0.8rem;
+	line-height: 1.2rem;
+}
+.root label {
+	cursor: pointer;
+}
+
+

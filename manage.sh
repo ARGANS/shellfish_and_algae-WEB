@@ -9,7 +9,7 @@ function get_dc_flags {
 		STAGE='prod'
 	fi
 
-	echo "-f $DIR/misc/proxy.docker-compose.yml -f $DIR/misc/$STAGE.dashboard.docker-compose.yml"
+	echo "-f $DIR/misc/proxy.docker-compose.yml -f $DIR/misc/$STAGE.dashboard.docker-compose.yml -f $DIR/misc/$STAGE.site.docker-compose.yml"
 }
 
 function start {
