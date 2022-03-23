@@ -10,7 +10,7 @@ function ServicePage(props) {
 			<meta property="og:title" content={title} key="title" />
 		</Head>
 		<section className={''}>
-			<p>TODO !</p>
+			<p>TODO ServicePage</p>
 		</section>
 	</>
 }

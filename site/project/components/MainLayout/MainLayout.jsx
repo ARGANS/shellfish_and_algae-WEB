@@ -4,7 +4,7 @@
 export function MainLayout(props) {
 	return <>
 		{/* <PageHeader/> */}
-		<main>{props.children}</main>
+		{props.children}
 		{/* <PageFooter/> */}
 	</>
 }
