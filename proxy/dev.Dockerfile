@@ -30,7 +30,8 @@ COPY ./proxy/start.sh /opt/app/
 COPY ./proxy/dev.nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/
 COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/
-COPY ./staticsite/ /usr/share/nginx/html/
+# DEPREACTED
+# COPY ./staticsite/ /usr/share/nginx/html/
 
 
 ARG WITH_UTILS

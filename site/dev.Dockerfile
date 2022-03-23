@@ -29,6 +29,6 @@ COPY ./build.sh ./
 
 RUN chmod +x ./build.sh
 
-CMD sh
+CMD ./build.sh && sh
 
 

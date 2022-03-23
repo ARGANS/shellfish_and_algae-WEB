@@ -16,6 +16,12 @@ services:
       - ac_net
     depends_on:
       - acdashboard
+      - acsite
+    volumes:
+      - site_out:/usr/share/nginx/html/
 
 networks:
   ac_net:
+
+volumes:
+  site_out:
