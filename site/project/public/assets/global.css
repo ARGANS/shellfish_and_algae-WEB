@@ -142,3 +142,11 @@ button {cursor:pointer; background: transparent;}
 .if_wsxga {display: var(--visible_gr-1680);}
 .in-col_gr-then-992 {flex-direction: var(--col-direction_gr-992);}
 .in-col_gr-then-992 > div + div {margin: var(--col-direction_margin)}
+
+/* For Aquaculture */
+fieldset {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+legend {padding: 0;}

@@ -10,7 +10,6 @@ function IndexPage(props) {
 		<Head>
 			<title>{title}</title>
 			<meta property="og:title" content={title} key="title" />
-			<link rel="stylesheet" type="text/css" href="/assets/global.css"/>
 			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
 			<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,regular,600,700,300italic,italic,600italic,700italic,|Kalam:300,regular,700&amp;subset=latin" media="all"></link>

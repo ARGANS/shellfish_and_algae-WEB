@@ -11,7 +11,7 @@ export default class SiteDocument extends Document {
 		<Html lang="en">
 			<Head>
 				<meta charSet="utf-8" />
-				{/* <link rel="stylesheet" href="/assets/styles/global.css"/> */}
+				<link rel="stylesheet" type="text/css" href="/assets/global.css"/>
 				<link rel="preconnect" href="https://fonts.gstatic.com"/>
 				<link href={'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap'} rel="stylesheet"/>
 				<meta name="theme-color" content="#323A40"></meta> 
