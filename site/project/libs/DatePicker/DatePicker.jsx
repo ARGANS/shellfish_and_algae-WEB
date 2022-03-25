@@ -1,121 +1,58 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import s from './DatePicker.module.css';
 
 export default function DatePicker(props) {
     const [date, setDate] = useState(props.date || new Date());
     const [isOpened, openCalendar] = useState(false);
+    const toggleHandler = useCallback((event) => {
+      openCalendar(!isOpened)
+    }, [isOpened])
+    const mouseOutHandler = useCallback((event) => {
+      // console.log('mouseOutHandler %s');
+      // console.dir(event)
+      const 	$target = event.toElement || event.relatedTarget;
+      const conf_target = event.target.closest('.dropdown')
 
-    // day of the week date.getDay()
+      if(!(
+        $target === conf_target || conf_target.contains($target)
+      )){
+        openCalendar(false);
+      }
+    }, [isOpened])
 
-    // TODO format date
-    // return (<div className={s.root}>{date}</div>)
+    const month = date.getMonth()
+    const year = date.getFullYear()
+    const firstDayNumber = new Date(year, month, 1).getDay();
+    const daysInMonth = Math.floor((new Date(year, month +1, 0) -new Date(year, month, 0)) / (1000*3600*24))
+
     console.log('State');
     console.dir(date)
-    return <div className={s.root}>{date+''}</div>
+    return <div className={s.root}>
+      <div onClick={toggleHandler}>{date+''}</div>
+      {isOpened && <div className="dropdown" onMouseOut={mouseOutHandler}>
+        <div className={s.dropdown}>
+          <div class={s.calendar} style={{'--first-day-number': firstDayNumber}}>
+            <div class={s.monthIndicator}>
+              <time datetime="2019-02"> February 2019 </time>
+            </div>
+            <div class={s.dayOfWeek}>
+              <div>Su</div>
+              <div>Mo</div>
+              <div>Tu</div>
+              <div>We</div>
+              <div>Th</div>
+              <div>Fr</div>
+              <div>Sa</div>
+            </div>
+            <div class={s.dateGrid}>
+              {Array(daysInMonth).fill(0).map((_, index) => <button><time datetime="2019-02-01">{index +1}</time></button>)}
+                </div>
+        </div>
+        </div>
+      </div>}
+    </div>
 }
 // https://zellwk.com/blog/calendar-with-css-grid/
 // https://github.com/nmaltsev/abc/blob/ea2978d8707de783466398f939ec15908faffd65/static/app/lib/ctxMenu.js
 
-/* <main>
-  <div class="calendar">
-    <div class="month-indicator">
-      <time datetime="2019-02"> February 2019 </time>
-    </div>
-    <div class="day-of-week">
-      <div>Su</div>
-      <div>Mo</div>
-      <div>Tu</div>
-      <div>We</div>
-      <div>Th</div>
-      <div>Fr</div>
-      <div>Sa</div>
-    </div>
-    <div class="date-grid">
-      <button>
-        <time datetime="2019-02-01">1</time>
-      </button>
-      <button>
-        <time datetime="2019-02-02">2</time>
-      </button>
-      <button>
-        <time datetime="2019-02-03">3</time>
-      </button>
-      <button>
-        <time datetime="2019-02-04">4</time>
-      </button>
-      <button>
-        <time datetime="2019-02-05">5</time>
-      </button>
-      <button>
-        <time datetime="2019-02-06">6</time>
-      </button>
-      <button>
-        <time datetime="2019-02-07">7</time>
-      </button>
-      <button>
-        <time datetime="2019-02-08">8</time>
-      </button>
-      <button>
-        <time datetime="2019-02-09">9</time>
-      </button>
-      <button>
-        <time datetime="2019-02-10">10</time>
-      </button>
-      <button>
-        <time datetime="2019-02-11">11</time>
-      </button>
-      <button>
-        <time datetime="2019-02-12">12</time>
-      </button>
-      <button>
-        <time datetime="2019-02-13">13</time>
-      </button>
-      <button>
-        <time datetime="2019-02-14">14</time>
-      </button>
-      <button>
-        <time datetime="2019-02-15">15</time>
-      </button>
-      <button>
-        <time datetime="2019-02-16">16</time>
-      </button>
-      <button>
-        <time datetime="2019-02-17">17</time>
-      </button>
-      <button>
-        <time datetime="2019-02-18">18</time>
-      </button>
-      <button>
-        <time datetime="2019-02-19">19</time>
-      </button>
-      <button>
-        <time datetime="2019-02-20">20</time>
-      </button>
-      <button>
-        <time datetime="2019-02-21">21</time>
-      </button>
-      <button>
-        <time datetime="2019-02-22">22</time>
-      </button>
-      <button>
-        <time datetime="2019-02-23">23</time>
-      </button>
-      <button>
-        <time datetime="2019-02-24">24</time>
-      </button>
-      <button>
-        <time datetime="2019-02-25">25</time>
-      </button>
-      <button>
-        <time datetime="2019-02-26">26</time>
-      </button>
-      <button>
-        <time datetime="2019-02-27">27</time>
-      </button>
-      <button>
-        <time datetime="2019-02-28">28</time>
-      </button>
-    </div>
-  </div>
-</main> */

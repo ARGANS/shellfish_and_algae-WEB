@@ -1,10 +1,4 @@
 .root {
-
-}
-
-
-
-/*:root {
   --teal-050: #effcf6;
   --teal-100: #c6f7e2;
   --teal-200: #8eedc7;
@@ -26,7 +20,18 @@
   --blue-grey-700: #334e68;
   --blue-grey-800: #243b53;
   --blue-grey-900: #102a43;
+
 }
+.dropdown {
+  border: 1px solid #000;
+  /* width: 100px;
+  height: 60px; */
+}
+.calendar {
+  --first-day-number: 1;
+}
+
+/*
 
 html {
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -50,26 +55,23 @@ main {
   border-radius: 8px;
 }*/
 
-/* For the month*/
-.month-indicator {
+.monthIndicator {
   color: var(--blue-grey-700);
   text-align: center;
   font-weight: 500;
 }
 
-/* CSS grid used for the dates*/
-.day-of-week,
-.date-grid {
+.dayOfWeek,
+.dateGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
 
-/* Styles for the weekday/weekend header*/
-.day-of-week {
+.dayOfWeek {
   margin-top: 1.25em;
 }
 
-.day-of-week > * {
+.dayOfWeek > * {
   font-size: 0.7em;
   color: var(--blue-grey-400);
   font-weight: 500;
@@ -79,18 +81,18 @@ main {
 }
 
 /* Dates */
-.date-grid {
+.dateGrid {
   margin-top: 0.5em;
 }
 
 /* TODO use css variable to manage the first day*/
 /* Positioning the first day */
-.date-grid button:first-child {
-  grid-column: 3;
+.dateGrid button:first-child {
+  grid-column: var(--first-day-number);
 }
 
 /* Style for each day*/
-.date-grid button {
+.dateGrid button {
   position: relative;
   border: 0;
   width: 4.5ch;
@@ -100,15 +102,15 @@ main {
   color: var(--blue-grey-600);
 }
 
-.date-grid button:hover,
-.date-grid button:focus {
+.dateGrid button:hover,
+.dateGrid button:focus {
   outline: none;
   background-color: var(--blue-grey-050);
   color: var(--blue-grey-700);
 }
 
-.date-grid button:active,
-.date-grid button.is-selected {
+.dateGrid button:active,
+.dateGrid button.is-selected {
   background-color: var(--teal-100);
   color: var(--teal-900);
 }
