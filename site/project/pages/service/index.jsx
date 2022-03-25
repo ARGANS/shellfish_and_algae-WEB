@@ -3,6 +3,7 @@ import Head from 'next/head'
 import s from './service_page.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
 import model_parameters from 'settings/macroalgae_model_parameters.json'
+import DatePicker from 'libs/DatePicker/DatePicker';
 
 export default function ServicePage(props) {
 	const title = 'Service';
@@ -17,6 +18,7 @@ export default function ServicePage(props) {
 		<main className={s.root}>
 			<div className={s.main}>
 				<p>TODO</p>
+				<DatePicker date={new Date()}/>
 			</div>
 			<div className={s.sidebar}>
 				<h3 className={s.sidebar_title}>Model selection</h3>
