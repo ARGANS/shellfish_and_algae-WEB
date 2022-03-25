@@ -1,6 +1,7 @@
 #!/bin/sh 
 
 # [dev]elopment/[prod]uction/[int]ermediate
+COMPOSE_CMD="docker-compose" # TODO change for prod
 
 function get_env_path {
 	local STAGE
@@ -10,26 +11,31 @@ function get_env_path {
 	# 	STAGE='intermediate'
 	else 
 		STAGE='prod'
+		COMPOSE_CMD='~/docker-compose'
 	fi
 
 	echo "$DIR/misc/$STAGE.env"
 }
 
 function docker_up {
-	sh -c "docker-compose $1 --env-file=$2 down --remove-orphans"
-	sh -c "docker-compose $1 --env-file=$2 up --build -d"
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 down --remove-orphans"
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 up --build -d"
 }
 
 function docker_ps {
-	sh -c "docker-compose $1 --env-file=$2 ps"	
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 ps"	
 }
 
 function docker_logs {
-	sh -c "docker-compose $1 --env-file=$2 logs -f"
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 logs -f"
 }
 
 function docker_down {
-	sh -c "docker-compose $1 --env-file=$2 down --remove-orphans"
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 down --remove-orphans"
+}
+
+function compose_config {
+	bash -c "${COMPOSE_CMD} $1 --env-file=$2 config"
 }
 
 function connect {

@@ -67,7 +67,7 @@ function stop {
 function config {
 	local ENV_PATH=$(get_env_path $1)
 	local DC_FLAG=$(get_dc_flags $1)
-	bash -c "docker-compose $DC_FLAG --env-file=$ENV_PATH config"
+	compose_config "$DC_FLAG" "$ENV_PATH"
 }
 
 function help {
