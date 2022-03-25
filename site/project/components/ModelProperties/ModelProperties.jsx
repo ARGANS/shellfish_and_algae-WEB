@@ -10,21 +10,6 @@ const SECTION_ORDER = {
 }
 
 export default function ModelProperties(props) {
-    // const [sectionOrder, setSectionOrder] = useState([])
-    // useEffect(() => {
-    //     console.log('PROPS');
-    //     console.dir(props.parameters);
-    //     const _sectionOrder = Object.keys(props.parameters)
-    //         .sort((section_name1, section_name2) => 
-    //             (SECTION_ORDER[section_name1] || 0) > (SECTION_ORDER[section_name2] || 0) 
-    //                 ? 1
-    //                 : (SECTION_ORDER[section_name1] || 0) < (SECTION_ORDER[section_name2] || 0)
-    //                     ? -1
-    //                     : 0
-    //         )
-    //     setSectionOrder(_sectionOrder)
-    //     console.dir(_sectionOrder)
-    // }, [setSectionOrder])
     const onSectionChange = useCallback((event) =>{
         const $select = event.target;
         $select.setAttribute('data-value', $select.value)
@@ -72,10 +57,11 @@ export default function ModelProperties(props) {
                 return <fieldset className={''} key={secPropId} value={secPropId} style={{display: index > 0 ? 'none' : ''}}>{
                     Object.entries(secProp.parameters)
                         .map(([paramId, paramDefValue]) => {
-                            const step = Math.pow(10, Math.floor(Math.log10(paramDefValue)))
+                            const dimension = Math.floor(Math.log10(paramDefValue));
+                            const step = (dimension < 0) ? 1 / Math.pow(10, Math.abs(dimension)) : Math.pow(10, dimension); 
                             const [patramDescription, paramMesure] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
                                 ? sectionData.parameters_descriptions[paramId]
-                                : [null, null]
+                                : [null, null];
                             return <label key={paramId}>
                                 <div className="bflex-row">
                                     <input className="flex-size-fill" type="number" name={paramId} defaultValue={paramDefValue} step={step}/>
