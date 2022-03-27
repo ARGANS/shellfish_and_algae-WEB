@@ -87,12 +87,12 @@ main {
 
 /* TODO use css variable to manage the first day*/
 /* Positioning the first day */
-.dateGrid button:first-child {
+.dateGrid > .day:first-child {
   grid-column: var(--first-day-number);
 }
 
 /* Style for each day*/
-.dateGrid button {
+.dateGrid > .day {
   position: relative;
   border: 0;
   width: 4.5ch;
@@ -102,15 +102,19 @@ main {
   color: var(--blue-grey-600);
 }
 
-.dateGrid button:hover,
-.dateGrid button:focus {
+.dateGrid > .day:hover,
+.dateGrid > .day:focus {
   outline: none;
   background-color: var(--blue-grey-050);
   color: var(--blue-grey-700);
 }
 
-.dateGrid button:active,
-.dateGrid button.is-selected {
+.dateGrid > .day.actual {
+  background-color: var(--teal-600);
+}
+
+.dateGrid > .day:active,
+.dateGrid > .day.is-selected {
   background-color: var(--teal-100);
   color: var(--teal-900);
 }
