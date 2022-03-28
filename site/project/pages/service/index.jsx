@@ -40,5 +40,19 @@ export async function getStaticProps(context) {
 	return {
 	  props: {model_parameters,},
 	}
- }
+}
+
+/*
+PLAN:
+1 -submit form, get a json 
+2 - time range control
+3 - region select control
+---
+4 - 1/2 slides for presentation
+
+Regions: Baltic, Black, Mediterranean and North Seas, others
+
   
+
+
+*/

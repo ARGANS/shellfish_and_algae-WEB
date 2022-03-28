@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import s from './DatePicker.module.css';
+import { DateZ } from "./dates";
 
 export default function DatePicker(props) {
     const initDate = props.date || new Date();
@@ -19,6 +20,9 @@ export default function DatePicker(props) {
         console.log('[ACTUALDATE changed2]');
         setRenderedDate(actualDate)
         openCalendar(false);
+        if (props.hasOwnProperty('onChanged')) {
+          props.onChanged(actualDate)
+        }
       }
     }, [setRenderedDate, actualDate, openCalendar])
 
@@ -58,13 +62,13 @@ export default function DatePicker(props) {
     const daysInMonth = Math.floor((new Date(year, month + 1) - new Date(year, month)) / (1000*3600*24))
 
     return <div className={s.root}>
-      <div onClick={toggleHandler}>{actualDate+''}</div>
+      <div onClick={toggleHandler}>{DateZ.from(actualDate).t('DD-MM-YYYY')}</div>
       {isOpened && <div className="dropdown" onMouseOut={mouseOutHandler}>
         <div className={s.dropdown}>
           <div class={s.calendar} style={{'--first-day-number': firstDayNumber}}>
             <div class={s.monthIndicator}>
               <div onClick={prevClickHandler}>Prev</div>
-              <time datetime="2019-02">{year} {month}</time>
+              <time datetime={year + '-' + DateZ.withLeadingZero(month + 1)}>{DateZ.from(year, month).t('YYYY ML')}</time>
               <div onClick={nextClickHandler}>Next</div>
             </div>
             <div class={s.dayOfWeek}>
@@ -91,7 +95,7 @@ export default function DatePicker(props) {
                   className={classList} 
                   onClick={onSelectDayHandler} 
                   data-day={index + 1} 
-                  datetime="2019-02-01">{index + 1}</time>
+                  datetime={DateZ.from(year, month, index + 1).DDMMYYYY('-')}>{index + 1}</time>
               })
             }</div>
         </div>
