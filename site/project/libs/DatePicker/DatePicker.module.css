@@ -22,38 +22,10 @@
   --blue-grey-900: #102a43;
 
 }
-.dropdown {
-  border: 1px solid #000;
-  /* width: 100px;
-  height: 60px; */
-}
+
 .calendar {
   --first-day-number: 1;
 }
-
-/*
-
-html {
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-size: 125%;
-  line-height: 1.4;
-  font-weight: 400;
-  color: var(--blue-grey-900);
-}
-
-body {
-  min-height: 100vh;
-  background: var(--blue-grey-100);
-}
-
-main {
-  max-width: max-content;
-  margin: 3em auto 0 auto;
-  padding: 1.5em;
-  background-color: #fff;
-  border: 2px solid var(--blue-grey-200);
-  border-radius: 8px;
-}*/
 
 .monthIndicator {
   color: var(--blue-grey-700);

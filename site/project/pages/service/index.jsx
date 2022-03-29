@@ -18,12 +18,12 @@ export default function ServicePage(props) {
 		<main className={s.root}>
 			<div className={s.main}>
 				<p>TODO</p>
-				<DatePicker date={new Date()}/>
+				<DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/>
 			</div>
 			<div className={s.sidebar}>
 				<h3 className={s.sidebar_title}>Model selection</h3>
 				<div className={s.modelform}>
-					<ModelProperties parameters={props.model_parameters} />	
+					<ModelProperties parameters={props.model_parameters}/>	
 				</div>
 			</div>
 			<div className={s.header}>
