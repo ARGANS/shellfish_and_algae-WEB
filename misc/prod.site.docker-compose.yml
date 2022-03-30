@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  acsite:
+    container_name: ac-site
+    stdin_open: true
+    build:
+      context: ../site/
+      dockerfile: ./dev.Dockerfile
+    networks:
+      - ac_net
+    volumes:
+      - site_node_modules:/opt/app/node_modules
+      - site_next_dir:/opt/app/.next
+      - site_out:/opt/app/out
+    environment:
+      - TODO=1
+networks:
+  ac_net:
+
+volumes:
+  site_node_modules:
+  # Volume used to store Next.js build artifacts:
+  site_next_dir:
+  site_out:
