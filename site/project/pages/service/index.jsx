@@ -18,6 +18,7 @@ export default function ServicePage(props) {
 		<main className={s.root}>
 			<div className={s.main}>
 				<p>TODO</p>
+				<input />
 				<DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/>
 			</div>
 			<div className={s.sidebar}>

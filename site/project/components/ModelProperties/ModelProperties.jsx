@@ -41,7 +41,19 @@ export default function ModelProperties(props) {
         const {dataset} = target;
         console.log('Change [%s/%s/%s]', target.value, dataset?.section, dataset?.prop)
         console.dir(event);
-        const nextState = dset(cloneObject(state), [dataset?.section, dataset?.prop, target.name].join('.'), target.value - 0)
+        const isParameter = target.tagName === 'INPUT';
+
+        // 
+        const nextState = dset(
+            cloneObject(state), 
+            [
+                dataset?.section, 
+                dataset?.prop, 
+                isParameter ? 'parameters' : 'options',
+                target.name
+            ].join('.'), 
+            target.value - 0
+        )
         setState(nextState)
     }, [state, setState]);
 
@@ -56,7 +68,7 @@ export default function ModelProperties(props) {
     return <form class={S.root} onSubmit={onSubmitHandler}>{sectionOrder.map(sectionName => {
         const sectionData = model_parameters[sectionName];
         const sectionDefaults = Object.entries(sectionData.defaults);
-        return <fieldset key={sectionName}>
+        return <fieldset key={sectionName} class={S.section}>
             <legend>{sectionData.section_name}</legend>
             <p className={S.description}>{sectionData.section_description}</p>
 
@@ -73,7 +85,7 @@ export default function ModelProperties(props) {
             {sectionDefaults.map(([secPropId, secProp], index) => {
                 const propOptions = Object.entries(secProp.options);
 
-                return <fieldset className={''} key={secPropId} value={secPropId} style={{display: index > 0 ? 'none' : ''}}>{
+                return <fieldset className={S.subsection} key={secPropId} value={secPropId} style={{display: index > 0 ? 'none' : ''}}>{
                     Object.entries(secProp.parameters)
                         .map(([paramId, paramDefValue]) => {
                             const dimension = Math.floor(Math.log10(paramDefValue));
@@ -82,6 +94,7 @@ export default function ModelProperties(props) {
                                 ? sectionData.parameters_descriptions[paramId]
                                 : [null, null];
                             return <label key={paramId}>
+                                <div>{patramDescription || paramId}:</div>
                                 <div className="bflex-row">
                                     <input 
                                         className="flex-size-fill" 
@@ -95,8 +108,6 @@ export default function ModelProperties(props) {
                                     />
                                     {paramMesure && <span className="flex-size-own">{paramMesure}</span> }
                                 </div>
-                                
-                                {paramMesure && <div>{patramDescription}</div>}
                             </label>
                         })}
                     {propOptions.length > 0 && propOptions.map(([optionId, optionValue]) => {

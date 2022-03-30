@@ -12,6 +12,9 @@ export default function DatePicker(props) {
     const toggleHandler = useCallback((event) => {
       openCalendar(!isOpened)
     }, [isOpened])
+    const focusHandler = useCallback((event) => {
+      openCalendar(true)
+    }, [isOpened])
 
     // To close the calendar after selecting a new date
     useEffect(() => {
@@ -59,14 +62,21 @@ export default function DatePicker(props) {
     const firstDayNumber = new Date(year, month, 1).getDay();
     const daysInMonth = Math.floor((new Date(year, month + 1) - new Date(year, month)) / (1000*3600*24))
 
-    return <div className={(props.className ? props.className + ' ' : '') + s.root}>
-      <div onClick={toggleHandler} data-role="dp-label">{DateZ.from(actualDate).t('DD-MM-YYYY')}</div>
-      {isOpened && <div data-role="dp-dropdown" onMouseOut={mouseOutHandler}>
+    // onFocus={focusHandler}
+    return <div 
+      className={(props.className ? props.className + ' ' : '') + s.root} 
+      tabIndex="0"
+    >
+      <div 
+        data-role="dp-label"
+        onClick={toggleHandler} 
+      >{DateZ.from(actualDate).t('DD-MM-YYYY')}</div>
+      {isOpened && <div data-role="dp-dropdown" onMouseOut={mouseOutHandler} onClick={event => event.stopPropagation()}>
         <div data-role="dp-calendar" class={s.calendar} style={{'--first-day-number': firstDayNumber}}>
           <div data-role="dp-calendar-nav" class={s.monthIndicator}>
-            <div data-role="dp-prev" onClick={prevClickHandler}>Prev</div>
+            <div data-role="dp-prev" onClick={prevClickHandler} tabIndex="0">Prev</div>
             <time data-role="dp-month" datetime={year + '-' + DateZ.withLeadingZero(month + 1)}>{DateZ.from(year, month).t('YYYY ML')}</time>
-            <div data-role="dp-next" onClick={nextClickHandler}>Next</div>
+            <div data-role="dp-next" onClick={nextClickHandler} tabIndex="0">Next</div>
           </div>
           <div class={s.dayOfWeek} data-role="dp-calendar-days">
             <div>Mo</div>
@@ -88,6 +98,7 @@ export default function DatePicker(props) {
               }
 
               return <time 
+                tabIndex="0"
                 key={index} 
                 className={classList} 
                 onClick={onSelectDayHandler} 

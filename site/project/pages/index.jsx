@@ -30,7 +30,7 @@ function IndexPage(props) {
                     </div>
                 </div>
                 <div className="introsection-inner-bottom">
-                    <div classNameName="bcontainer">
+                    <div className="bcontainer">
                         <nav className="members-list">
                             <a className="" href="https://argans.co.uk/" target="_blank">
                                 <img src="/assets/images/argans_white_new.png" style={{width: '60%'}}/>

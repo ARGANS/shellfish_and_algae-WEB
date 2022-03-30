@@ -45,11 +45,11 @@
     margin: 0 1rem 2rem 1rem;
 }
 
-.dp {}
+.dp {display:inline-block;vertical-align:middle;position: relative;}
 .dp [data-role="dp-label"] { cursor:pointer;}
-.dp [data-role="dp-dropdown"] {border: 1px solid}
+.dp [data-role="dp-dropdown"] {position:absolute;border:1px solid;}
 .dp [data-role="dp-calendar"] {}
-.dp [data-role="dp-calendar-nav"] {display: flex; flex-direction: row;}
+.dp [data-role="dp-calendar-nav"] {display:flex;flex-direction:row;padding:0.5rem 1rem 0 1rem;}
 .dp [data-role="dp-prev"],
 .dp [data-role="dp-next"] {flex:0 0 auto;cursor:pointer;}
 .dp [data-role="dp-month"] {flex: 1 1 auto;}
