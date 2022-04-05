@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import model_parameters from 'settings/macroalgae_model_parameters.json'
+import { downloadFileFromText } from "utils/downloadFile";
+import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 
 const SECTION_ORDER = {
@@ -10,6 +12,7 @@ const SECTION_ORDER = {
 }
 
 export default function ModelProperties(props) {
+    const [state, setState] = useState({});
     const onSectionChange = useCallback((event) =>{
         const $select = event.target;
         $select.setAttribute('data-value', $select.value)
@@ -25,6 +28,35 @@ export default function ModelProperties(props) {
         } while($node = $node.nextElementSibling);
     }, []);
 
+    const onSubmitHandler = useCallback(event => {
+        event.preventDefault();
+        console.log('state')
+        console.dir(state)
+
+        downloadFileFromText('form.json', JSON.stringify(state, null, '\t'))
+    }, [state]);
+    
+    const onChangeHandler = useCallback(event => {
+        const {target} = event;
+        const {dataset} = target;
+        console.log('Change [%s/%s/%s]', target.value, dataset?.section, dataset?.prop)
+        console.dir(event);
+        const isParameter = target.tagName === 'INPUT';
+
+        // 
+        const nextState = dset(
+            cloneObject(state), 
+            [
+                dataset?.section, 
+                dataset?.prop, 
+                isParameter ? 'parameters' : 'options',
+                target.name
+            ].join('.'), 
+            target.value - 0
+        )
+        setState(nextState)
+    }, [state, setState]);
+
     const sectionOrder = Object.keys(model_parameters)
             .sort((section_name1, section_name2) => 
                 (SECTION_ORDER[section_name1] || 0) > (SECTION_ORDER[section_name2] || 0) 
@@ -33,10 +65,10 @@ export default function ModelProperties(props) {
                         ? -1 : 0
             )
 
-    return <form class={S.root}>{sectionOrder.map(sectionName => {
+    return <form class={S.root} onSubmit={onSubmitHandler}>{sectionOrder.map(sectionName => {
         const sectionData = model_parameters[sectionName];
         const sectionDefaults = Object.entries(sectionData.defaults);
-        return <fieldset key={sectionName}>
+        return <fieldset key={sectionName} class={S.section}>
             <legend>{sectionData.section_name}</legend>
             <p className={S.description}>{sectionData.section_description}</p>
 
@@ -53,8 +85,7 @@ export default function ModelProperties(props) {
             {sectionDefaults.map(([secPropId, secProp], index) => {
                 const propOptions = Object.entries(secProp.options);
 
-
-                return <fieldset className={''} key={secPropId} value={secPropId} style={{display: index > 0 ? 'none' : ''}}>{
+                return <fieldset className={S.subsection} key={secPropId} value={secPropId} style={{display: index > 0 ? 'none' : ''}}>{
                     Object.entries(secProp.parameters)
                         .map(([paramId, paramDefValue]) => {
                             const dimension = Math.floor(Math.log10(paramDefValue));
@@ -63,26 +94,40 @@ export default function ModelProperties(props) {
                                 ? sectionData.parameters_descriptions[paramId]
                                 : [null, null];
                             return <label key={paramId}>
+                                <div>{patramDescription || paramId}:</div>
                                 <div className="bflex-row">
-                                    <input className="flex-size-fill" type="number" name={paramId} defaultValue={paramDefValue} step={step}/>
+                                    <input 
+                                        className="flex-size-fill" 
+                                        type="number" 
+                                        name={paramId} 
+                                        defaultValue={paramDefValue} 
+                                        step={step}
+                                        data-section={sectionName}
+                                        data-prop={secPropId}
+                                        onChange={onChangeHandler}
+                                    />
                                     {paramMesure && <span className="flex-size-own">{paramMesure}</span> }
                                 </div>
-                                
-                                
-                                {paramMesure && <div>{patramDescription}</div>}
                             </label>
                         })}
                     {propOptions.length > 0 && propOptions.map(([optionId, optionValue]) => {
                         const options = sectionData.options_descriptions[optionId]
-                        return (<select defaultValue={optionValue}>{options.map((optionLabel, index) => (
+                        return (<select 
+                            defaultValue={optionValue}
+                            data-section={sectionName}
+                            data-prop={secPropId}
+                            name={optionId}
+                            onChange={onChangeHandler}
+                        >{options.map((optionLabel, index) => (
                             <option key={optionLabel} value={index}>{optionLabel}</option>
                         ))}
-
                         </select>)
                     })}</fieldset>
             })}
         </fieldset>
-    })}</form>
+    })}
+    <button type="submit">Submit</button>
+    </form>
 }
 
 {/* <select>

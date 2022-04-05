@@ -1,4 +1,6 @@
 .root {
+  --dp-cell-size: 3rem;
+  /* DEPRECATED*/
   --teal-050: #effcf6;
   --teal-100: #c6f7e2;
   --teal-200: #8eedc7;
@@ -22,38 +24,10 @@
   --blue-grey-900: #102a43;
 
 }
-.dropdown {
-  border: 1px solid #000;
-  /* width: 100px;
-  height: 60px; */
-}
+
 .calendar {
   --first-day-number: 1;
 }
-
-/*
-
-html {
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-size: 125%;
-  line-height: 1.4;
-  font-weight: 400;
-  color: var(--blue-grey-900);
-}
-
-body {
-  min-height: 100vh;
-  background: var(--blue-grey-100);
-}
-
-main {
-  max-width: max-content;
-  margin: 3em auto 0 auto;
-  padding: 1.5em;
-  background-color: #fff;
-  border: 2px solid var(--blue-grey-200);
-  border-radius: 8px;
-}*/
 
 .monthIndicator {
   color: var(--blue-grey-700);
@@ -68,7 +42,7 @@ main {
 }
 
 .dayOfWeek {
-  margin-top: 1.25em;
+  margin-top: 0.5rem;
 }
 
 .dayOfWeek > * {
@@ -95,8 +69,10 @@ main {
 .dateGrid > .day {
   position: relative;
   border: 0;
-  width: 4.5ch;
-  height: 4.5ch;
+  width: var(--dp-cell-size);
+  height: var(--dp-cell-size);
+  line-height: var(--dp-cell-size);
+  text-align: center;
   border-radius: 50%;
   background-color: transparent;
   color: var(--blue-grey-600);
@@ -110,11 +86,12 @@ main {
 }
 
 .dateGrid > .day.actual {
-  background-color: var(--teal-600);
+  background-color: #777;
+  color: #fff;
 }
 
 .dateGrid > .day:active,
 .dateGrid > .day.is-selected {
-  background-color: var(--teal-100);
-  color: var(--teal-900);
+  background-color: #777;
+  color: #fff;
 }

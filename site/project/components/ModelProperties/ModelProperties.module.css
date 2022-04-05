@@ -5,15 +5,18 @@
 .root input {text-align: right;}
 .root label {display: block; margin: 0 0 0.5rem 0;}
 
+.section {
+    margin: 0 0 2rem 0;
+}
+.subsection {
+    margin: 0 0 0 2rem;
+}
 .root form {
     margin: 0 0 2rem 0;
 }
 .root legend {
     text-transform: uppercase;
     margin: 0 0 0.25rem 0;
-}
-.root fieldset {
-    margin: 0 0 2rem 0;
 }
 .description {
     margin: 0 0 1rem 0;

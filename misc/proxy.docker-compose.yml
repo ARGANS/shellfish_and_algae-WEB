@@ -6,7 +6,7 @@ services:
     stdin_open: true
     build:
       context: ../
-      dockerfile: ./proxy/${ENV}.Dockerfile
+      dockerfile: ./proxy/dev.Dockerfile
       args:
         WITH_UTILS: "true"
     ports:
