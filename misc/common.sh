@@ -1,17 +1,16 @@
 #!/bin/sh 
 
 # [dev]elopment/[prod]uction/[int]ermediate
-COMPOSE_CMD="docker-compose" # TODO change for prod
+COMPOSE_CMD="docker-compose" 
+# TODO change for prod
+# COMPOSE_CMD='~/docker-compose'
 
 function get_env_path {
 	local STAGE
 	if [[ "$1" == 'dev' ]]; then
 		STAGE='dev'
-	# elif [[ "$1" == 'int' ]]; then
-	# 	STAGE='intermediate'
 	else 
 		STAGE='prod'
-		COMPOSE_CMD='~/docker-compose'
 	fi
 
 	echo "$DIR/misc/$STAGE.env"
