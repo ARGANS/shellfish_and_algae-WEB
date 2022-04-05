@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import Head from 'next/head'
 import s from './service_page.module.css'
-import ModelProperties from 'components/ModelProperties/ModelProperties';
-import model_parameters from 'settings/macroalgae_model_parameters.json'
 import DatePicker from 'libs/DatePicker/DatePicker';
+import SimulationList from 'components/SimulationList/SimulationList';
+import model_parameters from 'settings/macroalgae_model_parameters.json'
 
 export default function ServicePage(props) {
 	const title = 'Service';
@@ -14,17 +14,19 @@ export default function ServicePage(props) {
 		<Head>
 			<title>{title}</title>
 			<meta property="og:title" content={title} key="title" />
+			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
+			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
+			<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,regular,600,700,300italic,italic,600italic,700italic,|Kalam:300,regular,700&amp;subset=latin" media="all"></link>
 		</Head>
 		<main className={s.root}>
 			<div className={s.main}>
-				<p>TODO</p>
-				<input />
-				<DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/>
+				<SimulationList parameters={props.model_parameters}/>
+				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
 			<div className={s.sidebar}>
 				<h3 className={s.sidebar_title}>Model selection</h3>
 				<div className={s.modelform}>
-					<ModelProperties parameters={props.model_parameters}/>	
+					
 				</div>
 			</div>
 			<div className={s.header}>

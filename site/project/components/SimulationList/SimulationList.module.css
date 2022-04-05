@@ -1,0 +1,34 @@
+.root {
+    display: grid;
+    grid-template-columns: [col1] 1fr;
+	grid-template-rows: [row1] auto [row2] 1fr;
+	gap: 0;
+	grid-template-areas: "area1" "area2";
+    width: 100%;
+    height: 100%;
+}
+
+.header {grid-area: area1;}
+.body {grid-area: area2;}
+.formWrapper {
+    position: relative;
+    grid-column: col1;
+    grid-row: row1 / span 2;
+}
+.formWrapperInner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.list {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: min-content;
+    gap: 0;
+}

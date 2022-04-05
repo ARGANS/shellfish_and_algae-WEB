@@ -3,6 +3,7 @@ import model_parameters from 'settings/macroalgae_model_parameters.json'
 import { downloadFileFromText } from "utils/downloadFile";
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
+import model_data from 'settings/model_data';
 
 const SECTION_ORDER = {
     species: 1,
@@ -13,6 +14,7 @@ const SECTION_ORDER = {
 
 export default function ModelProperties(props) {
     const [state, setState] = useState({});
+    
     const onSectionChange = useCallback((event) =>{
         const $select = event.target;
         $select.setAttribute('data-value', $select.value)
@@ -39,11 +41,7 @@ export default function ModelProperties(props) {
     const onChangeHandler = useCallback(event => {
         const {target} = event;
         const {dataset} = target;
-        console.log('Change [%s/%s/%s]', target.value, dataset?.section, dataset?.prop)
-        console.dir(event);
         const isParameter = target.tagName === 'INPUT';
-
-        // 
         const nextState = dset(
             cloneObject(state), 
             [
@@ -65,7 +63,16 @@ export default function ModelProperties(props) {
                         ? -1 : 0
             )
 
-    return <form class={S.root} onSubmit={onSubmitHandler}>{sectionOrder.map(sectionName => {
+    return <form class={S.root} onSubmit={onSubmitHandler}>
+        <fieldset>
+            <label>Name</label>
+            <input type="text" name="model-name"/>
+        </fieldset>
+        <fieldset>
+            <label>Zone</label>
+            <select name="model-zone">{model_data.zones.map(zone_name => <option key={zone_name} value={zone_name}>{zone_name}</option>)}</select>
+        </fieldset>
+        {sectionOrder.map(sectionName => {
         const sectionData = model_parameters[sectionName];
         const sectionDefaults = Object.entries(sectionData.defaults);
         return <fieldset key={sectionName} class={S.section}>
@@ -129,19 +136,3 @@ export default function ModelProperties(props) {
     <button type="submit">Submit</button>
     </form>
 }
-
-{/* <select>
-					<optgroup label="Zone">
-					</optgroup>
-				</select>
-				<select>
-					<optgroup label="Species">
-						<otion value="0">Shellfish</otion>
-						<otion value="1">Algae</otion>
-					</optgroup>
-				</select>
-				<select>
-					<optgroup label="Model">
-					</optgroup>
-				</select>
-				<h3>Model Configuration</h3> */}
