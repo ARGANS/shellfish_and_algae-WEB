@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { memo, useCallback, useEffect, useState } from "react"
 import model_parameters from 'settings/macroalgae_model_parameters.json'
 import { downloadFileFromText } from "utils/downloadFile";
 import { cloneObject, dset } from "../../utils/deepClone";
@@ -13,37 +13,76 @@ const SECTION_ORDER = {
     run: 4
 }
 
-export default function ModelProperties(props) {
-    const [state, setState] = useState({});
+
+function createDefaultModel(initData) {
+    return Object.entries(initData).reduce(function (store, [sectionName, {defaults}]) {
+        const sectionNames = Object.keys(defaults).sort()
+        const defaultSection = sectionNames[0]
+
+        store[sectionName] = {
+            [defaultSection]: {
+                options: defaults[defaultSection].options,
+                parameters: defaults[defaultSection].parameters
+            } 
+        }
+        return store;
+    }, {});
+}
+
+function createDefaultMetadata(initData) {
+    return {
+        name: '',
+        _suggestedName: suggestName('Alaria', initData.zones[0]),
+        zone: initData.zones[0]
+    }
+}
+
+
+function suggestName(species, zone) {
+    return [
+        // TODO: login
+        species,
+        zone,
+        // TODO: date
+    ].join('_')
+}
+
+function ModelProperties(props) {
+    const [state, setState] = useState(createDefaultModel(model_parameters));
+    const [metadata, setMetadata] = useState(createDefaultMetadata(model_data));
+
     
     const onSectionChange = useCallback((event) =>{
-        const $select = event.target;
-        $select.setAttribute('data-value', $select.value)
+        const {target: $select} = event;
+        const {dataset} = $select;
+        const {options, parameters} = model_parameters[dataset?.section].defaults[$select.value];
+
+        console.log('[onSectionChange] section:%s val: %s', dataset?.section, $select.value);
+        console.dir(model_parameters[dataset?.section])
         
-        const section = $select.dataset.section
-        const $node = $select.parentNode.nextElementSibling;
-        Array.from($node.querySelectorAll(`[data-${section}]`)).forEach(node => {node.style.display = 'none'});
-        Array.from($node.querySelectorAll(`[data-${section}="${$select.value}"]`)).forEach(node => {node.style.display = ''});
-
-        return;
-
-        const nextState = dset(
-            cloneObject(state), 
-            [
-                dataset?.section, 
-                dataset?.prop, 
-            ].join('.'), 
-            {} // use default properties
-        )
+        const nextState = {
+            ...cloneObject(state), 
+            [dataset?.section]: {
+                [$select.value]: {options, parameters}
+            }
+        }
+            
+        console.dir(nextState);
         setState(nextState)
-    }, []);
+    }, [setState]);
 
     const onSubmitHandler = useCallback(event => {
         event.preventDefault();
         console.log('state')
         console.dir(state)
+        console.dir(metadata)
 
-        // downloadFileFromText('form.json', JSON.stringify(state, null, '\t'))
+        // TODO
+    }, [state, metadata]);
+
+    const onDownloadHandler = useCallback(event => {
+        event.preventDefault();
+        downloadFileFromText('form.json', JSON.stringify(state, null, '\t'))
     }, [state]);
     
     const onChangeHandler = useCallback(event => {
@@ -63,6 +102,16 @@ export default function ModelProperties(props) {
         setState(nextState)
     }, [state, setState]);
 
+    const metaDataChangeHandler = useCallback(event => {
+        event.stopPropagation()
+        const {target: $input} = event;
+        console.log('[metaDataChangeHandler] `%s`', $input.value)
+        setMetadata({
+            ...metadata,
+            [$input.name]: $input.value
+        })
+    }, [metadata, setMetadata])
+
     const sectionOrder = Object.keys(model_parameters)
         .sort((section_name1, section_name2) => 
             (SECTION_ORDER[section_name1] || 0) > (SECTION_ORDER[section_name2] || 0) 
@@ -70,18 +119,62 @@ export default function ModelProperties(props) {
                 : (SECTION_ORDER[section_name1] || 0) < (SECTION_ORDER[section_name2] || 0)
                     ? -1 : 0
         )
+    
+    useEffect(() => {
+        if (metadata.hasOwnProperty('name')) return;
+
+        console.log('Update suggestion')
+        // TODO
+        
+        setMetadata({
+            ...metadata,
+            _suggestedName: suggestName(Object.keys(state.species)[0], metadata.zone)
+        })
+    }, [state, metadata, setMetadata])
+
+    console.log('RERENDER FORM %s', metadata.zone);
 
     return <form class={S.root} onSubmit={onSubmitHandler}>
         
         <label>Name</label>
-        <input type="text" name="model-name"/>
+        <input 
+            type="text" 
+            name="name" 
+            defaultValue={metadata.name || metadata._suggestedName} 
+            onChange={metaDataChangeHandler}
+        />
         
         <label>Zone</label>
-        <select name="model-zone">{model_data.zones.map(zone_name => <option key={zone_name} value={zone_name}>{zone_name}</option>)}</select>
+        <select 
+            name="zone" 
+            value={metadata.zone}
+            onChange={metaDataChangeHandler}
+        >{model_data.zones.map(zone_name => <option 
+            key={zone_name} 
+            selected={metadata.zone === zone_name}
+            defaultValue={zone_name}
+        >{zone_name}</option>)}</select>
+
+        {/*  TODO */}
+        <span></span>
+        <div>
+            <label>Depth min</label>
+            <label>Depth max</label>
+            <label>Depth Year</label>
+            {/* TODO min & max values, step? */}
+            <input type="number" />
+            <input type="number" />
+            <input type="number" min="1980" max="2022" step="1" />
+        </div>
         
         {sectionOrder.map(sectionName => {
             const sectionData = model_parameters[sectionName];
             const sectionDefaults = Object.entries(sectionData.defaults);
+            const keys = Object.keys(state[sectionName]);
+            const secPropId = keys[0];
+            const secProp = state[sectionName][secPropId];
+            const propOptions = Object.entries(secProp.options);
+            
             return (<>
                 <label>{sectionData.section_name}</label>
                 <div>
@@ -93,7 +186,7 @@ export default function ModelProperties(props) {
                             data-section={sectionName}
                         >{
                             sectionDefaults.map(([secPropId, secProp], index) => (
-                                <option key={secPropId} value={secPropId} title={secProp.description} selected={index === 0}>{secProp.name}</option>
+                                <option key={secPropId} value={secPropId} title={secProp.description} selected={keys.indexOf(secPropId) > -1}>{secProp.name}</option>
                             ))
                         }</select>
                     ) : sectionDefaults.map(([secPropId, secProp]) => (
@@ -102,21 +195,10 @@ export default function ModelProperties(props) {
                     <p className={S.description}>{sectionData.section_description}</p>
                 </div>
                 <fieldset key={sectionName} class={S.section}>
-                    {/*
-                    
-                        TODO filter sectionDefaults
-                    
-                    */}
-                    {sectionDefaults.map(([secPropId, secProp], index) => {
-                        const propOptions = Object.entries(secProp.options);
-                        const props = {[`data-${sectionName}`]: secPropId}
-
-                        return <fieldset 
+                    <fieldset 
                             className={S.subsection} 
                             key={secPropId} 
                             value={secPropId} 
-                            {...props}
-                            style={{display: index > 0 ? 'none' : ''}}
                         >{
                             Object.entries(secProp.parameters)
                                 .map(([paramId, paramDefValue]) => {
@@ -155,10 +237,20 @@ export default function ModelProperties(props) {
                                 ))}
                                 </select>)
                             })}</fieldset>
-                    })}
                 </fieldset>
             </>)
         })}
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn">Submit</button>
+    <button class="btn __secondary" onClick={onDownloadHandler}>Download</button>
     </form>
 }
+
+// export default ModelProperties
+export default memo(ModelProperties, (props, nextProps) => {
+    console.log('Rerender');
+    console.dir([props, nextProps]);
+    if(props.prop1 === nextProps.prop1) {
+        // don't re-render/update
+        return true
+    }
+})

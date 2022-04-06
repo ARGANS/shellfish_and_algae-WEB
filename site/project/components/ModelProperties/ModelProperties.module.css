@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
 	grid-template-rows: 1fr;
-	gap: 0.5rem 0;
+	gap: .5rem .5rem;
 	grid-template-areas: "area1" "area2";
 }
 .root select {width:100%;}
