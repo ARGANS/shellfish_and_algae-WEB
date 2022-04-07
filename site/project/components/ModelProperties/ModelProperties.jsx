@@ -4,6 +4,7 @@ import { downloadFileFromText } from "utils/downloadFile";
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'settings/model_data';
+import { DateZ } from "libs/DatePicker/dates";
 
 // TODO move into the model
 const SECTION_ORDER = {
@@ -32,18 +33,24 @@ function createDefaultModel(initData) {
 function createDefaultMetadata(initData) {
     return {
         name: '',
-        _suggestedName: suggestName('Alaria', initData.zones[0]),
-        zone: initData.zones[0]
+        zone: initData.zones[0],
+        _suggested: {
+            login: '<username>',
+            species: 'Alaria',
+            zone: initData.zones[0],
+            date: DateZ.from().DDMMYYYY('-'),    
+        },
+        depth_min: 0,
+        depth_max: 0,
+        depth_year: new Date().getFullYear()
     }
 }
-
-
-function suggestName(species, zone) {
+function printSuggestedName(_suggested) {
     return [
-        // TODO: login
-        species,
-        zone,
-        // TODO: date
+        _suggested.login,
+        _suggested.species,
+        _suggested.zone,
+        _suggested.date,
     ].join('_')
 }
 
@@ -60,16 +67,23 @@ function ModelProperties(props) {
         console.log('[onSectionChange] section:%s val: %s', dataset?.section, $select.value);
         console.dir(model_parameters[dataset?.section])
         
-        const nextState = {
-            ...cloneObject(state), 
-            [dataset?.section]: {
-                [$select.value]: {options, parameters}
+        setState(_state => {
+            return {
+                ...cloneObject(_state), 
+                [dataset?.section]: {
+                    [$select.value]: {options, parameters}
+                }
             }
-        }
-            
-        console.dir(nextState);
-        setState(nextState)
-    }, [setState]);
+        });
+
+        setMetadata(_metadata => ({
+            ..._metadata,
+            _suggested: {
+                ..._metadata._suggested,
+                species: $select.value,
+            }
+        }))
+    }, []);
 
     const onSubmitHandler = useCallback(event => {
         event.preventDefault();
@@ -86,31 +100,45 @@ function ModelProperties(props) {
     }, [state]);
     
     const onChangeHandler = useCallback(event => {
+        event.preventDefault();
+        event.persist();
+        event.stopPropagation()
         const {target} = event;
         const {dataset} = target;
         const isParameter = target.tagName === 'INPUT';
-        const nextState = dset(
-            cloneObject(state), 
-            [
-                dataset?.section, 
-                dataset?.prop, 
-                isParameter ? 'parameters' : 'options',
-                target.name
-            ].join('.'), 
-            target.value - 0
-        )
-        setState(nextState)
-    }, [state, setState]);
+        
+        setState(_state => {
+            const nextState = dset(
+                cloneObject(_state), 
+                [
+                    dataset?.section, 
+                    dataset?.prop, 
+                    isParameter ? 'parameters' : 'options',
+                    target.name
+                ].join('.'), 
+                target.value - 0
+            )
+
+            return nextState
+        })
+    }, []);
+
 
     const metaDataChangeHandler = useCallback(event => {
+        event.preventDefault();
+        event.persist();
         event.stopPropagation()
         const {target: $input} = event;
-        console.log('[metaDataChangeHandler] `%s`', $input.value)
-        setMetadata({
-            ...metadata,
-            [$input.name]: $input.value
-        })
-    }, [metadata, setMetadata])
+        // console.log('[metaDataChangeHandler] `%s`', $input.value)
+        setMetadata(_metadata => ({
+            ..._metadata,
+            _suggested: {
+                ..._metadata._suggested,
+                zone: $input.name === 'zone' ? $input.value : _metadata.zone,
+            },
+            [$input.name]: $input.value,
+        }))
+    }, [])
 
     const sectionOrder = Object.keys(model_parameters)
         .sort((section_name1, section_name2) => 
@@ -120,18 +148,8 @@ function ModelProperties(props) {
                     ? -1 : 0
         )
     
-    useEffect(() => {
-        if (metadata.hasOwnProperty('name')) return;
 
-        console.log('Update suggestion')
-        // TODO
-        
-        setMetadata({
-            ...metadata,
-            _suggestedName: suggestName(Object.keys(state.species)[0], metadata.zone)
-        })
-    }, [state, metadata, setMetadata])
-
+    // TODO fix form rerendering on change
     console.log('RERENDER FORM %s', metadata.zone);
 
     return <form class={S.root} onSubmit={onSubmitHandler}>
@@ -140,7 +158,7 @@ function ModelProperties(props) {
         <input 
             type="text" 
             name="name" 
-            defaultValue={metadata.name || metadata._suggestedName} 
+            value={metadata.name || printSuggestedName(metadata._suggested)} 
             onChange={metaDataChangeHandler}
         />
         
@@ -155,16 +173,33 @@ function ModelProperties(props) {
             defaultValue={zone_name}
         >{zone_name}</option>)}</select>
 
-        {/*  TODO */}
         <span></span>
-        <div>
+        <div className={S.metadata_list}>
             <label>Depth min</label>
             <label>Depth max</label>
-            <label>Depth Year</label>
+            <label>Depth year</label>
             {/* TODO min & max values, step? */}
-            <input type="number" />
-            <input type="number" />
-            <input type="number" min="1980" max="2022" step="1" />
+            <input 
+                type="number" 
+                name="depth_min" 
+                value={metadata.depth_min}
+                onChange={metaDataChangeHandler}    
+            />
+            <input 
+                type="number" 
+                name="depth_max" 
+                value={metadata.depth_max}
+                onChange={metaDataChangeHandler}
+            />
+            <input 
+                type="number" 
+                min="1980" 
+                max="2022" 
+                step="1" 
+                name="depth_year" 
+                value={metadata.depth_year}
+                onChange={metaDataChangeHandler}
+            />
         </div>
         
         {sectionOrder.map(sectionName => {
