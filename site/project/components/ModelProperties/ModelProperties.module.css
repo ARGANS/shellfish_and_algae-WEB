@@ -42,3 +42,7 @@
     margin: 0;
 }
 
+.submit {
+    position: sticky;
+    bottom: 0;
+}

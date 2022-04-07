@@ -1,6 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react"
 import model_parameters from 'settings/macroalgae_model_parameters.json'
-import { downloadFileFromText } from "utils/downloadFile";
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'settings/model_data';
@@ -87,18 +86,19 @@ function ModelProperties(props) {
 
     const onSubmitHandler = useCallback(event => {
         event.preventDefault();
+
+        metadata.name = metadata.name || printSuggestedName(metadata._suggested)
         console.log('state')
         console.dir(state)
         console.dir(metadata)
 
+        if (props.onSubmit) {
+            props.onSubmit(state, metadata)
+        }
+
         // TODO
     }, [state, metadata]);
 
-    const onDownloadHandler = useCallback(event => {
-        event.preventDefault();
-        downloadFileFromText('form.json', JSON.stringify(state, null, '\t'))
-    }, [state]);
-    
     const onChangeHandler = useCallback(event => {
         event.preventDefault();
         event.persist();
@@ -275,8 +275,7 @@ function ModelProperties(props) {
                 </fieldset>
             </>)
         })}
-    <button type="submit" class="btn">Submit</button>
-    <button class="btn __secondary" onClick={onDownloadHandler}>Download</button>
+        <button type="submit" className={'btn ' + S.submit}>Submit</button>
     </form>
 }
 
