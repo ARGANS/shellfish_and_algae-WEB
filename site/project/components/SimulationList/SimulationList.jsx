@@ -3,7 +3,7 @@ import S from './SimulationList.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 
-import SimulationModel, { ModelMode } from 'settings/SimulationModel';
+import SimulationModel from 'settings/SimulationModel';
 
 // TODO rename settings into models
 

@@ -3,7 +3,6 @@ import model_parameters from 'settings/macroalgae_model_parameters.json'
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'settings/model_data';
-import { DateZ } from "libs/DatePicker/dates";
 import SimulationModel from "settings/SimulationModel";
 
 // TODO move into the model
@@ -14,6 +13,23 @@ const SECTION_ORDER = {
     run: 4
 }
 
+function _getStep(num) {
+	const parts = (num+'').split('.')
+	if (parts[1]) {
+		return Math.pow(10, -1 * parts[1].length)
+	} else {
+		return 1
+	}
+}
+
+const _stepCache = {};
+function getStep(paramId, num) {
+    if (_stepCache.hasOwnProperty(paramId)) {
+        return _stepCache[paramId];
+    }
+    _stepCache[paramId] = _getStep(num);
+    return _stepCache[paramId];
+}
 
 function printSuggestedName(_suggested) {
     return [
@@ -33,9 +49,7 @@ function printSuggestedName(_suggested) {
 function ModelProperties(props) {
     console.log('Model Properties')
     console.dir(props.model)
-    console.dir(SimulationModel.createDefaultATBDParameters(model_parameters))
-    console.dir(createDefaultMetadata(model_data))
-
+    
     // ? createDefaultModel into SimulationModel
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
     const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data));
@@ -214,34 +228,33 @@ function ModelProperties(props) {
                 </div>
                 <fieldset key={sectionName} class={S.section}>
                     <fieldset 
-                            className={S.subsection} 
-                            key={secPropId} 
-                            value={secPropId} 
-                        >{
-                            Object.entries(secProp.parameters)
-                                .map(([paramId, paramDefValue]) => {
-                                    const dimension = Math.floor(Math.log10(paramDefValue));
-                                    const step = (dimension < 0) ? 1 / Math.pow(10, Math.abs(dimension)) : Math.pow(10, dimension); 
-                                    const [patramDescription, paramMesure] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
-                                        ? sectionData.parameters_descriptions[paramId]
-                                        : [null, null];
-                                    return <label key={paramId}>
-                                        <div>{patramDescription || paramId}:</div>
-                                        <div className="bflex-row">
-                                            <input 
-                                                className="flex-size-fill" 
-                                                type="number" 
-                                                name={paramId} 
-                                                defaultValue={paramDefValue} 
-                                                step={step}
-                                                data-section={sectionName}
-                                                data-prop={secPropId}
-                                                onChange={onChangeHandler}
-                                            />
-                                            {paramMesure && <span className="flex-size-own">{paramMesure}</span> }
-                                        </div>
-                                    </label>
-                                })}
+                        className={S.subsection} 
+                        key={secPropId} 
+                        value={secPropId} 
+                    >{
+                        Object.entries(secProp.parameters)
+                            .map(([paramId, paramDefValue]) => {
+                                const step = getStep(paramId, paramDefValue);
+                                const [patramDescription, paramMesure] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
+                                    ? sectionData.parameters_descriptions[paramId]
+                                    : [null, null];
+                                return <label key={paramId}>
+                                    <div>{patramDescription || paramId}:</div>
+                                    <div className="bflex-row">
+                                        <input 
+                                            className="flex-size-fill" 
+                                            type="number" 
+                                            name={paramId} 
+                                            defaultValue={paramDefValue} 
+                                            step={step}
+                                            data-section={sectionName}
+                                            data-prop={secPropId}
+                                            onChange={onChangeHandler}
+                                        />
+                                        {paramMesure && <span className="flex-size-own">{paramMesure}</span> }
+                                    </div>
+                                </label>
+                            })}
                             {propOptions.length > 0 && propOptions.map(([optionId, optionValue]) => {
                                 const options = sectionData.options_descriptions[optionId]
                                 return (<select 
