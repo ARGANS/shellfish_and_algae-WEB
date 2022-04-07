@@ -3,7 +3,7 @@ import S from './SimulationList.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 
-import SimulationModel from 'settings/SimulationModel';
+import SimulationModel, { ModelMode } from 'settings/SimulationModel';
 
 // TODO rename settings into models
 
@@ -19,9 +19,23 @@ export default function ModelList(props) {
         setModel(null)
     }, [setModel])
 
-    const handleModelSubmit = useCallback((state, metdata) => {
-        model.init(state, metdata);
-        setModels(_models => ([..._models, model]));
+    // TODO refactor this method
+    const handleModelSubmit = useCallback((state, metadata) => {
+        model.init(state, metadata);
+        
+        setModels(_models => {
+            const index = _models.indexOf(model)
+            // This is a new model
+            if (index < 0) return [..._models, model];
+
+            // The model has been edited
+            return [
+                ..._models.slice(0, index), 
+                model,
+                ..._models.slice(index + 1)
+            ];
+        });
+        
         // Close the form
         setModel(null);
     }, [model])
@@ -44,6 +58,7 @@ export default function ModelList(props) {
             return [..._models.slice(0, index), ..._models.slice(index + 1)];
         });
     }, []);
+    
     const onSelectHandler = useCallback(event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
@@ -51,13 +66,16 @@ export default function ModelList(props) {
         console.log('[onSelectHandler]');
         console.dir(models[index]);
     }, [models]);
+
     const onModifyHandler = useCallback(event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
 
-        console.log('[onSelectHandler]');
-        console.dir(models[index]);
+        // console.log('[onSelectHandler]');
+        // console.dir();
+        setModel(models[index])
     }, [models]);
+
     const onViewHandler = useCallback(event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
@@ -67,7 +85,7 @@ export default function ModelList(props) {
     }, [models]);
 
     return <div className={S.root}>
-        {model === null? ( <>
+        {model === null ? ( <>
             <div className={S.header}>
                 <button className="btn" onClick={createModel}>+ Create a model</button>
             </div>
@@ -112,13 +130,15 @@ export default function ModelList(props) {
                 {/* TODO when submitting, fill the model with properties from the form */}
             
                 <ModelProperties 
+                    model={model}
                     parameters={props.model_parameters}
                     onSubmit={handleModelSubmit}
                 />	
             
-            <button className="btn __secondary" onClick={showList}>[X]</button>
+                <button className="btn __secondary" onClick={showList}>[X]</button>
             </div>
-        </div>) }
+        </div>) 
+        }
         
     </div>
 }

@@ -4,6 +4,7 @@ import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'settings/model_data';
 import { DateZ } from "libs/DatePicker/dates";
+import SimulationModel from "settings/SimulationModel";
 
 // TODO move into the model
 const SECTION_ORDER = {
@@ -14,36 +15,6 @@ const SECTION_ORDER = {
 }
 
 
-function createDefaultModel(initData) {
-    return Object.entries(initData).reduce(function (store, [sectionName, {defaults}]) {
-        const sectionNames = Object.keys(defaults).sort()
-        const defaultSection = sectionNames[0]
-
-        store[sectionName] = {
-            [defaultSection]: {
-                options: defaults[defaultSection].options,
-                parameters: defaults[defaultSection].parameters
-            } 
-        }
-        return store;
-    }, {});
-}
-
-function createDefaultMetadata(initData) {
-    return {
-        name: '',
-        zone: initData.zones[0],
-        _suggested: {
-            login: '<username>',
-            species: 'Alaria',
-            zone: initData.zones[0],
-            date: DateZ.from().DDMMYYYY('-'),    
-        },
-        depth_min: 0,
-        depth_max: 0,
-        depth_year: new Date().getFullYear()
-    }
-}
 function printSuggestedName(_suggested) {
     return [
         _suggested.login,
@@ -53,9 +24,21 @@ function printSuggestedName(_suggested) {
     ].join('_')
 }
 
+/**
+ * 
+ * @param {*} props 
+ * @param {SimulationModel|null} props.model 
+ * @returns 
+ */
 function ModelProperties(props) {
-    const [state, setState] = useState(createDefaultModel(model_parameters));
-    const [metadata, setMetadata] = useState(createDefaultMetadata(model_data));
+    console.log('Model Properties')
+    console.dir(props.model)
+    console.dir(SimulationModel.createDefaultATBDParameters(model_parameters))
+    console.dir(createDefaultMetadata(model_data))
+
+    // ? createDefaultModel into SimulationModel
+    const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
+    const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data));
 
     
     const onSectionChange = useCallback((event) =>{
