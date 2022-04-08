@@ -3,7 +3,6 @@
 # [dev]elopment/[prod]uction/[int]ermediate
 COMPOSE_CMD="${DC_PATH:-docker-compose}"
 
-
 function get_env_path {
 	local STAGE
 	if [[ "$1" == 'dev' ]]; then
@@ -33,7 +32,6 @@ function docker_down {
 }
 
 function compose_config {
-	echo "CCMD2: $COMPOSE_CMD2"
 	bash -c "${COMPOSE_CMD} $1 --env-file=$2 config"
 }
 
