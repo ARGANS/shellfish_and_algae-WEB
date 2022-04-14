@@ -48,7 +48,7 @@ export default class SimulationModel {
             },
             depth_min: 0,
             depth_max: 0,
-            depth_year: new Date().getFullYear()
+            year: new Date().getFullYear()
         }
     }
 }

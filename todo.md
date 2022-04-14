@@ -17,3 +17,5 @@ Parse
 
 font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   
+
+https://github.com/ARGANS/shellfish_and_algae-MODEL/blob/main/macroalgae/macroalgae_model_parameters_input.json

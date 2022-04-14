@@ -174,7 +174,7 @@ function ModelProperties(props) {
         <div className={S.metadata_list}>
             <label>Depth min</label>
             <label>Depth max</label>
-            <label>Depth year</label>
+            <label>Year</label>
             {/* TODO min & max values, step? */}
             <input 
                 type="number" 
@@ -194,7 +194,7 @@ function ModelProperties(props) {
                 max="2022" 
                 step="1" 
                 name="depth_year" 
-                value={metadata.depth_year}
+                value={metadata.year}
                 onChange={metaDataChangeHandler}
             />
         </div>
