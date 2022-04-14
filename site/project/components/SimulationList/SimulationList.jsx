@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import S from './SimulationList.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
@@ -83,6 +83,31 @@ export default function ModelList(props) {
         console.log('[onViewHandler]');
         console.dir(models[index]);
     }, [models]);
+
+    useEffect(() => {
+        // TODO retrieve models via API
+        fetch('/api/v1/data/models', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then((response) => {
+            return response.json();
+        }).then((content) => {
+            console.log('Received')
+            console.dir(content)
+        }).catch((e) => {
+            // not authorized
+            console.log('Error');
+            console.dir(e)
+        })
+        // TODO use longpolling
+        
+        return () => {
+            // TODO stol longpolling
+        }
+    }, [])
 
     return <div className={S.root}>
         {model === null ? ( <>
