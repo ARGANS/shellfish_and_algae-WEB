@@ -1,14 +1,17 @@
 import { DateZ } from "libs/DatePicker/dates";
+import { remove_spaces } from "utils/strings";
 
 export default class SimulationModel {
     atbd_parameters = null;
     metadata = null;
     id = null;
-    user_id = null;
+    owner_id = null;
+    owner_name = null;
 
-    constructor(id, user_id) {
+    constructor(id, owner_id, owner_name) {
         this.id = id;
-        this.user_id = user_id;
+        this.owner_id = owner_id;
+        this.owner_name = owner_name;
     }
 
     init(state, metadata) {
@@ -40,14 +43,14 @@ export default class SimulationModel {
             }, {});
     }
 
-    static createDefaultMetadata(initData) {
+    static createDefaultMetadata(initData, login) {
         return {
             name: '',
             zone: initData.zones[0],
             _suggested: {
-                login: '<username>',
+                login: remove_spaces(login),
                 species: 'Alaria',
-                zone: initData.zones[0],
+                zone: remove_spaces(initData.zones[0]),
                 date: DateZ.from().DDMMYYYY('-'),    
             },
             depth_min: 0,

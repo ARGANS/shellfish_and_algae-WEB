@@ -13,6 +13,7 @@ const SECTION_ORDER = {
     run: 4
 }
 
+// TODO rename into getDimension and move into libs
 function _getStep(num) {
 	const parts = (num+'').split('.')
 	if (parts[1]) {
@@ -52,7 +53,7 @@ function ModelProperties(props) {
     
     // ? createDefaultModel into SimulationModel
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
-    const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data));
+    const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data, props.model?.owner_name));
 
     
     const onSectionChange = useCallback((event) =>{

@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, deleteModel$, getModels$, updateModel$ } from 'helpers/api';
+import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$ } from 'helpers/api';
 
 const DEBUG_POLLING = false;
 
@@ -12,11 +12,12 @@ export default function ModelList(props) {
     const [model, setModel] = useState(null);
     const [models, setModels] = useState([]);
     const [isReadyToRecheck, triggeRecheck] = useState(false);
-    const debouncedValue = useDebounce(isReadyToRecheck, 500)
+    const debouncedValue = useDebounce(isReadyToRecheck, 500);
+    const [user, setUser] = useState(null);
 
     const createModel = useCallback(() => {
-        setModel(new SimulationModel())
-    }, [setModel])
+        setModel(new SimulationModel(null, user?.id, user?.username))
+    }, [setModel, user])
 
     const showList = useCallback(() => {
         setModel(null)
@@ -28,7 +29,7 @@ export default function ModelList(props) {
         console.log('Model has changed')
         console.dir(model)
 
-        await (model.id !== undefined 
+        await (model.id !== null 
             ? updateModel$(model.id, {state, metadata}) 
             : addModel$({state, metadata})
         ).
@@ -90,6 +91,13 @@ export default function ModelList(props) {
     }, [models]);
 
     useEffect(() => {
+        getActiveUser$().
+            then(user_data => {
+                setUser(user_data);
+            });
+        
+
+
         const _interval = setInterval(_ => {
             if (DEBUG_POLLING) console.log('[NEXT tick]');
             triggeRecheck(value => !value);
@@ -104,7 +112,9 @@ export default function ModelList(props) {
         getModels$().
             then((_models) => {
                 if (DEBUG_POLLING) console.log('[getModels$]')
-                setModels(_ => _models.map(({id, user_id, properties : {state, metadata}}) => new SimulationModel(id, user_id).init(state, metadata)));
+                setModels(_ => _models.map(
+                    ({id, user_id, user_name, properties : {state, metadata}}) => new SimulationModel(id, user_id, user_name).init(state, metadata)
+                ));
             }).
             catch((e) => {
                 // not authorized
@@ -157,10 +167,9 @@ export default function ModelList(props) {
             </div>
         </>) : (<div className={S.formWrapper}>
             <div className={S.formWrapperInner}>
-                {/* TODO when submitting, fill the model with properties from the form */}
-            
                 <ModelProperties 
                     model={model}
+                    disabled={user && model.owner_id === user.id}
                     parameters={props.model_parameters}
                     onSubmit={handleModelSubmit}
                 />	

@@ -7,9 +7,7 @@ export function getModels$() {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         }
-    }).then((response) => {
-        return response.json();
-    });
+    }).then((response) => response.json());
 }
 
 
@@ -21,9 +19,7 @@ export function addModel$(data) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then((response) => {
-        return response.json();
-    });
+    }).then((response) => response.json());
 }
 
 
@@ -35,9 +31,7 @@ export function updateModel$(id, data) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
-    }).then((response) => {
-        return response.json();
-    });
+    }).then((response) => response.json());
 }
 
 export function deleteModel$(id) {
@@ -48,4 +42,14 @@ export function deleteModel$(id) {
             'Content-Type': 'application/json'
         },
     });
+}
+
+export function getActiveUser$() {
+    return fetch(API_PREFIX + '/auth/whoami', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+    }).then((response) => response.json());
 }
