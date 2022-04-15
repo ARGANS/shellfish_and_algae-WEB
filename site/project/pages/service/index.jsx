@@ -24,10 +24,8 @@ export default function ServicePage(props) {
 				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
 			<div className={s.sidebar}>
-				<h3 className={s.sidebar_title}>Model selection</h3>
-				<div className={s.modelform}>
-					
-				</div>
+				{/* <h3 className={s.sidebar_title}>Model selection</h3>
+				<div className={s.modelform}></div> */}
 			</div>
 			<div className={s.header}>
 				<p>1</p>

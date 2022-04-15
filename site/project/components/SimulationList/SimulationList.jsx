@@ -93,10 +93,11 @@ export default function ModelList(props) {
     useEffect(() => {
         getActiveUser$().
             then(user_data => {
+                if (!user_data) {
+                    window.location.reload();
+                }
                 setUser(user_data);
             });
-        
-
 
         const _interval = setInterval(_ => {
             if (DEBUG_POLLING) console.log('[NEXT tick]');
