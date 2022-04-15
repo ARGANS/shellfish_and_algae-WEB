@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, getModels$, updateModel$ } from 'helpers/api';
+import { addModel$, deleteModel$, getModels$, updateModel$ } from 'helpers/api';
 
 const DEBUG_POLLING = false;
 
@@ -55,16 +55,14 @@ export default function ModelList(props) {
         }
     }, [models]);
 
-    const onDeleteHandler = useCallback(event => {
+    const onDeleteHandler = useCallback(async event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
-
-        setModels(_models => {
-            if (!_models[index]) return _models;
-
-            return [..._models.slice(0, index), ..._models.slice(index + 1)];
-        });
-    }, []);
+        const model = models[index]
+        if (!model || model.id === undefined) return;
+        await deleteModel$(model.id);
+        triggeRecheck(value => !value);
+    }, [models]);
     
     const onSelectHandler = useCallback(event => {
         event.preventDefault();
@@ -105,7 +103,7 @@ export default function ModelList(props) {
     useEffect(() => {
         getModels$().
             then((_models) => {
-                console.log('[getModels$]')
+                if (DEBUG_POLLING) console.log('[getModels$]')
                 setModels(_ => _models.map(({id, user_id, properties : {state, metadata}}) => new SimulationModel(id, user_id).init(state, metadata)));
             }).
             catch((e) => {

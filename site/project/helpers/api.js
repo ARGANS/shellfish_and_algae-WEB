@@ -39,3 +39,13 @@ export function updateModel$(id, data) {
         return response.json();
     });
 }
+
+export function deleteModel$(id) {
+    return fetch(API_PREFIX + '/data/models/' + id, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+    });
+}
