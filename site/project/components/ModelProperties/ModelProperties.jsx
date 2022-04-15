@@ -16,6 +16,7 @@ function printSuggestedName(_suggested) {
         _suggested.date,
     ].join('_')
 }
+const DEBUG_RENDER = false;
 
 /**
  * 
@@ -27,7 +28,7 @@ function printSuggestedName(_suggested) {
  * @returns 
  */
 function ModelProperties(props) {
-    console.log('Model Properties')
+    console.log('Model Properties %s', props.disabled)
     console.dir(props.model)
     
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
@@ -124,9 +125,9 @@ function ModelProperties(props) {
     
 
     // TODO fix form rerendering on change
-    console.log('RERENDER FORM %s', metadata.zone);
+    if (DEBUG_RENDER) console.log('RERENDER FORM %s', metadata.zone);
 
-    return <form class={S.root} onSubmit={onSubmitHandler}>
+    return <form class={S.root + (props.disabled ? ' ' + S.disabled : '')} onSubmit={onSubmitHandler}>
         
         <label>Name</label>
         <input 
@@ -254,8 +255,13 @@ function ModelProperties(props) {
 
 // export default ModelProperties
 export default memo(ModelProperties, (props, nextProps) => {
-    console.log('Rerender');
-    console.dir([props, nextProps]);
+    if (DEBUG_RENDER) {
+        console.log('Rerender');
+        console.dir([props, nextProps]);
+    }
+    
+    // TODO calculate hash on the back-end!
+    // TODO compare props.model.hash == nextProps.model.hash
     if(props.prop1 === nextProps.prop1) {
         // don't re-render/update
         return true

@@ -5,6 +5,11 @@
 	gap: .5rem .5rem;
 	grid-template-areas: "area1" "area2";
 }
+.disabled {
+    pointer-events: none;
+    user-select: none;
+}
+
 .root select {width:100%;}
 .root input[type=number] {text-align: right;}
 .root label {display: block; margin: 0 0 0.5rem 0;}

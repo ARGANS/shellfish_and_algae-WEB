@@ -169,7 +169,7 @@ export default function ModelList(props) {
             <div className={S.formWrapperInner}>
                 <ModelProperties 
                     model={model}
-                    disabled={user && model.owner_id === user.id}
+                    disabled={user && model.owner_id !== user.id}
                     parameters={props.model_parameters}
                     onSubmit={handleModelSubmit}
                 />	
