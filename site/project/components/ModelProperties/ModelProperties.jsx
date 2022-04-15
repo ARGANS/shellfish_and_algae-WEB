@@ -4,33 +4,9 @@ import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'models/model_data';
 import SimulationModel from "models/SimulationModel";
+import { getDimension } from "utils/alg";
 
-// TODO move into the model
-const SECTION_ORDER = {
-    species: 1,
-    farm: 2,
-    harvest: 3,
-    run: 4
-}
-
-// TODO rename into getDimension and move into libs
-function _getStep(num) {
-	const parts = (num+'').split('.')
-	if (parts[1]) {
-		return Math.pow(10, -1 * parts[1].length)
-	} else {
-		return 1
-	}
-}
-
-const _stepCache = {};
-function getStep(paramId, num) {
-    if (_stepCache.hasOwnProperty(paramId)) {
-        return _stepCache[paramId];
-    }
-    _stepCache[paramId] = _getStep(num);
-    return _stepCache[paramId];
-}
+const {section_order: SECTION_ORDER} = model_data;
 
 function printSuggestedName(_suggested) {
     return [
@@ -45,18 +21,20 @@ function printSuggestedName(_suggested) {
  * 
  * @param {*} props 
  * @param {SimulationModel|null} props.model 
+ * @param {boolean} props.disabled = [false]
+ * @param {Object} props.parameters
+ * @param {Function} props.onSubmit
  * @returns 
  */
 function ModelProperties(props) {
     console.log('Model Properties')
     console.dir(props.model)
     
-    // ? createDefaultModel into SimulationModel
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
     const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data, props.model?.owner_name));
 
     
-    const onSectionChange = useCallback((event) =>{
+    const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
         const {dataset} = $select;
         const {options, parameters} = model_parameters[dataset?.section].defaults[$select.value];
@@ -93,8 +71,6 @@ function ModelProperties(props) {
         if (props.onSubmit) {
             props.onSubmit(state, metadata)
         }
-
-        // TODO
     }, [state, metadata]);
 
     const onChangeHandler = useCallback(event => {
@@ -235,7 +211,7 @@ function ModelProperties(props) {
                     >{
                         Object.entries(secProp.parameters)
                             .map(([paramId, paramDefValue]) => {
-                                const step = getStep(paramId, paramDefValue);
+                                const step = getDimension(paramId, paramDefValue);
                                 const [patramDescription, paramMesure] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
                                     ? sectionData.parameters_descriptions[paramId]
                                     : [null, null];

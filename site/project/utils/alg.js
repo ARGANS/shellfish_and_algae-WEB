@@ -15,3 +15,21 @@ export function mult(...args) {
 		return mult * n;
 	}, 1) / div;
 } 
+
+function _getDimension(num) {
+	const parts = (num + '').split('.')
+	if (parts[1]) {
+		return Math.pow(10, -1 * parts[1].length)
+	} else {
+		return 1
+	}
+}
+
+const _dimensionCache = {};
+export function getDimension(paramId, num) {
+    if (_dimensionCache.hasOwnProperty(paramId)) {
+        return _dimensionCache[paramId];
+    }
+    _dimensionCache[paramId] = _getDimension(num);
+    return _dimensionCache[paramId];
+}
