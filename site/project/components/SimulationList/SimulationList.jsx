@@ -2,14 +2,17 @@ import { useCallback, useEffect, useState } from 'react'
 import S from './SimulationList.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
+import SimulationModel from 'models/SimulationModel';
+import useDebounce from 'utils/useDebounce';
+import { addModel$, getModels$, updateModel$ } from 'helpers/api';
 
-import SimulationModel from 'settings/SimulationModel';
-
-// TODO rename settings into models
+const DEBUG_POLLING = false;
 
 export default function ModelList(props) {
     const [model, setModel] = useState(null);
-    const [models, setModels] = useState([])
+    const [models, setModels] = useState([]);
+    const [isReadyToRecheck, triggeRecheck] = useState(false);
+    const debouncedValue = useDebounce(isReadyToRecheck, 500)
 
     const createModel = useCallback(() => {
         setModel(new SimulationModel())
@@ -20,22 +23,26 @@ export default function ModelList(props) {
     }, [setModel])
 
     // TODO refactor this method
-    const handleModelSubmit = useCallback((state, metadata) => {
+    const handleModelSubmit = useCallback(async (state, metadata) => {
         model.init(state, metadata);
-        
-        setModels(_models => {
-            const index = _models.indexOf(model)
-            // This is a new model
-            if (index < 0) return [..._models, model];
+        console.log('Model has changed')
+        console.dir(model)
 
-            // The model has been edited
-            return [
-                ..._models.slice(0, index), 
-                model,
-                ..._models.slice(index + 1)
-            ];
-        });
-        
+        await (model.id !== undefined 
+            ? updateModel$(model.id, {state, metadata}) 
+            : addModel$({state, metadata})
+        ).
+            then((response) => {
+                console.log('[addModel$] response')
+                console.dir(response);
+            }).
+            catch(e => {
+                console.log('[addModel$] error')
+                console.dir(e)
+            })
+
+        triggeRecheck(value => !value);
+
         // Close the form
         setModel(null);
     }, [model])
@@ -85,29 +92,29 @@ export default function ModelList(props) {
     }, [models]);
 
     useEffect(() => {
-        // TODO retrieve models via API
-        fetch('/api/v1/data/models', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then((response) => {
-            return response.json();
-        }).then((content) => {
-            console.log('Received')
-            console.dir(content)
-        }).catch((e) => {
-            // not authorized
-            console.log('Error');
-            console.dir(e)
-        })
-        // TODO use longpolling
+        const _interval = setInterval(_ => {
+            if (DEBUG_POLLING) console.log('[NEXT tick]');
+            triggeRecheck(value => !value);
+        }, 10000)
         
         return () => {
-            // TODO stol longpolling
+            clearInterval(_interval)
         }
     }, [])
+
+    useEffect(() => {
+        getModels$().
+            then((_models) => {
+                console.log('[getModels$]')
+                setModels(_ => _models.map(({id, user_id, properties : {state, metadata}}) => new SimulationModel(id, user_id).init(state, metadata)));
+            }).
+            catch((e) => {
+                // not authorized
+                console.log('[getModels$ error:]');
+                console.dir(e)
+            })
+
+    }, [debouncedValue])
 
     return <div className={S.root}>
         {model === null ? ( <>

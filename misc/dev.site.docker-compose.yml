@@ -14,8 +14,9 @@ services:
       - ../site/project/libs:/opt/app/libs
       - ../site/project/pages:/opt/app/pages
       - ../site/project/public:/opt/app/public
-      - ../site/project/settings:/opt/app/settings
+      - ../site/project/models:/opt/app/models
       - ../site/project/utils:/opt/app/utils
+      - ../site/project/helpers:/opt/app/helpers
       - ../site/project/jsconfig.json:/opt/app/jsconfig.json
       - ../site/project/next.config.js:/opt/app/next.config.js
       - ../site/project/package.json:/opt/app/package.json

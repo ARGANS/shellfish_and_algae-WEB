@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useState } from "react"
-import model_parameters from 'settings/macroalgae_model_parameters.json'
+import model_parameters from 'models/macroalgae_model_parameters.json'
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
-import model_data from 'settings/model_data';
-import SimulationModel from "settings/SimulationModel";
+import model_data from 'models/model_data';
+import SimulationModel from "models/SimulationModel";
 
 // TODO move into the model
 const SECTION_ORDER = {
