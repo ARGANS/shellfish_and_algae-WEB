@@ -29,6 +29,7 @@ export default function ServicePage(props) {
 			</div>
 			<div className={s.header}>
 				<p>1</p>
+				<a href="/api/v1/auth/logout?redirect=/">Log out</a>
 			</div>
 			<div className={s.footer}>
 				<p>2</p>	
@@ -43,17 +44,3 @@ export async function getStaticProps(context) {
 	}
 }
 
-/*
-PLAN:
-1 -submit form, get a json 
-2 - time range control
-3 - region select control
----
-4 - 1/2 slides for presentation
-
-Regions: Baltic, Black, Mediterranean and North Seas, others
-
-  
-
-
-*/
