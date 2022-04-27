@@ -58,4 +58,13 @@ export default class SimulationModel {
             year: new Date().getFullYear()
         }
     }
+
+    /**
+     * 
+     * @param {Object} data = {id, user_id, user_name, properties : {state, metadata}}
+     * @returns 
+     */
+    static validateProperties(data) {
+        return data.properties && data.properties.state && data.properties.metadata;
+    }
 }

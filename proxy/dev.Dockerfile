@@ -30,9 +30,9 @@ COPY ./proxy/start.sh /opt/app/
 COPY ./proxy/dev.nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/
 COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/
-# DEPREACTED
-# COPY ./staticsite/ /usr/share/nginx/html/
 
+# TODO parametrize default.template.conf
+# echo -e "$(eval "echo -e \"`<default.template.conf`\"")"
 
 ARG WITH_UTILS
 RUN if [[ -z "$WITH_UTILS" ]] ; \
@@ -42,8 +42,6 @@ RUN if [[ -z "$WITH_UTILS" ]] ; \
     apk add --update nano; \
     fi
 
-# RUN apk add --update curl && \
-#     apk add --update nano
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log \

@@ -113,9 +113,10 @@ export default function ModelList(props) {
         getModels$().
             then((_models) => {
                 if (DEBUG_POLLING) console.log('[getModels$]')
-                setModels(_ => _models.map(
-                    ({id, user_id, user_name, properties : {state, metadata}}) => new SimulationModel(id, user_id, user_name).init(state, metadata)
-                ));
+                setModels(_ => _models.
+                    filter(model_props => SimulationModel.validateProperties(model_props)).
+                    map(({id, user_id, user_name, properties : {state, metadata}}) => new SimulationModel(id, user_id, user_name).init(state, metadata))
+                );
             }).
             catch((e) => {
                 // not authorized

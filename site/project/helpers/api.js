@@ -22,8 +22,8 @@ export function getModels$() {
         method: 'GET',
         headers: JSON_HEADERS
     }).
-    then(validateJSONResponse).
-    then(parseJSON);
+        then(validateJSONResponse).
+        then(parseJSON);
 }
 
 
