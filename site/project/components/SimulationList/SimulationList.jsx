@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$, getTaskStatus$ } from 'helpers/api';
+import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$, getTaskStatus$, runDataImportTask$, runDataReadTask$ } from 'helpers/api';
 
 const DEBUG_POLLING = false;
 
@@ -52,7 +52,7 @@ export default function ModelList(props) {
         event.preventDefault();
         const {index} = event.target.dataset
         if (models[index] !== undefined) {
-            downloadFileFromText(models[index].metadata.name + '.json', models[index].export())
+            downloadFileFromText(models[index].metadata.name + '.json', models[index].export(true))
         }
     }, [models]);
 
@@ -72,13 +72,73 @@ export default function ModelList(props) {
 
         if (!model || model.id === undefined) return;
 
-        console.log('[onSelectHandler]');
+        console.log('[onSelectHandler] `%s`', model.dataset_id);
         console.dir(model);
         
         getTaskStatus$(model)
             .then(status => {
-                console.log('Task Statuses')
+                console.log('Task Statuse')
                 console.dir(status);
+
+                if (status.data_read.not_started) {
+                    if (status.data_import.not_started) {
+                        return runDataImportTask$(model)
+                            .then(data => {
+                                console.log('[runDataImportTask$]');
+                                console.dir(data);
+                                
+                                model.metadata = {
+                                    ...model.metadata,
+                                    data_import_container: data.id
+                                }
+
+                                return updateModel$(model.id, {
+                                    state: model.atbd_parameters,
+                                    metadata: model.metadata
+                                })
+                            })
+                        // TODO start the dataimport task
+                        // TODO get container id
+                        // Save container id in the model!
+
+                        // // data.id
+                        // 7cec3a6dbc
+                    } else {
+                        if (status.data_read.in_progress) {
+                            alert('The data importing task is in progress')
+                        } else if (status.data_read.completed){
+                            alert('The data importing task is completed')
+                            //  TODO start dataread task
+                            // TODO get container id
+                            // Save container id in the model!
+                            return runDataReadTask$(model)
+                                .then(data => {
+                                    console.log('[runDataReadTask$]');
+                                    console.dir(data);
+
+                                    model.metadata = {
+                                        ...model.metadata,
+                                        data_read_container: data.id
+                                    }
+                                    return updateModel$(model.id, {
+                                        state: model.atbd_parameters,
+                                        metadata: {
+                                            state: model.atbd_parameters,
+                                            metadata: model.metadata
+                                        }
+                                    })
+                                });
+                        }
+                    }
+
+                } else {
+                    if (status.data_read.in_progress) {
+                        alert('The data reading task is in progress')
+                    } else if (status.data_read.completed){
+                        alert('The data reading task is completed')
+                    }
+                }
+
             })
     }, [models]);
 

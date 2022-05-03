@@ -7,6 +7,14 @@
         "Mediterranean sea",
         "Black sea"
     ],
+    "zone_id": {
+        "Artic": "Arctic",
+        "Baltic sea": "Baltic sea",
+        "North West Shelf": "NWS",
+        "Ireland-Biscay-Iberia": "IBI",
+        "Mediterranean sea": "Mediterranean sea",
+        "Black sea": "Black sea"
+    },
     "section_order": {
         "species": 1,
         "farm": 2,

@@ -91,20 +91,91 @@ export function getTaskStatus$(simulationModel) {
                         data_import: {
                             completed: report[0] !== FNF,
                             in_progress: report[1] !== FNF,
-                            not_started: (report[0] !== FNF) && (report[1] !== FNF),
+                            not_started: (report[0] === FNF) || (report[1] !== FNF),
                         },
                         data_read: {
                             completed: (report[2] !== FNF),
                             in_progress: (report[3] !== FNF),
-                            not_started: (report[2] !== FNF) && (!report[3] !== FNF),
+                            not_started: (report[2] === FNF) || (report[3] !== FNF),
                         }
                     }
                 });
         })
         .catch(error => {
-            console.log('Cannot download the endpoint');
+            console.log('Cannot request the endpoint');
             console.dir(error)
         });
+}
 
-        
+export function runDataImportTask$(simulationModel){
+    const body = {
+        image: 'ac-import/runtime:latest',
+        environment: {
+            AC_OUTPUT_DIR: '/media/share/data/' + simulationModel.dataset_id,
+            parameters_json: JSON.stringify({
+                zone: simulationModel.metadata.zone,
+                depth_min: simulationModel.metadata.depth_min,
+                depth_max: simulationModel.metadata.depth_max,
+                year: simulationModel.metadata.year
+            }),
+            PYTHONDONTWRITEBYTECODE: '1',
+        },
+        hosts: {},
+        volumes: ['ac_share:/media/share']
+    };
+
+    return fetch(NODE_API_PREFIX + '/container', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(body)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON)
+                // .then(function(report) {
+                // });
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint');
+            console.dir(error)
+        });
+}
+
+export function runDataReadTask$(simulationModel){
+    const body = {
+        image: 'ac-processing/runtime:latest',
+        environment: {
+            TASK_ID: simulationModel.dataset_id,
+            PARAMETERS_JSON: simulationModel.export(),
+            PYTHONDONTWRITEBYTECODE: '1',
+        },
+        hosts: {},
+        volumes: ['ac_share:/media/share']
+    };
+
+    return fetch(NODE_API_PREFIX + '/container', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(body)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON)
+                // .then(function(report) {
+                // });
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint');
+            console.dir(error)
+        });
 }

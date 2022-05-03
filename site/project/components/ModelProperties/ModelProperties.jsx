@@ -28,13 +28,8 @@ const DEBUG_RENDER = false;
  * @returns 
  */
 function ModelProperties(props) {
-    console.log('Model Properties %s', props.disabled)
-    console.dir(props.model)
-    
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
     const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data, props.model?.owner_name));
-
-    
     const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
         const {dataset} = $select;
@@ -145,7 +140,7 @@ function ModelProperties(props) {
         >{model_data.zones.map(zone_name => <option 
             key={zone_name} 
             selected={metadata.zone === zone_name}
-            defaultValue={zone_name}
+            value={model_data.zone_id[zone_name]}
         >{zone_name}</option>)}</select>
 
         <span></span>
@@ -171,7 +166,7 @@ function ModelProperties(props) {
                 min="1980" 
                 max="2022" 
                 step="1" 
-                name="depth_year" 
+                name="year" 
                 value={metadata.year}
                 onChange={metaDataChangeHandler}
             />

@@ -20,11 +20,17 @@ export default class SimulationModel {
         return this;
     }
 
-    export() {
+    export(formatted = false) {
+        if (formatted) {
+            JSON.stringify({
+                parameters: this.atbd_parameters,
+                metadata: this.metadata
+            }, null, '\t')
+        }
         return JSON.stringify({
             parameters: this.atbd_parameters,
             metadata: this.metadata
-        }, null, '\t')
+        })
     }
 
     static createDefaultATBDParameters(scheme) {
@@ -69,6 +75,6 @@ export default class SimulationModel {
     }
 
     get dataset_id() {
-        return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_min].join('-')
+        return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_max].join('-')
     }
 }
