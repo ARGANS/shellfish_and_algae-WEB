@@ -67,4 +67,8 @@ export default class SimulationModel {
     static validateProperties(data) {
         return data.properties && data.properties.state && data.properties.metadata;
     }
+
+    get dataset_id() {
+        return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_min].join('-')
+    }
 }

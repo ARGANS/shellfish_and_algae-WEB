@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$ } from 'helpers/api';
+import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$, getTaskStatus$ } from 'helpers/api';
 
 const DEBUG_POLLING = false;
 
@@ -68,17 +68,24 @@ export default function ModelList(props) {
     const onSelectHandler = useCallback(event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
+        const model = models[index]
+
+        if (!model || model.id === undefined) return;
 
         console.log('[onSelectHandler]');
-        console.dir(models[index]);
+        console.dir(model);
+        
+        getTaskStatus$(model)
+            .then(status => {
+                console.log('Task Statuses')
+                console.dir(status);
+            })
     }, [models]);
 
     const onModifyHandler = useCallback(event => {
         event.preventDefault();
         const index = parseInt(event.target.dataset.index)
 
-        // console.log('[onSelectHandler]');
-        // console.dir();
         setModel(models[index])
     }, [models]);
 
