@@ -91,12 +91,12 @@ export function getTaskStatus$(simulationModel) {
                         data_import: {
                             completed: report[0] !== FNF,
                             in_progress: report[1] !== FNF,
-                            not_started: (report[0] === FNF) || (report[1] !== FNF),
+                            not_started: (report[1] === FNF) && (report[0] === FNF),
                         },
                         data_read: {
                             completed: (report[2] !== FNF),
                             in_progress: (report[3] !== FNF),
-                            not_started: (report[2] === FNF) || (report[3] !== FNF),
+                            not_started: (report[3] === FNF) && (report[2] === FNF),
                         }
                     }
                 });

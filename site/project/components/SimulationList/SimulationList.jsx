@@ -73,11 +73,11 @@ export default function ModelList(props) {
         if (!model || model.id === undefined) return;
 
         console.log('[onSelectHandler] `%s`', model.dataset_id);
-        console.dir(model);
+        // console.dir(model);
         
         getTaskStatus$(model)
             .then(status => {
-                console.log('Task Statuse')
+                console.log('Task status')
                 console.dir(status);
 
                 if (status.data_read.not_started) {
@@ -90,8 +90,7 @@ export default function ModelList(props) {
                                 model.metadata = {
                                     ...model.metadata,
                                     data_import_container: data.id
-                                }
-
+                                };
                                 return updateModel$(model.id, {
                                     state: model.atbd_parameters,
                                     metadata: model.metadata
@@ -104,9 +103,8 @@ export default function ModelList(props) {
                         // // data.id
                         // 7cec3a6dbc
                     } else {
-                        if (status.data_read.in_progress) {
-                            alert('The data importing task is in progress')
-                        } else if (status.data_read.completed){
+                        if (status.data_import.completed){
+                            console.log('The data importing task is completed')
                             alert('The data importing task is completed')
                             //  TODO start dataread task
                             // TODO get container id
@@ -115,27 +113,26 @@ export default function ModelList(props) {
                                 .then(data => {
                                     console.log('[runDataReadTask$]');
                                     console.dir(data);
-
                                     model.metadata = {
                                         ...model.metadata,
                                         data_read_container: data.id
-                                    }
+                                    };
                                     return updateModel$(model.id, {
                                         state: model.atbd_parameters,
-                                        metadata: {
-                                            state: model.atbd_parameters,
-                                            metadata: model.metadata
-                                        }
-                                    })
+                                        metadata: model.metadata
+                                    });
                                 });
+                        } else if (status.data_import.in_progress) {
+                            console.log('The data importing task is in progress')
+                            alert('The data importing task is in progress')
                         }
                     }
 
                 } else {
-                    if (status.data_read.in_progress) {
-                        alert('The data reading task is in progress')
-                    } else if (status.data_read.completed){
+                    if (status.data_read.completed){
                         alert('The data reading task is completed')
+                    } else if (status.data_read.in_progress) {
+                        alert('The data reading task is in progress')
                     }
                 }
 
