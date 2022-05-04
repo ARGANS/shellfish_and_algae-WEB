@@ -28,12 +28,10 @@ export default function ServicePage(props) {
 				<div className={s.modelform}></div> */}
 			</div>
 			<div className={s.header}>
-				<p>1</p>
 				<a href="/api/v1/auth/logout?redirect=/">Log out</a>
 			</div>
-			<div className={s.footer}>
-				<p>2</p>	
-			</div>
+			{/* TODO */}
+			{/* <div className={s.footer}></div> */}
 		</main>
 	</>
 }

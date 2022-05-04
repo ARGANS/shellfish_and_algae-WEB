@@ -5,6 +5,9 @@ import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
 import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$, getTaskStatus$, runDataImportTask$, runDataReadTask$ } from 'helpers/api';
+import { addComponent, removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
+import Dialog from 'libs/Dialogs/Dialog';
+import TaskList from 'components/TaskList/TaskList';
 
 const DEBUG_POLLING = false;
 
@@ -73,6 +76,12 @@ export default function ModelList(props) {
         if (!model || model.id === undefined) return;
 
         console.log('[onSelectHandler] `%s`', model.dataset_id);
+
+        addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
+            <TaskList model={model}/>
+        </Dialog>, 'default')
+
+        return;
         // console.dir(model);
         
         getTaskStatus$(model)
