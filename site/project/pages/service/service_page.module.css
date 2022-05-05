@@ -4,7 +4,8 @@
     height: 100vh;
     
     grid-template-columns: [col1] 400px [col2] auto;
-    grid-template-rows: [row1] 100px [row2] auto [row3] 100px;
+    /* grid-template-rows: [row1] 100px [row2] auto [row3] 100px; */
+    grid-template-rows: [row1] min-content [row2] auto [row3] 100px;
 }
 
 .header {

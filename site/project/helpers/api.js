@@ -67,12 +67,14 @@ export function getActiveUser$() {
 const FNF = 'FileNotFound';
 
 export function getTaskStatus$(simulationModel) {
+    const {destination_dataimport_path, destination_dataread_path} = simulationModel;
+    console.log('[getTaskStatus$] %s', destination_dataread_path);
+
     const commands = [
-        {'type': 'get_file', 'path': simulationModel.destination_directory_path + '/task.mark'},
-        {'type': 'get_file', 'path': simulationModel.destination_directory_path + '/parameters.json'},
-        // TODO dataread task must depend on the hash from the model properties!
-        {'type': 'get_file', 'path': '/media/share/results/' + simulationModel.dataset_id + '/task.mark'},
-        {'type': 'get_file', 'path': '/media/share/results/' + simulationModel.dataset_id + '/parameters.json'},
+        {'type': 'get_file', 'path': destination_dataimport_path + '/task.mark'},
+        {'type': 'get_file', 'path': destination_dataimport_path + '/parameters.json'},
+        {'type': 'get_file', 'path': destination_dataread_path + '/task.mark'},
+        {'type': 'get_file', 'path': destination_dataread_path + '/parameters.json'},
     ]
     return fetch(NODE_API_PREFIX + '/batch', {
         method: 'POST',
@@ -151,7 +153,8 @@ export function runDataReadTask$(simulationModel){
     const body = {
         image: 'ac-processing/runtime:latest',
         environment: {
-            TASK_ID: simulationModel.dataset_id,
+            DATASET_ID: simulationModel.dataset_id,
+            TASK_ID: simulationModel.dataread_id,
             PARAMETERS_JSON: simulationModel.export(),
             PYTHONDONTWRITEBYTECODE: '1',
         },
@@ -174,6 +177,54 @@ export function runDataReadTask$(simulationModel){
                 .then(parseJSON)
                 // .then(function(report) {
                 // });
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint');
+            console.dir(error)
+        });
+}
+
+export function deleteDataImportResults$(simulationModel) {
+    const commands = [
+        {'type': 'rm', 'path': simulationModel.destination_dataimport_path},
+    ]
+    return fetch(NODE_API_PREFIX + '/batch', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(commands)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON);
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint');
+            console.dir(error)
+        });
+}
+
+export function deleteDataReadResults$(simulationModel) {
+    const commands = [
+        {'type': 'rm', 'path': simulationModel.destination_dataread_path},
+    ]
+    return fetch(NODE_API_PREFIX + '/batch', {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(commands)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON);
         })
         .catch(error => {
             console.log('Cannot request the endpoint');

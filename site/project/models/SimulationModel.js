@@ -1,5 +1,6 @@
 import { DateZ } from "libs/DatePicker/dates";
 import { remove_spaces } from "utils/strings";
+import md5 from 'utils/md5'; 
 
 export default class SimulationModel {
     atbd_parameters = null;
@@ -78,7 +79,15 @@ export default class SimulationModel {
         return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_max].join('-')
     }
 
-    get destination_directory_path() {
+    get dataread_id() {
+        return md5(JSON.stringify(this.atbd_parameters));
+    }
+
+    get destination_dataimport_path() {
         return '/media/share/data/' + this.dataset_id;
+    }
+
+    get destination_dataread_path() {
+        return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
     }
 }
