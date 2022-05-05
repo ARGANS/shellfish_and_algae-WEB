@@ -4,6 +4,7 @@ import s from './service_page.module.css'
 import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
 import model_parameters from 'models/macroalgae_model_parameters.json'
+import JobList from 'components/JobList/JobList';
 
 export default function ServicePage(props) {
 	const title = 'Service';
@@ -24,8 +25,10 @@ export default function ServicePage(props) {
 				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
 			<div className={s.sidebar}>
-				{/* <h3 className={s.sidebar_title}>Model selection</h3>
-				<div className={s.modelform}></div> */}
+				<h3 className={s.sidebar_title}>List of containers</h3>
+			{/* 	<div className={s.modelform}></div> */}
+				{/* TODO */}
+				<JobList/>
 			</div>
 			<div className={s.header}>
 				<a href="/api/v1/auth/logout?redirect=/">Log out</a>
