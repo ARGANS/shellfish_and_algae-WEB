@@ -77,4 +77,8 @@ export default class SimulationModel {
     get dataset_id() {
         return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_max].join('-')
     }
+
+    get destination_directory_path() {
+        return '/media/share/data/' + this.dataset_id;
+    }
 }

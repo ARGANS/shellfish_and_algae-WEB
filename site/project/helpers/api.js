@@ -68,8 +68,9 @@ const FNF = 'FileNotFound';
 
 export function getTaskStatus$(simulationModel) {
     const commands = [
-        {'type': 'get_file', 'path': '/media/share/data/' + simulationModel.dataset_id + '/task.mark'},
-        {'type': 'get_file', 'path': '/media/share/data/' + simulationModel.dataset_id + '/parameters.json'},
+        {'type': 'get_file', 'path': simulationModel.destination_directory_path + '/task.mark'},
+        {'type': 'get_file', 'path': simulationModel.destination_directory_path + '/parameters.json'},
+        // TODO dataread task must depend on the hash from the model properties!
         {'type': 'get_file', 'path': '/media/share/results/' + simulationModel.dataset_id + '/task.mark'},
         {'type': 'get_file', 'path': '/media/share/results/' + simulationModel.dataset_id + '/parameters.json'},
     ]
@@ -90,12 +91,12 @@ export function getTaskStatus$(simulationModel) {
                     return {
                         data_import: {
                             completed: report[0] !== FNF,
-                            in_progress: report[1] !== FNF,
+                            in_progress: report[0] === FNF && report[1] !== FNF,
                             not_started: (report[1] === FNF) && (report[0] === FNF),
                         },
                         data_read: {
                             completed: (report[2] !== FNF),
-                            in_progress: (report[3] !== FNF),
+                            in_progress: (report[2] === FNF) && (report[3] !== FNF),
                             not_started: (report[3] === FNF) && (report[2] === FNF),
                         }
                     }

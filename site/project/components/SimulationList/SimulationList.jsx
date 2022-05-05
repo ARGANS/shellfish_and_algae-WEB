@@ -4,8 +4,8 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$, getTaskStatus$, runDataImportTask$, runDataReadTask$ } from 'helpers/api';
-import { addComponent, removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
+import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$ } from 'helpers/api';
+import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import TaskList from 'components/TaskList/TaskList';
 
@@ -79,73 +79,7 @@ export default function ModelList(props) {
 
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
             <TaskList model={model}/>
-        </Dialog>, 'default')
-
-        return;
-        // console.dir(model);
-        
-        getTaskStatus$(model)
-            .then(status => {
-                console.log('Task status')
-                console.dir(status);
-
-                if (status.data_read.not_started) {
-                    if (status.data_import.not_started) {
-                        return runDataImportTask$(model)
-                            .then(data => {
-                                console.log('[runDataImportTask$]');
-                                console.dir(data);
-                                
-                                model.metadata = {
-                                    ...model.metadata,
-                                    data_import_container: data.id
-                                };
-                                return updateModel$(model.id, {
-                                    state: model.atbd_parameters,
-                                    metadata: model.metadata
-                                })
-                            })
-                        // TODO start the dataimport task
-                        // TODO get container id
-                        // Save container id in the model!
-
-                        // // data.id
-                        // 7cec3a6dbc
-                    } else {
-                        if (status.data_import.completed){
-                            console.log('The data importing task is completed')
-                            alert('The data importing task is completed')
-                            //  TODO start dataread task
-                            // TODO get container id
-                            // Save container id in the model!
-                            return runDataReadTask$(model)
-                                .then(data => {
-                                    console.log('[runDataReadTask$]');
-                                    console.dir(data);
-                                    model.metadata = {
-                                        ...model.metadata,
-                                        data_read_container: data.id
-                                    };
-                                    return updateModel$(model.id, {
-                                        state: model.atbd_parameters,
-                                        metadata: model.metadata
-                                    });
-                                });
-                        } else if (status.data_import.in_progress) {
-                            console.log('The data importing task is in progress')
-                            alert('The data importing task is in progress')
-                        }
-                    }
-
-                } else {
-                    if (status.data_read.completed){
-                        alert('The data reading task is completed')
-                    } else if (status.data_read.in_progress) {
-                        alert('The data reading task is in progress')
-                    }
-                }
-
-            })
+        </Dialog>, 'default');
     }, [models]);
 
     const onModifyHandler = useCallback(event => {
