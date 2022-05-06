@@ -5,7 +5,7 @@
     
     grid-template-columns: [col1] 400px [col2] auto;
     /* grid-template-rows: [row1] 100px [row2] auto [row3] 100px; */
-    grid-template-rows: [row1] min-content [row2] auto [row3] 100px;
+    grid-template-rows: [row1] min-content [row2] auto [row3] min-content;
 }
 
 .header {
@@ -32,13 +32,14 @@
     background-color: #aaa;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 0 0.5rem;
 }
 
 .sidebar_title {
     position: sticky;
     top: 0;
     margin: 0;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     background-color: #aaa;
 }
 

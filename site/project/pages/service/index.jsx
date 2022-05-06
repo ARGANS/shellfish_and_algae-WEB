@@ -27,14 +27,17 @@ export default function ServicePage(props) {
 			<div className={s.sidebar}>
 				<h3 className={s.sidebar_title}>List of containers</h3>
 			{/* 	<div className={s.modelform}></div> */}
-				{/* TODO */}
 				<JobList/>
 			</div>
 			<div className={s.header}>
-				<a href="/api/v1/auth/logout?redirect=/">Log out</a>
+				<div className="bflex-row">
+					<div className="flex-size-fill">&nbsp;</div>
+					<div className="flex-size-own">
+						<a href="/api/v1/auth/logout?redirect=/">Log out</a>
+					</div>
+				</div>
 			</div>
-			{/* TODO */}
-			{/* <div className={s.footer}></div> */}
+			<div className={s.footer}></div>
 		</main>
 	</>
 }

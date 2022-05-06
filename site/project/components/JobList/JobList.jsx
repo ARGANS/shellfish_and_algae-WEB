@@ -9,17 +9,13 @@ export default function JobList(props) {
         console.log('START source');
         console.dir(_evtSource);
         _evtSource.onmessage = function(e) {
-            console.log('[MESSAGE]');
-            console.dir(typeof(e.data));
             const response = JSON.parse(e.data)
-            console.dir(response)
         
             setContainers(response.map(containerData => {
-                //  TODO does not work properly!
-                containerData['StartedAt'] = Date.parse(containerData['StartedAt'])
-                containerData['FinishedAt'] = Date.parse(containerData['FinishedAt'])
-                if (containerData['FinishedAt'] < 0) {
-                    containerData['FinishedAt'] = null;
+                containerData.state.StartedAt = Date.parse(containerData.state.StartedAt)
+                containerData.state.FinishedAt = Date.parse(containerData.state.FinishedAt)
+                if (containerData.state.FinishedAt < 0) {
+                    containerData.state.FinishedAt = null;
                 }
                 return containerData;
             }).sort((a, b) => a.StartedAt - b.StartedAt));
