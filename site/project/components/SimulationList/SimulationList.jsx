@@ -7,7 +7,7 @@ import useDebounce from 'utils/useDebounce';
 import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$ } from 'helpers/api';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
-import TaskList from 'components/TaskList/TaskList';
+import PipelineModal from 'components/PipelineModal/PipelineModal';
 
 const DEBUG_POLLING = false;
 
@@ -78,7 +78,7 @@ export default function ModelList(props) {
         console.log('[onSelectHandler] `%s`', model.dataset_id);
 
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
-            <TaskList model={model}/>
+            <PipelineModal model={model}/>
         </Dialog>, 'default');
     }, [models]);
 

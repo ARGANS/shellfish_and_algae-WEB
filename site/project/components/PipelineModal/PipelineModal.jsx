@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import S from './TaskList.module.css'
+import S from './PipelineModal.module.css'
 import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
 import { updateModel$, getTaskStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$ } from 'helpers/api';
 
@@ -27,7 +27,7 @@ function typeDataReadStatus(state) {
 }
 
 
-export default function TaskList(props) {
+export default function PipelineModal(props) {
     const [state, setState] = useState({})
     const synchronizeState = useCallback(() => getTaskStatus$(props.model)
         .then(status => {
@@ -87,19 +87,21 @@ export default function TaskList(props) {
     });
 
     const removeDataImportResults = useCallback(() => {
-        return deleteDataImportResults$(props.model).then(() => {
-            synchronizeState();
-        })
+        return deleteDataImportResults$(props.model)
+            .then(() => {
+                synchronizeState();
+            })
     })
     const removeDataReadResults = useCallback(() => {
-        return deleteDataReadResults$(props.model).then(() => {
+        return deleteDataReadResults$(props.model)
+        .then(() => {
             synchronizeState();
         })
     })
 
     return <div className={S.root}>
         {!!state.data_import && <>
-            <h3>Dataset</h3>
+            <h3>#1 Dataset</h3>
             <p>
                 <span>{typeDataImportStatus(state.data_import)}</span> 
                 {!state.data_import.in_progress && <button onClick={startDataImportTaskHandler}>Start task</button>}
@@ -113,7 +115,7 @@ export default function TaskList(props) {
             </p>
         </>}
         {!!state.data_read && <>
-            <h3>Processed data</h3>
+            <h3>#2 Processed data</h3>
             <p>
                 <span>{typeDataReadStatus(state.data_read)}</span> 
                 {!state.data_read.in_progress && state.data_import.completed && <button onClick={startDataReadTaskHandler}>Start task</button>}
