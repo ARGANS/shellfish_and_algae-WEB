@@ -1,5 +1,6 @@
 import { DateZ } from "libs/DatePicker/dates";
 import { remove_spaces } from "utils/strings";
+import { addModel$, updateModel$ } from 'helpers/api';
 import md5 from 'utils/md5'; 
 
 export default class SimulationModel {
@@ -21,17 +22,18 @@ export default class SimulationModel {
         return this;
     }
 
-    export(formatted = false) {
-        if (formatted) {
-            JSON.stringify({
-                parameters: this.atbd_parameters,
-                metadata: this.metadata
-            }, null, '\t')
-        }
-        return JSON.stringify({
+    get body() {
+        return {
             parameters: this.atbd_parameters,
             metadata: this.metadata
-        })
+        }
+    }
+
+    export(formatted = false) {
+        if (formatted) {
+            JSON.stringify(this.body, null, '\t')
+        }
+        return JSON.stringify(this.body)
     }
 
     static createDefaultATBDParameters(scheme) {
@@ -89,5 +91,11 @@ export default class SimulationModel {
 
     get destination_dataread_path() {
         return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
+    }
+
+    synchronize() {
+        return this.id !== null 
+            ? updateModel$(this.id, this.body) 
+            : addModel$(this.body);
     }
 }

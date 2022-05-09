@@ -28,7 +28,9 @@ function typeDataReadStatus(state) {
 
 
 export default function PipelineModal(props) {
-    const [state, setState] = useState({})
+    const [state, setState] = useState({});
+    const [watchingContainer, setWatchingContainer] = useState(null);
+
     const synchronizeState = useCallback(() => getTaskStatus$(props.model)
         .then(status => {
             console.log('TaskList');
@@ -54,16 +56,14 @@ export default function PipelineModal(props) {
                 console.log('[runDataImportTask$]');
                 console.dir(data);
                 synchronizeState();
-                // TODO Probably unused:
+                setWatchingContainer(data.id);
                 
-                model.metadata = {
-                    ...model.metadata,
-                    data_import_container: data.id
-                };
-                return updateModel$(model.id, {
-                    state: model.atbd_parameters,
-                    metadata: model.metadata
-                })
+                return model
+                    .init(model.atbd_parameters, {
+                        ...model.metadata,
+                        data_import_container: data.id
+                    })
+                    .synchronize();
             })
     });
 
@@ -74,30 +74,59 @@ export default function PipelineModal(props) {
                 console.log('[runDataReadTask$]');
                 console.dir(data);
                 synchronizeState();
-                // TODO Probably unused:
-                model.metadata = {
-                    ...model.metadata,
-                    data_read_container: data.id
-                };
-                return updateModel$(model.id, {
-                    state: model.atbd_parameters,
-                    metadata: model.metadata
-                });
+                setWatchingContainer(data.id);
+
+                console.log('Model update')
+                console.dir(model);
+
+
+                
+                return model
+                    .init(model.atbd_parameters, {
+                        ...model.metadata,
+                        data_read_container: data.id
+                    })
+                    .synchronize();
             });
     });
 
     const removeDataImportResults = useCallback(() => {
-        return deleteDataImportResults$(props.model)
+        const {model} = props;
+        return deleteDataImportResults$(model)
             .then(() => {
                 synchronizeState();
+                const {data_import_container, ...rest} = model.metadata;
+                
+                console.log('Removing data_import_container %s', data_import_container);
+                console.dir(model);
+
+                setWatchingContainer(null);
+                model
+                    .init(propsmodel.atbd_parameters, {...rest})
+                    .synchronize();
             })
-    })
+    });
     const removeDataReadResults = useCallback(() => {
-        return deleteDataReadResults$(props.model)
-        .then(() => {
-            synchronizeState();
-        })
-    })
+        const {model} = props;
+        return deleteDataReadResults$(model)
+            .then(() => {
+                synchronizeState();
+                const {data_read_container, ...rest} = model.metadata;
+                
+                console.log('Removing data_reas_container %s', data_read_container);
+                console.dir(model);
+                
+                setWatchingContainer(null);
+                model
+                    .init(model.atbd_parameters, {...rest})
+                    .synchronize();
+            })
+    });
+
+
+    useEffect(() => {
+        console.log('[watchingContainer] %s', watchingContainer);
+    }, [watchingContainer]);
 
     return <div className={S.root}>
         {!!state.data_import && <>
