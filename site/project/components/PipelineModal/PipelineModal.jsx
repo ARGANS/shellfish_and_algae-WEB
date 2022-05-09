@@ -43,6 +43,8 @@ export default function PipelineModal(props) {
     
     useEffect(() => {
         synchronizeState();
+
+        return () => {}
     }, []);
 
     const closeDialogHandler = useCallback(() => {
