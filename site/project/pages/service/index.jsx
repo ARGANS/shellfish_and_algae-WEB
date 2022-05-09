@@ -26,7 +26,6 @@ export default function ServicePage(props) {
 			</div>
 			<div className={s.sidebar}>
 				<h3 className={s.sidebar_title}>List of containers</h3>
-			{/* 	<div className={s.modelform}></div> */}
 				<JobList/>
 			</div>
 			<div className={s.header}>

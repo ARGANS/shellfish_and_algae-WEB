@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import S from './PipelineModal.module.css'
 import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
 import { updateModel$, getTaskStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$ } from 'helpers/api';
+import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 
 /**
  * 
@@ -29,7 +30,8 @@ function typeDataReadStatus(state) {
 
 export default function PipelineModal(props) {
     const [state, setState] = useState({});
-    const [watchingContainer, setWatchingContainer] = useState(null);
+    // const [watchingContainer, setWatchingContainer] = useState(null);
+    const [watchingContainer, setWatchingContainer] = useState('nginx');
 
     const synchronizeState = useCallback(() => getTaskStatus$(props.model)
         .then(status => {
@@ -163,6 +165,9 @@ export default function PipelineModal(props) {
             {/* TODO add spiner */}
             <p>Loading...</p>
         </>}
+        {watchingContainer && <div className={S.logs}>
+            <ContainerLogs container_id={watchingContainer} />
+        </div>}
         <button onClick={closeDialogHandler}>Close</button>
     </div>
 }

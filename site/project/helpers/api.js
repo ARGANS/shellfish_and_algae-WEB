@@ -1,5 +1,5 @@
 const API_PREFIX = '/api/v1';
-const NODE_API_PREFIX = '/api/v2';
+export const NODE_API_PREFIX = '/api/v2';
 export const EXCEPTION_403 = 'Not authorized';
 
 
@@ -216,6 +216,27 @@ export function deleteDataReadResults$(simulationModel) {
         method: 'POST',
         headers: JSON_HEADERS,
         body: JSON.stringify(commands)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON);
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint');
+            console.dir(error)
+        });
+}
+
+
+export function getLogs$(containerId, limit_n) {
+    return fetch(NODE_API_PREFIX + '/container/log?id=' + containerId + '&tail=' + limit_n, {
+        method: 'GET',
+        headers: JSON_HEADERS
     })
         .then(response => {
             if (!response.ok) {

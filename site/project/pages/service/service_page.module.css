@@ -43,10 +43,6 @@
     background-color: #aaa;
 }
 
-.modelform {
-    margin: 0 1rem 2rem 1rem;
-}
-
 .dp {display:inline-block;vertical-align:middle;position: relative;}
 .dp [data-role="dp-label"] { cursor:pointer;}
 .dp [data-role="dp-dropdown"] {position:absolute;border:1px solid;}

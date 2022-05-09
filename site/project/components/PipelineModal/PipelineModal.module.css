@@ -1,4 +1,8 @@
 .root {
     background: #fff;
-    width: 800px;
+    width: var(--bcontainer-max-width);
+}
+
+.logs {
+    height: 300px;
 }
