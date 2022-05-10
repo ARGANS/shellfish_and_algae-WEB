@@ -66,48 +66,74 @@ export function getActiveUser$() {
 
 const FNF = 'FileNotFound';
 
-export function getTaskStatus$(simulationModel) {
-    const {destination_dataimport_path, destination_dataread_path} = simulationModel;
-    console.log('[getTaskStatus$] %s', destination_dataread_path);
 
+export function getPipelineStatus$(simulationModel) {
+    const {destination_dataimport_path, destination_dataread_path} = simulationModel;
+    const {data_import_container, data_read_container} = simulationModel.metadata;
     const commands = [
+        // Proofs that the task finished, and results are corrected
         {'type': 'get_file', 'path': destination_dataimport_path + '/task.mark'},
         {'type': 'get_file', 'path': destination_dataimport_path + '/parameters.json'},
         {'type': 'get_file', 'path': destination_dataread_path + '/task.mark'},
         {'type': 'get_file', 'path': destination_dataread_path + '/parameters.json'},
     ]
-    return fetch(NODE_API_PREFIX + '/batch', {
-        method: 'POST',
-        headers: JSON_HEADERS,
-        body: JSON.stringify(commands)
-    })
-        .then(response => {
-            if (!response.ok) {
-                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
-                return Promise.reject(response);
-            }
-            return Promise.resolve(response)
-                .then(validateJSONResponse)
-                .then(parseJSON)
-                .then(function(report) {
-                    return {
-                        data_import: {
-                            completed: report[0] !== FNF,
-                            in_progress: report[0] === FNF && report[1] !== FNF,
-                            not_started: (report[1] === FNF) && (report[0] === FNF),
-                        },
-                        data_read: {
-                            completed: (report[2] !== FNF),
-                            in_progress: (report[2] === FNF) && (report[3] !== FNF),
-                            not_started: (report[3] === FNF) && (report[2] === FNF),
-                        }
-                    }
-                });
+
+    return Promise.all([
+        data_import_container 
+            ? getContainer$(data_import_container)
+            : Promise.resolve(null),
+        data_read_container
+            ? getContainer$(data_read_container)
+            : Promise.resolve(null),
+        // Get file stat
+        fetch(NODE_API_PREFIX + '/batch', {
+            method: 'POST',
+            headers: JSON_HEADERS,
+            body: JSON.stringify(commands)
         })
-        .catch(error => {
-            console.log('Cannot request the endpoint');
-            console.dir(error)
-        });
+            .then(response => {
+                if (!response.ok) {
+                    // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                    return Promise.reject(response);
+                }
+                return Promise.resolve(response)
+                    .then(validateJSONResponse)
+                    .then(parseJSON)
+                    .then(function(report) {
+                        return {
+                            data_import: {
+                                completed: report[0] !== FNF,
+                                started: report[1] !== FNF, // The task has been started
+                            },
+                            data_read: {
+                                completed: (report[2] !== FNF),
+                                started: (report[3] !== FNF),
+                            }
+                        }
+                    });
+            })
+            .catch(error => {
+                console.log('Cannot request the endpoint /batch');
+                console.dir(error)
+            })
+    ]).then(([dataImportContainerData, dataReadContainerData, fileStatus]) => {
+        // TODO check information about containers
+        console.log('Check container data:');
+        console.dir([dataImportContainerData, dataReadContainerData, fileStatus]);
+        
+        // The container data is proof that the task is running
+        // File statistics can lie if we stop the container with a command from the cli utility
+        
+        fileStatus.data_import.in_progress = !!dataImportContainerData;
+        fileStatus.data_import.not_started = !fileStatus.data_import.completed && !fileStatus.data_import.in_progress;
+        fileStatus.data_import.failed = fileStatus.data_import.started && !fileStatus.data_import.in_progress;
+
+        fileStatus.data_read.in_progress = !!dataReadContainerData;
+        fileStatus.data_read.not_started = !fileStatus.data_read.completed && !fileStatus.data_read.in_progress;
+        fileStatus.data_read.failed = fileStatus.data_read.started && !fileStatus.data_read.in_progress;
+        
+        return fileStatus;
+    });
 }
 
 export function runDataImportTask$(simulationModel){
@@ -140,11 +166,9 @@ export function runDataImportTask$(simulationModel){
             return Promise.resolve(response)
                 .then(validateJSONResponse)
                 .then(parseJSON)
-                // .then(function(report) {
-                // });
         })
         .catch(error => {
-            console.log('Cannot request the endpoint');
+            console.log('Cannot request the endpoint /container');
             console.dir(error)
         });
 }
@@ -175,11 +199,9 @@ export function runDataReadTask$(simulationModel){
             return Promise.resolve(response)
                 .then(validateJSONResponse)
                 .then(parseJSON)
-                // .then(function(report) {
-                // });
         })
         .catch(error => {
-            console.log('Cannot request the endpoint');
+            console.log('Cannot request the endpoint /container');
             console.dir(error)
         });
 }
@@ -203,7 +225,7 @@ export function deleteDataImportResults$(simulationModel) {
                 .then(parseJSON);
         })
         .catch(error => {
-            console.log('Cannot request the endpoint');
+            console.log('Cannot request the endpoint /batch');
             console.dir(error)
         });
 }
@@ -227,14 +249,15 @@ export function deleteDataReadResults$(simulationModel) {
                 .then(parseJSON);
         })
         .catch(error => {
-            console.log('Cannot request the endpoint');
+            console.log('Cannot request the endpoint /batch');
             console.dir(error)
         });
 }
 
 
 export function getLogs$(containerId, limit_n) {
-    return fetch(NODE_API_PREFIX + '/container/log?id=' + containerId + '&tail=' + limit_n, {
+    const link = NODE_API_PREFIX + '/container/log?id=' + containerId + '&tail=' + limit_n;
+    return fetch(link, {
         method: 'GET',
         headers: JSON_HEADERS
     })
@@ -248,7 +271,29 @@ export function getLogs$(containerId, limit_n) {
                 .then(parseJSON);
         })
         .catch(error => {
-            console.log('Cannot request the endpoint');
+            console.log('Cannot request the endpoint %s', link);
+            console.dir(error)
+            return null;
+        });
+}
+
+export function getContainer$(containerId) {
+    const link = NODE_API_PREFIX + '/container?id=' + containerId;
+    return fetch(link , {
+        method: 'GET',
+        headers: JSON_HEADERS
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON);
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint %s', link);
             console.dir(error)
             return null;
         });
