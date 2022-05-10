@@ -30,9 +30,7 @@ function typeDataReadStatus(state) {
 
 export default function PipelineModal(props) {
     const [state, setState] = useState({});
-    // const [watchingContainer, setWatchingContainer] = useState(null);
-    const [watchingContainer, setWatchingContainer] = useState('nginx');
-
+    const [watchingContainer, setWatchingContainer] = useState(null);
     const synchronizeState = useCallback(() => getTaskStatus$(props.model)
         .then(status => {
             console.log('TaskList');
@@ -41,6 +39,12 @@ export default function PipelineModal(props) {
                 ..._state,
                 ...status
             }))
+
+            if (status.data_import.in_progress) {
+                setWatchingContainer(props.model.metadata.data_import_container)
+            } else if (status.data_read.in_progress){
+                setWatchingContainer(props.model.metadata.data_read_container)
+            }
         }))
     
     useEffect(() => {
@@ -165,7 +169,7 @@ export default function PipelineModal(props) {
             {/* TODO add spiner */}
             <p>Loading...</p>
         </>}
-        {watchingContainer && <div className={S.logs}>
+        {!!state.data_import && watchingContainer && <div className={S.logs}>
             <ContainerLogs container_id={watchingContainer} />
         </div>}
         <button onClick={closeDialogHandler}>Close</button>

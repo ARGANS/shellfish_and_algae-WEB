@@ -27,9 +27,9 @@ export default function ModelList(props) {
     }, [setModel])
 
     // TODO refactor this method!
-    const handleModelSubmit = useCallback(async (state, metadata) => {
-        model
-            .init(state, metadata)
+    const handleModelSubmit = useCallback(async (properties, metadata) => {
+        await model
+            .init(properties, metadata)
             .synchronize()
             .then((response) => {
                 console.log('Model has changed')
@@ -40,21 +40,6 @@ export default function ModelList(props) {
                 console.log('Fail to change the model')
                 console.dir(e)
             });
-
-        
-
-        await (model.id !== null 
-            ? updateModel$(model.id, {state, metadata}) 
-            : addModel$({state, metadata})
-        ).
-            then((response) => {
-                console.log('[addModel$] response')
-                console.dir(response);
-            }).
-            catch(e => {
-                console.log('[addModel$] error')
-                console.dir(e)
-            })
 
         triggeRecheck(value => !value);
 

@@ -14,6 +14,7 @@ export default function ContainerLogs(props) {
                 setRecords(logRecords)
             });
 
+        // Does not work stable!
         const _esource = new ListenEvent(NODE_API_PREFIX + '/container/log/stream?id=' + props.container_id, ({data: message}) => {
             console.log('Message: %s', message);
             setRecords((_records) => {

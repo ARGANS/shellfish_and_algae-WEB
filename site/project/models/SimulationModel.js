@@ -16,8 +16,8 @@ export default class SimulationModel {
         this.owner_name = owner_name;
     }
 
-    init(state, metadata) {
-        this.atbd_parameters = state;
+    init(parameters, metadata) {
+        this.atbd_parameters = parameters;
         this.metadata = metadata;
         return this;
     }
@@ -70,11 +70,11 @@ export default class SimulationModel {
 
     /**
      * 
-     * @param {Object} data = {id, user_id, user_name, properties : {state, metadata}}
+     * @param {Object} data = {id, user_id, user_name, properties : {parameters, metadata}}
      * @returns 
      */
     static validateProperties(data) {
-        return data.properties && data.properties.state && data.properties.metadata;
+        return data.properties && data.properties.parameters && data.properties.metadata;
     }
 
     get dataset_id() {

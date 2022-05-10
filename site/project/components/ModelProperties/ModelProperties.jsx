@@ -60,9 +60,6 @@ function ModelProperties(props) {
         event.preventDefault();
 
         metadata.name = metadata.name || printSuggestedName(metadata._suggested)
-        console.log('state')
-        console.dir(state)
-        console.dir(metadata)
 
         if (props.onSubmit) {
             props.onSubmit(state, metadata)

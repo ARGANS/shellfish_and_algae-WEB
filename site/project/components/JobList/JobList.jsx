@@ -12,10 +12,11 @@ export default function JobList(props) {
             const response = JSON.parse(e.data)
         
             setContainers(response.map(containerData => {
-                containerData.state.StartedAt = Date.parse(containerData.state.StartedAt)
-                containerData.state.FinishedAt = Date.parse(containerData.state.FinishedAt)
-                if (containerData.state.FinishedAt < 0) {
-                    containerData.state.FinishedAt = null;
+                const {state} = containerData;
+                state.StartedAt = Date.parse(state.StartedAt)
+                state.FinishedAt = Date.parse(state.FinishedAt)
+                if (state.FinishedAt < 0) {
+                    state.FinishedAt = null;
                 }
                 return containerData;
             }).sort((a, b) => a.StartedAt - b.StartedAt));
