@@ -250,5 +250,6 @@ export function getLogs$(containerId, limit_n) {
         .catch(error => {
             console.log('Cannot request the endpoint');
             console.dir(error)
+            return null;
         });
 }

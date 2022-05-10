@@ -31,7 +31,7 @@ export default class SimulationModel {
 
     export(formatted = false) {
         if (formatted) {
-            JSON.stringify(this.body, null, '\t')
+            return JSON.stringify(this.body, null, '\t')
         }
         return JSON.stringify(this.body)
     }
@@ -97,5 +97,10 @@ export default class SimulationModel {
         return this.id !== null 
             ? updateModel$(this.id, this.body) 
             : addModel$(this.body);
+    }
+
+    static fromJSON({id, user_id, user_name, properties : {parameters, metadata}}) {
+        return new SimulationModel(id, user_id, user_name)
+            .init(parameters, metadata);
     }
 }

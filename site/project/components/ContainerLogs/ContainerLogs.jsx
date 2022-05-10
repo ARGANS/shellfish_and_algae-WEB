@@ -11,8 +11,13 @@ export default function ContainerLogs(props) {
         console.log('[ContainerLogs] %s', props.container_id);
         getLogs$(props.container_id, LIMIT)
             .then((logRecords) => {
+                if (!logRecords) return;
                 setRecords(logRecords)
-            });
+            })
+            .catch(e => {
+                console.log('[getLogs$ ERROR]');
+                console.dir(e);
+            })
 
         // Does not work stable!
         const _esource = new ListenEvent(NODE_API_PREFIX + '/container/log/stream?id=' + props.container_id, ({data: message}) => {
@@ -38,7 +43,7 @@ class ListenEvent {
     #link = null;
     #source = null;
     #onMessage = null;
-    #count = 0;
+    #n_attempts = 0;
 
     constructor(link_s, onMessage){
         this.#link = link_s;
@@ -53,15 +58,17 @@ class ListenEvent {
         this.#source = new EventSource(this.#link);
         this.#source.onmessage = this.#onMessage;
         this.#source.onerror = (e) => {
-            console.log('SSE error %s', this.#count)
+            console.log('SSE error #%s', this.#n_attempts)
             console.dir(e)
+            this.close();
             // this.reconnect();
-            if (this.#count++ < 10) {
-                setTimeout(() => {
-                    this.reconnect();
-                }, 1000);
-            }
+            // if (this.#n_attempts < 3) {
+            //     setTimeout(() => {
+            //         this.reconnect();
+            //     }, 1000);
+            // }
         }
+        this.#n_attempts++;
     }
 
     close() {

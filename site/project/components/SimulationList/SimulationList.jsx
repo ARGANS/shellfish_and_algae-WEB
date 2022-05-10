@@ -4,12 +4,13 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { addModel$, deleteModel$, getActiveUser$, getModels$, updateModel$ } from 'helpers/api';
+import { deleteModel$, getActiveUser$, getModels$ } from 'helpers/api';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
 
 const DEBUG_POLLING = false;
+const LONG_POLLING_IS_ACTIVE = true;
 
 export default function ModelList(props) {
     const [model, setModel] = useState(null);
@@ -26,10 +27,9 @@ export default function ModelList(props) {
         setModel(null)
     }, [setModel])
 
-    // TODO refactor this method!
-    const handleModelSubmit = useCallback(async (properties, metadata) => {
+    const handleModelSubmit = useCallback(async (parameters, metadata) => {
         await model
-            .init(properties, metadata)
+            .init(parameters, metadata)
             .synchronize()
             .then((response) => {
                 console.log('Model has changed')
@@ -102,31 +102,37 @@ export default function ModelList(props) {
                 setUser(user_data);
             });
 
-        const _interval = setInterval(_ => {
-            if (DEBUG_POLLING) console.log('[NEXT tick]');
-            triggeRecheck(value => !value);
-        }, 10000)
+        let _interval;
+
+        if (LONG_POLLING_IS_ACTIVE) {
+            _interval = setInterval(_ => {
+                if (DEBUG_POLLING) console.log('[NEXT tick]');
+                triggeRecheck(value => !value);
+            }, 10000)
+        }
+        
         
         return () => {
-            clearInterval(_interval)
+            if (LONG_POLLING_IS_ACTIVE) {
+                clearInterval(_interval)
+            }
         }
     }, [])
 
     useEffect(() => {
-        getModels$().
-            then((_models) => {
+        getModels$()
+            .then((_models) => {
                 if (DEBUG_POLLING) console.log('[getModels$]')
-                setModels(_ => _models.
-                    filter(model_props => SimulationModel.validateProperties(model_props)).
-                    map(({id, user_id, user_name, properties : {state, metadata}}) => new SimulationModel(id, user_id, user_name).init(state, metadata))
+                setModels(_ => _models
+                    .filter(model_props => SimulationModel.validateProperties(model_props))
+                    .map(model_props =>  SimulationModel.fromJSON(model_props))
                 );
-            }).
-            catch((e) => {
+            })
+            .catch((e) => {
                 // not authorized
                 console.log('[getModels$ error:]');
                 console.dir(e)
             })
-
     }, [debouncedValue])
 
     return <div className={S.root}>
