@@ -51,3 +51,6 @@
 .list_header2 {
     grid-column: 2 / span 2;
 }
+.list button + button {
+    margin-right: 0.3rem;
+}

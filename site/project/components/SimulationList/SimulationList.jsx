@@ -8,6 +8,7 @@ import { deleteModel$, getActiveUser$, getModels$ } from 'helpers/api';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
+import DialogHeader from 'libs/DialogHeader/DialogHeader';
 
 const DEBUG_POLLING = false;
 const LONG_POLLING_IS_ACTIVE = true;
@@ -74,7 +75,9 @@ export default function ModelList(props) {
         console.log('[onSelectHandler] `%s`', model.dataset_id);
 
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
-            <PipelineModal model={model}/>
+            <DialogHeader title="Steps to execute the model">
+                <PipelineModal model={model}/>
+            </DialogHeader>
         </Dialog>, 'default');
     }, [models]);
 

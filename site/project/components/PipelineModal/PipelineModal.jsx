@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import S from './PipelineModal.module.css'
-import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
 import { getPipelineStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$ } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 
@@ -56,10 +55,6 @@ export default function PipelineModal(props) {
         return () => {}
     }, []);
 
-    const closeDialogHandler = useCallback(() => {
-        removeAllComponents();
-    })
-
     const startDataImportTaskHandler = useCallback(() => {
         const {model} = props;
         return runDataImportTask$(model)
@@ -85,7 +80,7 @@ export default function PipelineModal(props) {
                 console.log('[runDataReadTask$]');
                 console.dir(data);
                 // Does not work properly here
-                synchronizeState();
+                // synchronizeState();
                 
                 
                 setWatchingContainer(data.id);
@@ -98,7 +93,8 @@ export default function PipelineModal(props) {
                         ...model.metadata,
                         data_read_container: data.id
                     })
-                    .synchronize();
+                    .synchronize()
+                    .finally(synchronizeState)
             });
     });
 
@@ -160,9 +156,12 @@ export default function PipelineModal(props) {
                 {state.data_import.not_started && <button onClick={startDataImportTaskHandler}>Start task</button>}
             </p>
             <p>
-                <span>{props.model.destination_dataimport_path}</span>
+                {/* <span>{props.model.destination_dataimport_path}</span> */}
                 {!!state.data_import.completed && <>
-                    <button>Download</button>
+                    <a  title={props.model.destination_dataimport_path}
+                        href={'/api/v2/archive?path=' + props.model.destination_dataimport_path}
+                        download
+                    >Download</a>
                     <button onClick={removeDataImportResults}>Delete</button>
                 </>}
             </p>
@@ -174,9 +173,13 @@ export default function PipelineModal(props) {
                 {state.data_read.not_started && state.data_import.completed && <button onClick={startDataReadTaskHandler}>Start task</button>}
             </p>            
             <p>
-                <span>{props.model.destination_dataread_path}</span>
+                {/* <span>{props.model.destination_dataread_path}</span> */}
                 {!!state.data_read.completed && <>
-                    <button>Download</button>
+                    {/* <button>Download</button> */}
+                    <a  title={props.model.destination_dataread_path}
+                        href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
+                        download
+                    >Download</a>
                     <button onClick={removeDataReadResults}>Delete</button>
                 </>}
             </p>
@@ -192,6 +195,5 @@ export default function PipelineModal(props) {
                 onTermination={synchronizeState}
             />
         </div>}
-        <button onClick={closeDialogHandler}>Close</button>
     </div>
 }
