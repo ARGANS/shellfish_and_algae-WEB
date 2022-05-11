@@ -62,20 +62,28 @@ class ListenEvent {
         this.#onTermination = onTermination;
     }
 
-    reconnect() {
+    reconnect(max_attempts) {
         if (this.#source && this.#source?.readyState !== EventSource.CLOSED) {
             this.close();
         }
+
+        let _error_count = 0;
     
         this.#source = new EventSource(this.#link);
         this.#source.onmessage = this.#onMessage;
         this.#source.onerror = (e) => {
-            console.log('SSE error #%s, readyState: %s / %s', this.#n_attempts, this.#source.readyState, e.target.readyState)
+            const {readyState} = e.target;
+            console.log('SSE error %s readyState: %s errors: %s', this.#n_attempts, ['CONNECTING', 'OPEN', 'CLOSED'][readyState], _error_count);
             console.dir(e)
-            if (e.target.readyState === EventSource.CLOSED) {
-                // TODO connection closed!
+
+            if (readyState === EventSource.CLOSED) {
                 this.#onTermination()
             }
+            else if (readyState === EventSource.CONNECTING) {
+                // If the connection cannot be established, the application will stop further attempts
+                if (max_attempts && _error_count > max_attempts) this.close();
+            }
+            _error_count++;
         }
         this.#n_attempts++;
     }
