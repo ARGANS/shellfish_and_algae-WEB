@@ -172,7 +172,7 @@ export default function ModelList(props) {
                                     <button 
                                         data-index={modelIndex} 
                                         onClick={onDownloadHandler}
-                                    >Download</button>
+                                    >Export</button>
                                 </div>
                             </>
                         })}

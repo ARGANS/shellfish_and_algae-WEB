@@ -4,7 +4,8 @@ import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
 import model_parameters from 'models/macroalgae_model_parameters.json'
 import JobList from 'components/JobList/JobList';
-import "@fontsource/montserrat";
+// Does not work
+// import "@fontsource/montserrat";
 
 export default function ServicePage(props) {
 	const title = 'Service';

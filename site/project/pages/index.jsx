@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router';
-import "@fontsource/montserrat";
+// Does not work
+// import "@fontsource/montserrat";
 
 function IndexPage(props) {
 	const title = 'Lot 1: shellfish and algae';
