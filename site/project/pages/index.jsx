@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
+import "@fontsource/montserrat";
 
 function IndexPage(props) {
 	const title = 'Lot 1: shellfish and algae';
@@ -12,7 +12,6 @@ function IndexPage(props) {
 			<meta property="og:title" content={title} key="title" />
 			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
-			<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Montserrat:200,300,regular,600,700,300italic,italic,600italic,700italic,|Kalam:300,regular,700&amp;subset=latin" media="all"></link>
 		</Head>
 		<main className="introsection">
             <video playsinline autoPlay muted loop preload="none" className="introsection-video">

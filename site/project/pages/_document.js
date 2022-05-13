@@ -1,4 +1,4 @@
-import Document, { Head, Main, NextScript, Html } from 'next/document'
+import Document, { Head, Main, NextScript, Html } from 'next/document';
 
 export default class SiteDocument extends Document {
 	static getInitialProps({ renderPage }) {
@@ -18,9 +18,6 @@ export default class SiteDocument extends Document {
 				<link rel="icon" href="/favicons/favicon.svg" type="image/svg+xml" />
 				<link rel="apple-touch-icon" href="/favicons/touch-icon-iphone-retina_180.png" />
 				<link rel="manifest" href="/manifest.webmanifest" />
-				{/* <link rel="prefetch" href="/assets/art/smos_banner.jpg"></link> */}
-				<link rel="dns-prefetch" href="//fonts.googleapis.com"></link>
-				<link href="https://fonts.googleapis.com" crossorigin="" rel="preconnect"></link>
 				<meta name="robots" content="index, follow"></meta>
 				<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"></meta>
 				<meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"></meta>
