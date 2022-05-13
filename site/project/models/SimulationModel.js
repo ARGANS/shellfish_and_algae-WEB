@@ -93,6 +93,10 @@ export default class SimulationModel {
         return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
     }
 
+    get destination_postprocessing_path() {
+        return this.destination_dataread_path + '/posttreatment';
+    }
+
     synchronize() {
         return this.id !== null 
             ? updateModel$(this.id, this.body) 

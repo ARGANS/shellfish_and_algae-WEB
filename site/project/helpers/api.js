@@ -67,15 +67,33 @@ export function getActiveUser$() {
 const FNF = 'FileNotFound';
 
 
+/**
+ * 
+ * @param {SimulationModel} simulationModel 
+ * @returns {Promise<Object>} fileStatus
+ *  {bool} fileStatus.data_import.in_progress
+    {bool} fileStatus.data_import.not_started
+    {bool} fileStatus.data_import.failed
+
+    {bool} fileStatus.data_read.in_progress
+    {bool} fileStatus.data_read.not_started
+    {bool} fileStatus.data_read.failed
+
+    {bool} fileStatus.postprocessing.in_progress
+    {bool} fileStatus.postprocessing.not_started
+    {bool} fileStatus.postprocessing.failed
+ */
 export function getPipelineStatus$(simulationModel) {
-    const {destination_dataimport_path, destination_dataread_path} = simulationModel;
-    const {data_import_container, data_read_container} = simulationModel.metadata;
+    const {destination_dataimport_path, destination_dataread_path, destination_postprocessing_path} = simulationModel;
+    const {data_import_container, data_read_container, postprocessing_container} = simulationModel.metadata;
     const commands = [
         // Proofs that the task finished, and results are corrected
         {'type': 'get_file', 'path': destination_dataimport_path + '/task.mark'},
         {'type': 'get_file', 'path': destination_dataimport_path + '/parameters.json'},
         {'type': 'get_file', 'path': destination_dataread_path + '/task.mark'},
         {'type': 'get_file', 'path': destination_dataread_path + '/parameters.json'},
+        {'type': 'get_file', 'path': destination_postprocessing_path + '/start.mark'},
+        {'type': 'get_file', 'path': destination_postprocessing_path + '/end.mark'},
     ]
 
     return Promise.all([
@@ -85,7 +103,10 @@ export function getPipelineStatus$(simulationModel) {
         data_read_container
             ? getContainer$(data_read_container)
             : Promise.resolve(null),
-        // Get file stat
+        postprocessing_container
+            ? getContainer$(postprocessing_container)
+            : Promise.resolve(null),
+            // Get file stat
         fetch(NODE_API_PREFIX + '/batch', {
             method: 'POST',
             headers: JSON_HEADERS,
@@ -108,6 +129,10 @@ export function getPipelineStatus$(simulationModel) {
                             data_read: {
                                 completed: (report[2] !== FNF),
                                 started: (report[3] !== FNF),
+                            },
+                            postprocessing: {
+                                completed: (report[4] !== FNF),
+                                started: (report[5] !== FNF),
                             }
                         }
                     });
@@ -116,7 +141,7 @@ export function getPipelineStatus$(simulationModel) {
                 console.log('Cannot request the endpoint /batch');
                 console.dir(error)
             })
-    ]).then(([dataImportContainerData, dataReadContainerData, fileStatus]) => {
+    ]).then(([dataImportContainerData, dataReadContainerData, postProcessingContainerData, fileStatus]) => {
         // TODO check information about containers
         console.log('Check container data:');
         console.dir([dataImportContainerData, dataReadContainerData, fileStatus]);
@@ -131,13 +156,38 @@ export function getPipelineStatus$(simulationModel) {
         fileStatus.data_read.in_progress = !!dataReadContainerData;
         fileStatus.data_read.not_started = !fileStatus.data_read.completed && !fileStatus.data_read.in_progress;
         fileStatus.data_read.failed = fileStatus.data_read.started && !fileStatus.data_read.in_progress;
+
+        fileStatus.postprocessing.in_progress = !!postProcessingContainerData;
+        fileStatus.postprocessing.not_started = !fileStatus.postprocessing.completed && !fileStatus.postprocessing.in_progress;
+        fileStatus.postprocessing.failed = fileStatus.postprocessing.started && !fileStatus.postprocessing.in_progress;
         
         return fileStatus;
     });
 }
 
+function postJSON$(url, data) {
+    return fetch(url, {
+        method: 'POST',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON)
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint %s', url);
+            console.dir(error);
+        });
+}
+
 export function runDataImportTask$(simulationModel){
-    const body = {
+    return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-import/runtime:latest',
         environment: {
             AC_OUTPUT_DIR: '/media/share/data/' + simulationModel.dataset_id,
@@ -151,30 +201,11 @@ export function runDataImportTask$(simulationModel){
         },
         hosts: {},
         volumes: ['ac_share:/media/share']
-    };
-
-    return fetch(NODE_API_PREFIX + '/container', {
-        method: 'POST',
-        headers: JSON_HEADERS,
-        body: JSON.stringify(body)
-    })
-        .then(response => {
-            if (!response.ok) {
-                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
-                return Promise.reject(response);
-            }
-            return Promise.resolve(response)
-                .then(validateJSONResponse)
-                .then(parseJSON)
-        })
-        .catch(error => {
-            console.log('Cannot request the endpoint /container');
-            console.dir(error)
-        });
+    });
 }
 
 export function runDataReadTask$(simulationModel){
-    const body = {
+    return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-processing/runtime:latest',
         environment: {
             DATASET_ID: simulationModel.dataset_id,
@@ -184,74 +215,37 @@ export function runDataReadTask$(simulationModel){
         },
         hosts: {},
         volumes: ['ac_share:/media/share']
-    };
+    });
+}
 
-    return fetch(NODE_API_PREFIX + '/container', {
-        method: 'POST',
-        headers: JSON_HEADERS,
-        body: JSON.stringify(body)
-    })
-        .then(response => {
-            if (!response.ok) {
-                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
-                return Promise.reject(response);
-            }
-            return Promise.resolve(response)
-                .then(validateJSONResponse)
-                .then(parseJSON)
-        })
-        .catch(error => {
-            console.log('Cannot request the endpoint /container');
-            console.dir(error)
-        });
+export function runPostprocessingTask$(simulationModel){
+    return postJSON$(NODE_API_PREFIX + '/container', {
+        image: 'ac-posttreatment/runtime:latest',
+        environment: {
+            SOURCE_DIR: simulationModel.destination_dataread_path,
+            PYTHONDONTWRITEBYTECODE: '1',
+        },
+        hosts: {},
+        volumes: ['ac_share:/media/share']
+    });
 }
 
 export function deleteDataImportResults$(simulationModel) {
-    const commands = [
+    return postJSON$(NODE_API_PREFIX + '/batch', [
         {'type': 'rm', 'path': simulationModel.destination_dataimport_path},
-    ]
-    return fetch(NODE_API_PREFIX + '/batch', {
-        method: 'POST',
-        headers: JSON_HEADERS,
-        body: JSON.stringify(commands)
-    })
-        .then(response => {
-            if (!response.ok) {
-                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
-                return Promise.reject(response);
-            }
-            return Promise.resolve(response)
-                .then(validateJSONResponse)
-                .then(parseJSON);
-        })
-        .catch(error => {
-            console.log('Cannot request the endpoint /batch');
-            console.dir(error)
-        });
+    ]);
 }
 
 export function deleteDataReadResults$(simulationModel) {
-    const commands = [
+    return postJSON$(NODE_API_PREFIX + '/batch', [
         {'type': 'rm', 'path': simulationModel.destination_dataread_path},
-    ]
-    return fetch(NODE_API_PREFIX + '/batch', {
-        method: 'POST',
-        headers: JSON_HEADERS,
-        body: JSON.stringify(commands)
-    })
-        .then(response => {
-            if (!response.ok) {
-                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
-                return Promise.reject(response);
-            }
-            return Promise.resolve(response)
-                .then(validateJSONResponse)
-                .then(parseJSON);
-        })
-        .catch(error => {
-            console.log('Cannot request the endpoint /batch');
-            console.dir(error)
-        });
+    ]);
+}
+
+export function deletePostprocessingResults$(simulationModel) {
+    return postJSON$(NODE_API_PREFIX + '/batch', [
+        {'type': 'rm', 'path': simulationModel.destination_postprocessing_path},
+    ]);
 }
 
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import S from './PipelineModal.module.css'
-import { getPipelineStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$ } from 'helpers/api';
+import { getPipelineStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$, deletePostprocessingResults$, runPostprocessingTask$ } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 
 /**
@@ -40,7 +40,7 @@ export default function PipelineModal(props) {
                     ..._state,
                     ...status
                 }))
-                // TODO was disabled temporary
+
                 if (status.data_import.in_progress) {
                     setWatchingContainer(props.model.metadata.data_import_container)
                 } else if (status.data_read.in_progress){
@@ -69,7 +69,8 @@ export default function PipelineModal(props) {
                         ...model.metadata,
                         data_import_container: data.id
                     })
-                    .synchronize();
+                    .synchronize()
+                    .finally(synchronizeState)
             })
     });
 
@@ -80,8 +81,7 @@ export default function PipelineModal(props) {
                 console.log('[runDataReadTask$]');
                 console.dir(data);
                 // Does not work properly here
-                // synchronizeState();
-                
+                synchronizeState();
                 
                 setWatchingContainer(data.id);
 
@@ -98,6 +98,31 @@ export default function PipelineModal(props) {
             });
     });
 
+    
+    const startPostprocessingTaskHandler = useCallback(() => {
+        const {model} = props;
+        return runPostprocessingTask$(model)
+            .then(data => {
+                console.log('[runPostprocessingTask$]');
+                console.dir(data);
+                // Does not work properly here
+                synchronizeState();
+                
+                setWatchingContainer(data.id);
+
+                console.log('Model update')
+                console.dir(model);
+             
+                return model
+                    .init(model.atbd_parameters, {
+                        ...model.metadata,
+                        postprocessing_container: data.id
+                    })
+                    .synchronize()
+                    .finally(synchronizeState)
+            });
+    });
+
     const removeDataImportResults = useCallback(() => {
         const {model} = props;
         return deleteDataImportResults$(model)
@@ -105,14 +130,10 @@ export default function PipelineModal(props) {
                 synchronizeState();
                 const {data_import_container, ...rest} = model.metadata;
                 
-                console.log('Removing data_import_container %s', data_import_container);
-                console.dir(model);
-
                 setWatchingContainer(null);
                 model
                     .init(props.model.atbd_parameters, {...rest})
                     .synchronize();
-                // TODO remove file
             })
     });
 
@@ -123,16 +144,27 @@ export default function PipelineModal(props) {
                 synchronizeState();
                 const {data_read_container, ...rest} = model.metadata;
                 
-                console.log('Removing data_reas_container %s', data_read_container);
-                console.dir(model);
+                setWatchingContainer(null);
+                model
+                    .init(model.atbd_parameters, {...rest})
+                    .synchronize();
+            })
+    });
+
+    const removePostprocessingResults = useCallback(() => {
+        const {model} = props;
+        return deletePostprocessingResults$(model)
+            .then(() => {
+                synchronizeState();
+                const {postprocessing_container, ...rest} = model.metadata;
                 
                 setWatchingContainer(null);
                 model
                     .init(model.atbd_parameters, {...rest})
                     .synchronize();
-                // TODO remove file
             })
     });
+
 
     useEffect(() => {
         console.log('[watchingContainer] %s', watchingContainer);
@@ -156,7 +188,6 @@ export default function PipelineModal(props) {
                 {state.data_import.not_started && <button onClick={startDataImportTaskHandler}>Start task</button>}
             </p>
             <p>
-                {/* <span>{props.model.destination_dataimport_path}</span> */}
                 {!!state.data_import.completed && <>
                     <a  title={props.model.destination_dataimport_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataimport_path}
@@ -173,9 +204,7 @@ export default function PipelineModal(props) {
                 {state.data_read.not_started && state.data_import.completed && <button onClick={startDataReadTaskHandler}>Start task</button>}
             </p>            
             <p>
-                {/* <span>{props.model.destination_dataread_path}</span> */}
                 {!!state.data_read.completed && <>
-                    {/* <button>Download</button> */}
                     <a  title={props.model.destination_dataread_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
                         download
@@ -184,6 +213,23 @@ export default function PipelineModal(props) {
                 </>}
             </p>
         </>}
+        {!!state.postprocessing && <>
+            <h3>#3 Post-processing</h3>
+            <p>
+                <span>{typeDataReadStatus(state.postprocessing)}</span> 
+                {state.postprocessing.not_started && state.data_read.completed && <button onClick={startPostprocessingTaskHandler}>Start task</button>}
+            </p>            
+            <p>
+                {!!state.postprocessing.completed && <>
+                    <a  title={props.model.destination_postprocessing_path}
+                        href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
+                        download
+                    >Download</a>
+                    <button onClick={removePostprocessingResults}>Delete</button>
+                </>}
+            </p>
+        </>}
+        
         {!state.data_import && <>
             {/* TODO add spiner */}
             <p>Loading...</p>
