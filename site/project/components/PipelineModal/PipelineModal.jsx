@@ -1,7 +1,12 @@
+import dynamic from 'next/dynamic'
 import { useEffect, useState, useCallback } from 'react'
 import S from './PipelineModal.module.css'
 import { getPipelineStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$, deletePostprocessingResults$, runPostprocessingTask$ } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
+import Dialog from 'libs/Dialogs/Dialog';
+import DialogHeader from 'libs/DialogHeader/DialogHeader';
+import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
+const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
 /**
  * 
@@ -176,6 +181,16 @@ export default function PipelineModal(props) {
         }, 1000);
     }, [])
 
+    const showMapHandler = useCallback(() => {
+        addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
+            <DialogHeader title="Map">
+                <div className={S.mapDialog}>
+                    <DynamicMap/>
+                </div>
+            </DialogHeader>
+        </Dialog>, 'default');
+    })
+
     // TODO
     // Currently the app starts showing logs once the watchingContainer is changing.
     // But The app should listen the changes in the container list to request the log
@@ -229,6 +244,9 @@ export default function PipelineModal(props) {
                 </>}
             </p>
         </>}
+        <div>
+            <button onClick={showMapHandler}>Map</button>
+        </div>
         
         {!state.data_import && <>
             {/* TODO add spiner */}

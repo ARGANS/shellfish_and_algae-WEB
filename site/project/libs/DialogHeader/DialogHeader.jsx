@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getStaticProps } from 'pages/service'
 import S from './DialogHeader.module.css'
-import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
+import { removeLastComponent } from 'libs/ComponentHeap/ComponentHeap';
 
 export default function DialogHeader(props) {
     const closeDialogHandler = useCallback(() => {
-        removeAllComponents();
+        removeLastComponent();
     })
 
     return <div className={S.root}>

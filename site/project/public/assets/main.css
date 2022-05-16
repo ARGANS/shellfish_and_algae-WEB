@@ -135,3 +135,12 @@ details[open] > summary::before {
 .vmiddle:after {display: inline-block;vertical-align: middle;}
 .vmiddle:after {content: "";width: 0;height: 100%}
 .vmiddle-inner {width: 100%;}
+
+
+
+.act-toggle__target:checked ~ .act-toggle__hide-subject {display: none;}
+.act-toggle__target:checked ~ .act-toggle__show-subject {display: block;}
+
+.centr-content > *,
+.centr-content:after{display:inline-block;vertical-align:middle;}
+.centr-content:after{content:"";width:0;height:100%;}

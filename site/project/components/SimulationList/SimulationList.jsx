@@ -72,8 +72,6 @@ export default function ModelList(props) {
 
         if (!model || model.id === undefined) return;
 
-        console.log('[onSelectHandler] `%s`', model.dataset_id);
-
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
             <DialogHeader title="Steps to execute the model">
                 <PipelineModal model={model}/>

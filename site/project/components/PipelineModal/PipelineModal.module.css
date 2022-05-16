@@ -1,8 +1,13 @@
-.root {
+.root,
+.mapDialog {
     background: #fff;
     width: var(--bcontainer-max-width);
 }
 
 .logs {
     height: 300px;
+}
+
+.mapDialog {
+    height: 90vh;
 }

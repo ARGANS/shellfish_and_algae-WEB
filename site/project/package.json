@@ -12,6 +12,9 @@
         "start": "next start"
     },
     "dependencies": {
+        "georaster": "^1.5.4",
+		"georaster-layer-for-leaflet": "^1.0.2",
+		"leaflet": "^1.7.1",
         "@fontsource/montserrat": "^4.5.10",
         "next": "^12.1.0",
         "react": "^17.0.2",
