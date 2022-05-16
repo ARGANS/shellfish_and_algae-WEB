@@ -10,3 +10,4 @@ One liner to stop / remove all of Docker containers:
     docker rm -fv $(docker ps -aq)
 
 docker ps -aq --format '\t{{.Tag}}'
+docker ps -q --filter="NAME=php-fpm"
