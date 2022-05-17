@@ -206,7 +206,7 @@ export default function PipelineModal(props) {
                 {!!state.data_import.completed && <>
                     <a  title={props.model.destination_dataimport_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataimport_path}
-                        download
+                        download={props.model.metadata.name + '_dataset.zip'}
                     >Download</a>
                     <button onClick={removeDataImportResults}>Delete</button>
                 </>}
@@ -222,7 +222,7 @@ export default function PipelineModal(props) {
                 {!!state.data_read.completed && <>
                     <a  title={props.model.destination_dataread_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
-                        download
+                        download={props.model.metadata.name + '_files.zip'}
                     >Download</a>
                     <button onClick={removeDataReadResults}>Delete</button>
                 </>}
@@ -238,7 +238,7 @@ export default function PipelineModal(props) {
                 {!!state.postprocessing.completed && <>
                     <a  title={props.model.destination_postprocessing_path}
                         href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
-                        download
+                        download={props.model.metadata.name + '_images.zip'}
                     >Download</a>
                     <button onClick={removePostprocessingResults}>Delete</button>
                 </>}

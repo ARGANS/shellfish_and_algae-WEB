@@ -190,8 +190,8 @@ export function runDataImportTask$(simulationModel){
     return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-import/runtime:latest',
         environment: {
-            AC_OUTPUT_DIR: '/media/share/data/' + simulationModel.dataset_id,
-            parameters_json: JSON.stringify({
+            INPUT_DESTINATION: '/media/share/data/' + simulationModel.dataset_id,
+            INPUT_PARAMETERS: JSON.stringify({
                 zone: simulationModel.metadata.zone,
                 depth_min: simulationModel.metadata.depth_min,
                 depth_max: simulationModel.metadata.depth_max,
