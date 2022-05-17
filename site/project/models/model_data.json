@@ -9,11 +9,11 @@
     ],
     "zone_id": {
         "Artic": "Arctic",
-        "Baltic sea": "Baltic sea",
+        "Baltic sea": "BalticSea",
         "North West Shelf": "NWS",
         "Ireland-Biscay-Iberia": "IBI",
-        "Mediterranean sea": "Mediterranean sea",
-        "Black sea": "Black sea"
+        "Mediterranean sea": "MediterraneanSea",
+        "Black sea": "BlackSea"
     },
     "section_order": {
         "species": 1,
