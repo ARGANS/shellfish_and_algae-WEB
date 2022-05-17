@@ -1,15 +1,15 @@
 import S from './Map.module.css'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
+
+
 // import Switcher from '../ui/Switcher/Switcher';
 // import { DEBUG } from '../../content/main';
 // import List from '../ui/list/List';
 
 
 const DEBUG = false;
-
-
 const MAP_NODE = 'leaflet-map';
 const LAYERS = {
 	// ospar2: '/content/OSPAR2_P90_MODIS_2015-2020.tif',
@@ -32,9 +32,24 @@ if (DEBUG) {
 };
 
 
-export default function Map() {
+const files = [
+	'Biomass_CO2.tif',
+	'CO2_uptake_PUA.tif',
+	'DW.tif',
+	'DW_line.tif',
+	'DW_PUA.tif',
+	'FW.tif',
+	'FW_line.tif',
+	'FW_PUA.tif',
+	'kcal_PUA.tif',
+	'protein_PUA.tif',
+];
+
+export default function Map(props) {
 	const mapRef = useRef();
 	useEffect(() => {
+		console.log('[MAP]');
+		console.dir(props);
 		// let $footer = document.getElementById('footer');
 		// if ($footer) {
 		// 	$footer.checked = true;
@@ -88,6 +103,72 @@ export default function Map() {
 			});
 		}
 	}, []);
+	const [selectedFile, setSelectedFile] = useState(null);
+	const tileSelectHandler = useCallback(({target: $target}) => {
+		const fileName = $target.getAttribute('name');
+		setSelectedFile(fileName);
+	});
+
+	useEffect(() => {
+		const {current: map} = mapRef;
+		//---------------------------------
+		
+		// const resource_link = '/api/v2/archive?path=' + props.model.destination_postprocessing_path + '/' + selectedFile;
+		
+		//---------------------------------
+		
+		// Does not work due to NGINX redirection issue:
+		// const resource_link = '/assets/chlorophyll_a_20210228.tif';
+				// curl -Sk https://localhost:4443/assets/chlorophyll_a_20210228.tif
+				// curl -Sk https://localhost:4443/assets/index.css
+		
+		//---------------------------------
+		
+		// const resource_link = '/api/v2/file?path=/media/share/chlorophyll_a_20210228.tif';
+		const resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
+		
+		console.log('[selectedFile] %s %s', selectedFile, resource_link);
+		
+		let layerExist = false;
+		map.eachLayer(layer => {
+			if (!layer.hasOwnProperty('georasters')) return;
+
+			if (layer[LAYER_FLAG] === selectedFile) {
+				layer.setZIndex(1);
+				layerExist = !layerExist;
+			} else {
+				layer.setZIndex(-100);
+				// map.removeLayer(layer);
+			}
+		});
+
+		if (layerExist) return;
+		
+		let layerAdapter;
+
+		// layerAdapter = ({default: loadLayer}) => loadLayer(resource_link);
+		layerAdapter = ({loadDebugTiff}) => loadDebugTiff(resource_link);
+
+		import('utils/loadLayer')
+			.then(mod => {
+				console.log('LL');
+				console.dir(mod);
+				return mod;
+			})
+			.then(layerAdapter)
+			.then(layer => {
+				console.log('BINGO');
+				console.dir(layer);
+				layer[LAYER_FLAG] = selectedFile;
+				layer.addTo(map);
+
+				// map.fitBounds(layer.getBounds());    
+			})
+			.catch(error => {
+				console.warn('ERROR');
+				console.dir(error);
+			});
+	}, selectedFile)
 
 	// const onChangeHandler = useCallback((e) => {
 	// 	const {name, checked} = e.target;
@@ -139,9 +220,16 @@ export default function Map() {
 	return <div className={S.root}>
 		<div className={S.header}>
 			<input type="checkbox" id="toggleLayerMenu" className="invisible act-toggle__target"/>
-			<label htmlFor="toggleLayerMenu"><i className=""></i><span>Layers</span></label>
-			{/* <h1>Percentiles 90 products 2015-2020 (MODIS-AQUA)</h1> */}
+			<label htmlFor="toggleLayerMenu">Switch layers:</label>
 			<ul className={'act-toggle__show-subject ' + S.menu}>
+				{files.map(file => (
+					<li 
+						key={file} 
+						name={file}
+						className={selectedFile === file ? S.selected : ''} 
+						onClick={tileSelectHandler}
+					>{file}</li>
+				))}
 				{/* <List 
 					items={LayerList.map(item => ({
 						key: item.name,

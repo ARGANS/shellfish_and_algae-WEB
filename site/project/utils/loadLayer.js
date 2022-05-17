@@ -1,6 +1,6 @@
 import * as parse_georaster from 'georaster';
 import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
-import '../utils/proj4-src';
+import 'utils/proj4-src';
 
 const TRESHOLDS = [0.1, 1, 1.8, 2.5, 3, 4, 5, 6, 7, 8, 10, 12, 16, 21, 25];
 const COLORS = ['86,1,253', '86,84,255', '87,169,253', '85,255,255', '0,255,127', '170,255,126', '170,255,3', '253,255,122', '255,255,1', '255,248,44', '255,229,93', '255,171,127', '255,170,1', '255,137,57', '255,85,0', '255,3,67'];
