@@ -4,33 +4,9 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 
-// import Switcher from '../ui/Switcher/Switcher';
-// import { DEBUG } from '../../content/main';
-// import List from '../ui/list/List';
-
-
 const DEBUG = false;
 const MAP_NODE = 'leaflet-map';
-const LAYERS = {
-	// ospar2: '/content/OSPAR2_P90_MODIS_2015-2020.tif',
-	// ospar3: '/content/OSPAR3_P90_MODIS_2015-2020.tif',
-	// ospar4: '/content/OSPAR4_P90_MODIS_2015-2020.tif',
-	ospar2: '/content/p90_modis_chlorophyll_a_2015-2020_3to10_OSPARII.tif',
-	ospar3: '/content/p90_modis_chlorophyll_a_2015-2020_3to10_OSPARIII.tif',
-	ospar4: '/content/p90_modis_chlorophyll_a_2015-2020_3to10_OSPARIV.tif',
-};
-const LayerList = [
-	{name: 'ospar2', label: 'OSPAR II'},
-	{name: 'ospar3', label: 'OSPAR III'},
-	{name: 'ospar4', label: 'OSPAR IV'},
-];
 const LAYER_FLAG = '__name';
-
-if (DEBUG) {
-	LAYERS.test = '/content/chlorophyll_a_20210228.tif';
-	LayerList.push({name: 'test', label: 'Test'});
-};
-
 
 const files = [
 	'Biomass_CO2.tif',
@@ -109,20 +85,15 @@ export default function Map(props) {
 		setSelectedFile(fileName);
 	});
 
-	useEffect(() => {
+	useEffect(async () => {
+		if (!selectedFile) return;
+		
 		const {current: map} = mapRef;
-		//---------------------------------
 		
-		// const resource_link = '/api/v2/archive?path=' + props.model.destination_postprocessing_path + '/' + selectedFile;
-		
-		//---------------------------------
-		
-		// Does not work due to NGINX redirection issue:
+		// TODO Does not work due to NGINX redirection issue:
 		// const resource_link = '/assets/chlorophyll_a_20210228.tif';
-				// curl -Sk https://localhost:4443/assets/chlorophyll_a_20210228.tif
-				// curl -Sk https://localhost:4443/assets/index.css
-		
-		//---------------------------------
+			// curl -Sk https://localhost:4443/assets/chlorophyll_a_20210228.tif
+			// curl -Sk https://localhost:4443/assets/index.css
 		
 		// const resource_link = '/api/v2/file?path=/media/share/chlorophyll_a_20210228.tif';
 		const resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
@@ -131,91 +102,38 @@ export default function Map(props) {
 		
 		let layerExist = false;
 		map.eachLayer(layer => {
-			if (!layer.hasOwnProperty('georasters')) return;
+			if (!layer.hasOwnProperty(LAYER_FLAG)) return;
 
 			if (layer[LAYER_FLAG] === selectedFile) {
 				layer.setZIndex(1);
 				layerExist = !layerExist;
 			} else {
 				layer.setZIndex(-100);
-				// map.removeLayer(layer);
+				map.removeLayer(layer);
 			}
 		});
 
 		if (layerExist) return;
-		
+
 		let layerAdapter;
 
-		// layerAdapter = ({default: loadLayer}) => loadLayer(resource_link);
-		layerAdapter = ({loadDebugTiff}) => loadDebugTiff(resource_link);
+		layerAdapter = ({default: loadLayer}) => loadLayer(resource_link);
+		// Monochromatic:
+		// layerAdapter = ({loadDebugTiff}) => loadDebugTiff(resource_link);
 
 		import('utils/loadLayer')
-			.then(mod => {
-				console.log('LL');
-				console.dir(mod);
-				return mod;
-			})
 			.then(layerAdapter)
 			.then(layer => {
-				console.log('BINGO');
-				console.dir(layer);
 				layer[LAYER_FLAG] = selectedFile;
 				layer.addTo(map);
-
 				// map.fitBounds(layer.getBounds());    
 			})
 			.catch(error => {
-				console.warn('ERROR');
+				console.log('ERROR');
 				console.dir(error);
 			});
+	
 	}, selectedFile)
-
-	// const onChangeHandler = useCallback((e) => {
-	// 	const {name, checked} = e.target;
-	// 	const {current: map} = mapRef;
-
-	// 	if (!map || !LAYERS[name]) {
-	// 		console.warn('Map wasnt found');
-	// 		return;
-	// 	}
-
-	// 	if (checked) {
-	// 		let layerExist = false;
-	// 		map.eachLayer(layer => {
-	// 			if (layer.hasOwnProperty('georasters') && layer[LAYER_FLAG] === name) {
-	// 				layer.setZIndex(1);
-	// 				layerExist = !layerExist;
-	// 			}
-	// 		});
-	// 		if (!layerExist) {
-	// 			let layerAdapter;
-
-	// 			if (name !== 'test') {
-	// 				layerAdapter = ({default: loadLayer}) => loadLayer(LAYERS[name]);
-	// 			} else {
-	// 				layerAdapter = ({loadDebugTiff}) => loadDebugTiff(LAYERS[name]);
-	// 			}
-	// 			import('../../utils/loadLayer')
-	// 				.then(layerAdapter)
-	// 				.then(layer => {
-	// 					layer[LAYER_FLAG] = name;
-	// 					layer.addTo(map);
-	// 					// map.fitBounds(layer.getBounds());    
-	// 				})
-	// 				.catch(error => {
-	// 					console.warn('ERROR');
-	// 					console.dir(error);
-	// 				});
-	// 		}
-	// 	} else {
-	// 		map.eachLayer(layer => {
-	// 			if (layer.hasOwnProperty('georasters') && layer[LAYER_FLAG] === name) {
-	// 				layer.setZIndex(-100);
-	// 				// map.removeLayer(layer);
-	// 			}
-	// 		});
-	// 	}
-	// }, []);
 
 	return <div className={S.root}>
 		<div className={S.header}>
@@ -230,16 +148,6 @@ export default function Map(props) {
 						onClick={tileSelectHandler}
 					>{file}</li>
 				))}
-				{/* <List 
-					items={LayerList.map(item => ({
-						key: item.name,
-						props: {
-							...item, 
-							onChange: onChangeHandler
-						},
-					}))} 
-					component={(props) => <li><Switcher {...props}/></li>} 
-				/> */}
 			</ul>
 		</div>
 		<div className={S.body}>

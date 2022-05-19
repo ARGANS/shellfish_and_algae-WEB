@@ -5,7 +5,7 @@ import SimulationList from 'components/SimulationList/SimulationList';
 import model_parameters from 'models/macroalgae_model_parameters.json'
 import JobList from 'components/JobList/JobList';
 // Does not work
-// import "@fontsource/montserrat";
+import "@fontsource/montserrat";
 
 export default function ServicePage(props) {
 	const title = 'Service';
@@ -18,6 +18,9 @@ export default function ServicePage(props) {
 			<meta property="og:title" content={title} key="title" />
 			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
+			{/* <script src="https://unpkg.com/georaster@1.5.6/dist/georaster.browser.bundle.js"></script> */}
+			{/* <script src="https://unpkg.com/georaster@1.5.4/dist/georaster.browser.bundle.js"></script> */}
+			{/* <script src="https://cdn.jsdelivr.net/npm/geotiff"></script> */}
 		</Head>
 		<main className={s.root}>
 			<div className={s.main}>
