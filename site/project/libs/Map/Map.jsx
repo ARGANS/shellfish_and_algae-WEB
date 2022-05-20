@@ -95,11 +95,8 @@ export default function Map(props) {
 		
 		let resource_link = '/api/v2/file?path=/media/share' + props.model.destination_postprocessing_path + '/'  + selectedFile;
 		
-		console.log('[selectedFile] %s %s', selectedFile, resource_link);
 		// For debug
-		resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
-		
-		
+		// resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
 		
 		let layerExist = false;
 		map.eachLayer(layer => {
@@ -141,9 +138,8 @@ export default function Map(props) {
 
 	return <div className={S.root}>
 		<div className={S.header}>
-			<input type="checkbox" id="toggleLayerMenu" className="invisible act-toggle__target"/>
-			<label htmlFor="toggleLayerMenu">Switch layers:</label>
-			<ul className={'act-toggle__show-subject ' + S.menu}>
+			<h3>Switch layers:</h3>
+			<ul className={S.menu}>
 				{files.map(file => (
 					<li 
 						key={file} 

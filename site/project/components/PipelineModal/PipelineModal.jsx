@@ -236,6 +236,7 @@ export default function PipelineModal(props) {
             </p>            
             <p>
                 {!!state.postprocessing.completed && <>
+                    <button onClick={showMapHandler}>Map</button>
                     <a  title={props.model.destination_postprocessing_path}
                         href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
                         download={props.model.metadata.name + '_images'}
@@ -244,10 +245,10 @@ export default function PipelineModal(props) {
                 </>}
             </p>
         </>}
-        <div>
+        {/* <div>
             <button onClick={showMapHandler}>Map</button>
         </div>
-        
+         */}
         {!state.data_import && <>
             {/* TODO add spiner */}
             <p>Loading...</p>

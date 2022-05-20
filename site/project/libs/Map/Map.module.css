@@ -6,8 +6,6 @@
 }
 .header {
 	flex: 0 0 auto;
-	background: #333;
-	color: #fff;
 	position: relative;
 }
 .header > h1 {
@@ -36,11 +34,20 @@
 	height: 100%;
 }
 .menu {
-	
+	list-style: circle;
+	margin: 0;
+	padding: 0 0 0 1rem;
 }
 .menu > li {
-
+	color: blue;
+	cursor: pointer;
 }
+.menu > li:hover,
+.menu > li:focus {
+	color: lightblue;
+}
+
 .menu > li.selected {
 	background-color: #bbb;
+	pointer-events: none;
 }
