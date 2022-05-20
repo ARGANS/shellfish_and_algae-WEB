@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
 
-const DEBUG = false;
+const OPEN_POPUP = true;
 const MAP_NODE = 'leaflet-map';
 const LAYER_FLAG = '__name';
 
@@ -21,15 +21,23 @@ const files = [
 	'protein_PUA.tif',
 ];
 
+function getValueFromGeoRasterLayer(layer, leafletPoint) {
+	const NWtoPoint_y = layer.ymax - leafletPoint.lat; 
+	const NWtoPoint_x = leafletPoint.lng - layer.xmin; 
+	const dy = NWtoPoint_y * ( layer.height / layer.extent.height)
+	const dx = NWtoPoint_x * ( layer.width / layer.extent.width)
+	const raster = layer.rasters.at(leafletPoint);
+
+
+	console.log('Point (%s %s) [%s %s] GeoCoordinates', NWtoPoint_x, NWtoPoint_y, layer.extent.width, layer.extent.height);
+	console.log('(%s, %s)', dx, dy)
+
+	return Array.isArray(raster) ? raster[~~dy][~~dx] : null;
+}
+
 export default function Map(props) {
 	const mapRef = useRef();
 	useEffect(() => {
-		console.log('[MAP]');
-		console.dir(props);
-		// let $footer = document.getElementById('footer');
-		// if ($footer) {
-		// 	$footer.checked = true;
-		// }
 		const mapWidget = mapRef.current = L.map(MAP_NODE, {
             attributionControl: false,
             zoom : 5,
@@ -42,39 +50,23 @@ export default function Map(props) {
         }).addTo(mapWidget);
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(mapWidget);
 
-		if (DEBUG) {
-			console.log('mapWidget');
-			console.dir(mapWidget);
+		if (OPEN_POPUP) {
+			const _popup = L.popup()
 			mapWidget.on('click', e => {
 				const selectedGeoPoint = e.latlng;
-				console.log('CLICK %s', JSON.stringify(e.latlng));
-				console.dir(e);
-
+				console.log('selectedGeoPoint %s %s', JSON.stringify(e.latlng), e.layerPoint);
+				
 				mapWidget.eachLayer(layer => {
-					if (!layer.hasOwnProperty('georasters')) return;
+					if (!layer.hasOwnProperty(LAYER_FLAG)) return;
 					const layerBounds = layer.getBounds();
 					if (!layerBounds.contains(selectedGeoPoint)) return;
 
-					const NEpoint = mapWidget.options.crs.latLngToPoint(layerBounds.getNorthEast(), mapWidget.getZoom())
-					const SWpoint = mapWidget.options.crs.latLngToPoint(layerBounds.getSouthWest, mapWidget.getZoom())
-
-					console.log('L:');
-					console.dir(layer);
-					console.log('Bounds:');
-					console.dir([
-						NEpoint,
-						SWpoint,
-						NEpoint.x - SWpoint.x,
-						NEpoint.y - SWpoint.y,
-					])
-					const tileBounds = layer._getTiledPixelBounds(e.latlng);
-					const dX = tileBounds.max.x - tileBounds.min.x;
-					const dY = tileBounds.max.y - tileBounds.min.y;
-					console.dir(tileBounds);
-					console.log('Layer dX %s, dY %s ', dX,dY);
-					var x = e.layerPoint.x;
-					var y = e.layerPoint.y;
-					console.log([x, y]);
+				
+					const value = getValueFromGeoRasterLayer(layer, selectedGeoPoint);
+					_popup
+						.setLatLng(selectedGeoPoint)
+						.setContent('You clicked the map at ' + selectedGeoPoint.toString() + ' Value: ' + value)
+						.openOn(mapWidget);
 				});
 			});
 		}
