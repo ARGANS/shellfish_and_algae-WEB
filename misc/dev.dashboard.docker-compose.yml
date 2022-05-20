@@ -14,7 +14,7 @@ services:
       - ac_net
     volumes:
       - ../dashboard/repo/:/opt/app/
-      - ../dashboard/dshbrd.db:/opt/app/main.db
+      - ${DASHBOARD_DB_PATH}:/opt/app/main.db
     environment:
       - DSHBRD_BASE_ROUTE=/api/v1
       - DSHBRD_STATIC_ROOT=/dshbrd_static

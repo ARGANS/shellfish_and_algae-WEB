@@ -17,6 +17,13 @@ function start {
 	local DC_FLAG=$(get_dc_flags $1)
 	echo "DC_FLAG: $DC_FLAG"
 
+	if [[ "$1" == 'prod' ]]; then
+		if [[ ! -f ~/dshbrd_prod.db ]]; then
+			cp ./dashboard/dshbrd.db ~/dshbrd_prod.db
+			echo "DB created"
+		fi
+	fi
+
 	# if [[ "$1" != 'int' && "$1" != 'dev' ]]; then
 	# 	# Verifying the creation of certificate files
 	# 	if [[ -f "$PROD_PRIVATE_KEY" && -f "$PROD_PUBLIC_CRT" ]]; then

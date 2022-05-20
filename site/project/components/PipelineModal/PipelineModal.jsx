@@ -251,8 +251,8 @@ export default function PipelineModal(props) {
         </>}
         {/* <div>
             <button onClick={showMapHandler}>Map</button>
-        </div>
-         */}
+        </div> */}
+        
         {!state.data_import && <>
             {/* TODO add spiner */}
             <p>Loading...</p>
