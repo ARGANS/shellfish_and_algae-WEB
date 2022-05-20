@@ -2,6 +2,7 @@ import S from './Map.module.css'
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useCallback, useRef, useState } from 'react';
+import Legend from './Legend/Legend';
 
 
 const OPEN_POPUP = true;
@@ -27,16 +28,18 @@ function getValueFromGeoRasterLayer(layer, leafletPoint) {
 	const dy = NWtoPoint_y * ( layer.height / layer.extent.height)
 	const dx = NWtoPoint_x * ( layer.width / layer.extent.width)
 	const raster = layer.rasters.at(leafletPoint);
-
-
-	console.log('Point (%s %s) [%s %s] GeoCoordinates', NWtoPoint_x, NWtoPoint_y, layer.extent.width, layer.extent.height);
-	console.log('(%s, %s)', dx, dy)
-
+	// console.log('Point (%s %s) [%s %s] GeoCoordinates', NWtoPoint_x, NWtoPoint_y, layer.extent.width, layer.extent.height);
+	// console.log('(%s, %s)', dx, dy)
 	return Array.isArray(raster) ? raster[~~dy][~~dx] : null;
 }
 
+const COLORS = ['86,1,253', '86,84,255', '87,169,253', '85,255,255', '0,255,127', '170,255,126', '170,255,3', '253,255,122', '255,255,1', '255,248,44', '255,229,93', '255,171,127', '255,170,1', '255,137,57', '255,85,0', '255,3,67'];
+
+
 export default function Map(props) {
 	const mapRef = useRef();
+	const [legendSettings, setLegendSettings] = useState({});
+
 	useEffect(() => {
 		const mapWidget = mapRef.current = L.map(MAP_NODE, {
             attributionControl: false,
@@ -71,6 +74,7 @@ export default function Map(props) {
 			});
 		}
 	}, []);
+
 	const [selectedFile, setSelectedFile] = useState(null);
 	const tileSelectHandler = useCallback(({target: $target}) => {
 		const fileName = $target.getAttribute('name');
@@ -88,9 +92,14 @@ export default function Map(props) {
 			// curl -Sk https://localhost:4443/assets/index.css
 		
 		// const resource_link = '/api/v2/file?path=/media/share/chlorophyll_a_20210228.tif';
-		const resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
+		
+		let resource_link = '/api/v2/file?path=/media/share' + props.model.destination_postprocessing_path + '/'  + selectedFile;
 		
 		console.log('[selectedFile] %s %s', selectedFile, resource_link);
+		// For debug
+		resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
+		
+		
 		
 		let layerExist = false;
 		map.eachLayer(layer => {
@@ -109,9 +118,8 @@ export default function Map(props) {
 
 		let layerAdapter;
 
-		layerAdapter = ({default: loadLayer}) => loadLayer(resource_link);
-		// Monochromatic:
-		// layerAdapter = ({loadDebugTiff}) => loadDebugTiff(resource_link);
+		layerAdapter = ({default: loadLayer}) => loadLayer(resource_link, COLORS);
+		// layerAdapter = ({loadMonochromeTiffLayer}) => loadMonochromeTiffLayer(resource_link);
 
 		import('utils/loadLayer')
 			.then(layerAdapter)
@@ -119,13 +127,17 @@ export default function Map(props) {
 				layer[LAYER_FLAG] = selectedFile;
 				layer.addTo(map);
 				// map.fitBounds(layer.getBounds());    
+				const raster = layer.georasters[0]
+				setLegendSettings({
+					min: raster.mins[0],
+					max: raster.maxs[0]
+				});
 			})
 			.catch(error => {
-				console.log('ERROR');
+				console.log('Load layer error');
 				console.dir(error);
 			});
-	
-	}, selectedFile)
+	}, [selectedFile])
 
 	return <div className={S.root}>
 		<div className={S.header}>
@@ -144,7 +156,9 @@ export default function Map(props) {
 		</div>
 		<div className={S.body}>
 			<div className={S.map} id={MAP_NODE}></div>
-			{/* <img src="/assets/images/legend.jpg" className={S.legend} alt=""/> */}
+			{legendSettings?.max && <div className={S.legend}>
+				<Legend colors={COLORS} {...legendSettings} />
+			</div>}
 		</div>
 	</div>
 }

@@ -21,7 +21,7 @@ function fetchArrayBuffer$(resource_s) {
 		})
 }
 
-export default function loadLayer(imageTiffLink) {
+export default function loadLayer(imageTiffLink, legendColors=COLORS) {
 	return fetchArrayBuffer$(imageTiffLink)
 		.then(arrayBuffer => parse_georaster(arrayBuffer, { 
 			projection: 4326, 
@@ -39,7 +39,7 @@ export default function loadLayer(imageTiffLink) {
 							return 'rgba(0,0,0,0)';
 						}
 						
-						let color = getColor(value, MIN, MAX, COLORS);
+						let color = getColor(value, MIN, MAX, legendColors);
 						if (!color) {
 							return 'rgba(0,0,0,0)';
 						}
@@ -60,7 +60,7 @@ export default function loadLayer(imageTiffLink) {
 		})
 }
 
-export function loadDebugTiff(tiffLink) {
+export function loadMonochromeTiffLayer(tiffLink) {
 	return fetchArrayBuffer$(tiffLink)
 		.then(arrayBuffer => parse_georaster(arrayBuffer, { 
 			projection: 4326, 
@@ -100,7 +100,7 @@ export function loadDebugTiff(tiffLink) {
 			return layer;
 		})
 		.catch(exc => {
-			console.log('EXC2');
+			console.log('Unable to process image in TIFF format:');
 			console.dir(exc);
 		})
 }
