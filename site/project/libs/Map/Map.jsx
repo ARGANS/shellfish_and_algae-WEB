@@ -93,11 +93,7 @@ export default function Map(props) {
 		
 		// const resource_link = '/api/v2/file?path=/media/share/chlorophyll_a_20210228.tif';
 		
-		let resource_link = '/api/v2/file?path=/media/share' + props.model.destination_postprocessing_path + '/'  + selectedFile;
-		
-		// For debug
-		// resource_link = '/api/v2/file?path=/media/share/ref/' + selectedFile;
-		
+		let resource_link = props.dir + selectedFile;
 		let layerExist = false;
 		map.eachLayer(layer => {
 			if (!layer.hasOwnProperty(LAYER_FLAG)) return;

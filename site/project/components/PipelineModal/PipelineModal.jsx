@@ -182,10 +182,14 @@ export default function PipelineModal(props) {
     }, [])
 
     const showMapHandler = useCallback(() => {
+        // For debug
+		// const resource_link = '/api/v2/file?path=/media/share/ref/';
+		const resource_link = '/api/v2/file?path=' + props.model.destination_postprocessing_path + '/';
+		
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
             <DialogHeader title="Map">
                 <div className={S.mapDialog}>
-                    <DynamicMap model={props.model}/>
+                    <DynamicMap dir={resource_link}/>
                 </div>
             </DialogHeader>
         </Dialog>, 'default');
