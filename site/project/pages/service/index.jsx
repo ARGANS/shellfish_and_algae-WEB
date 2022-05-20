@@ -18,8 +18,6 @@ export default function ServicePage(props) {
 			<meta property="og:title" content={title} key="title" />
 			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
-			{/* <script src="https://unpkg.com/georaster@1.5.6/dist/georaster.browser.bundle.js"></script> */}
-			{/* <script src="https://unpkg.com/georaster@1.5.4/dist/georaster.browser.bundle.js"></script> */}
 			{/* <script src="https://cdn.jsdelivr.net/npm/geotiff"></script> */}
 		</Head>
 		<main className={s.root}>

@@ -27,10 +27,18 @@ function getValueFromGeoRasterLayer(layer, leafletPoint) {
 	const NWtoPoint_x = leafletPoint.lng - layer.xmin; 
 	const dy = NWtoPoint_y * ( layer.height / layer.extent.height)
 	const dx = NWtoPoint_x * ( layer.width / layer.extent.width)
-	const raster = layer.rasters.at(leafletPoint);
+	const raster = layer.georasters.at(leafletPoint);
 	// console.log('Point (%s %s) [%s %s] GeoCoordinates', NWtoPoint_x, NWtoPoint_y, layer.extent.width, layer.extent.height);
 	// console.log('(%s, %s)', dx, dy)
-	return Array.isArray(raster) ? raster[~~dy][~~dx] : null;
+	if (!raster) {
+		return null;
+	}
+	const value = raster.values[0][~~dy][~~dx];
+
+	if (value === raster.noDataValue) {
+		return null;
+	}
+	return value;
 }
 
 const COLORS = ['86,1,253', '86,84,255', '87,169,253', '85,255,255', '0,255,127', '170,255,126', '170,255,3', '253,255,122', '255,255,1', '255,248,44', '255,229,93', '255,171,127', '255,170,1', '255,137,57', '255,85,0', '255,3,67'];
@@ -66,6 +74,7 @@ export default function Map(props) {
 
 				
 					const value = getValueFromGeoRasterLayer(layer, selectedGeoPoint);
+					if (!value) return;
 					_popup
 						.setLatLng(selectedGeoPoint)
 						.setContent('You clicked the map at ' + selectedGeoPoint.toString() + ' Value: ' + value)
@@ -120,10 +129,16 @@ export default function Map(props) {
 				layer[LAYER_FLAG] = selectedFile;
 				layer.addTo(map);
 				// map.fitBounds(layer.getBounds());    
-				const raster = layer.georasters[0]
+				const raster = layer.georasters[0];
+				let title;
+				if (raster.gdalmetadata) {
+					title = raster.gdalmetadata.NETCDF_VARNAME + ', ' + raster.gdalmetadata.UNITTYPE;
+				}
+
 				setLegendSettings({
 					min: raster.mins[0],
-					max: raster.maxs[0]
+					max: raster.maxs[0],
+					title
 				});
 			})
 			.catch(error => {
