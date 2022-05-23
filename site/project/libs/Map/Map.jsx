@@ -94,14 +94,6 @@ export default function Map(props) {
 		if (!selectedFile) return;
 		
 		const {current: map} = mapRef;
-		
-		// TODO Does not work due to NGINX redirection issue:
-		// const resource_link = '/assets/chlorophyll_a_20210228.tif';
-			// curl -Sk https://localhost:4443/assets/chlorophyll_a_20210228.tif
-			// curl -Sk https://localhost:4443/assets/index.css
-		
-		// const resource_link = '/api/v2/file?path=/media/share/chlorophyll_a_20210228.tif';
-		
 		let resource_link = props.dir + selectedFile;
 		let layerExist = false;
 		map.eachLayer(layer => {

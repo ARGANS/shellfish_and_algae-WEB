@@ -6,7 +6,8 @@ export DC_PATH='~/docker-compose'
 ./manage.sh up prod
 ```
 ## Troubleshooting solutions
-`docker volume rm misc_site_node_modules`
+1. `docker volume rm misc_site_node_modules`
+2. `git pull --recurse-submodules`
 
 
 ## Application hostname 
