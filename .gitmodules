@@ -1,3 +1,6 @@
 [submodule "dashboard/repo"]
 	path = dashboard/repo
 	url = https://gitlab.acri-cwa.fr/nmaltsev/dshbrd.git
+[submodule "site/project/libs/georaster"]
+  path = site/project/libs/georaster
+	url = https://nmaltsev:b72480b6fd349d55960971d1d097466d4f6d242c@github.com/nmaltsev/georaster.git
