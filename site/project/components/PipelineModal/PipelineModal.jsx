@@ -183,8 +183,8 @@ export default function PipelineModal(props) {
 
     const showMapHandler = useCallback(() => {
         // For debug
-		const resource_link = '/api/v2/file?path=/media/share/ref/';
-		// const resource_link = '/api/v2/file?path=' + props.model.destination_postprocessing_path + '/';
+		// const resource_link = '/api/v2/file?path=/media/share/ref/';
+		const resource_link = '/api/v2/file?path=' + props.model.destination_postprocessing_path + '/';
 		
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
             <DialogHeader title="Map">
@@ -225,7 +225,7 @@ export default function PipelineModal(props) {
             <p>
                 {!!state.data_read.completed && <>
                     <a  title={props.model.destination_dataread_path}
-                        href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
+                    href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
                         download={props.model.metadata.name + '_files'}
                     >Download</a>
                     <button onClick={removeDataReadResults}>Delete</button>
@@ -249,9 +249,9 @@ export default function PipelineModal(props) {
                 </>}
             </p>
         </>}
-        <div>
+        {/* <div>
             <button onClick={showMapHandler}>Map</button>
-        </div>
+        </div> */}
         
         {!state.data_import && <>
             {/* TODO add spiner */}
