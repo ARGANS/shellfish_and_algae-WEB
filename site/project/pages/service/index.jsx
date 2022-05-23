@@ -4,8 +4,8 @@ import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
 import model_parameters from 'models/macroalgae_model_parameters.json'
 import JobList from 'components/JobList/JobList';
-// Does not work
 import "@fontsource/montserrat";
+import Sicon from 'libs/Sicon/Sicon';
 
 export default function ServicePage(props) {
 	const title = 'Service';
@@ -18,7 +18,6 @@ export default function ServicePage(props) {
 			<meta property="og:title" content={title} key="title" />
 			<link rel="stylesheet" type="text/css" href="/assets/main.css" />
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
-			{/* <script src="https://cdn.jsdelivr.net/npm/geotiff"></script> */}
 		</Head>
 		<main className={s.root}>
 			<div className={s.main}>
@@ -33,7 +32,9 @@ export default function ServicePage(props) {
 				<div className="bflex-row">
 					<div className="flex-size-fill">&nbsp;</div>
 					<div className="flex-size-own">
-						<a href="/api/v1/auth/logout?redirect=/">Log out</a>
+						<a className="icon-link" href="/api/v1/auth/logout?redirect=/">
+							<Sicon link={'/assets/images/service_icons.svg#profile'} text="Log out"/>
+						</a>
 					</div>
 				</div>
 			</div>

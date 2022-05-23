@@ -9,9 +9,18 @@ import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
+import Sicon from 'libs/Sicon/Sicon';
 
 const DEBUG_POLLING = false;
 const LONG_POLLING_IS_ACTIVE = true;
+
+function findModel(event, _models) {
+    const index = parseInt(event.target.closest('button').dataset.index)
+    const model = _models[index]
+
+    if (!model || model.id === undefined) return;
+    return model;
+}
 
 export default function ModelList(props) {
     const [model, setModel] = useState(null);
@@ -50,27 +59,25 @@ export default function ModelList(props) {
 
     const onDownloadHandler = useCallback(event => {
         event.preventDefault();
-        const {index} = event.target.dataset
-        if (models[index] !== undefined) {
-            downloadFileFromText(models[index].metadata.name + '.json', models[index].export(true))
-        }
+        
+        const model = findModel(event, models);
+        if (!model) return;
+
+        downloadFileFromText(model.metadata.name + '.json', models[index].export(true))
     }, [models]);
 
     const onDeleteHandler = useCallback(async event => {
         event.preventDefault();
-        const index = parseInt(event.target.dataset.index)
-        const model = models[index]
-        if (!model || model.id === undefined) return;
+        const model = findModel(event, models);
+        if (!model) return;
         await deleteModel$(model.id);
         triggeRecheck(value => !value);
     }, [models]);
     
     const onSelectHandler = useCallback(event => {
         event.preventDefault();
-        const index = parseInt(event.target.dataset.index)
-        const model = models[index]
-
-        if (!model || model.id === undefined) return;
+        const model = findModel(event, models);
+        if (!model) return;
 
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
             <DialogHeader title={'Steps to execute the model: ' + model.metadata.name}>
@@ -81,17 +88,19 @@ export default function ModelList(props) {
 
     const onModifyHandler = useCallback(event => {
         event.preventDefault();
-        const index = parseInt(event.target.dataset.index)
+        const model = findModel(event, models);
+        if (!model) return;
 
-        setModel(models[index])
+        setModel(model)
     }, [models]);
 
     const onViewHandler = useCallback(event => {
         event.preventDefault();
-        const index = parseInt(event.target.dataset.index)
+        const model = findModel(event, models);
+        if (!model) return;
 
         console.log('[onViewHandler]');
-        console.dir(models[index]);
+        console.dir(model);
     }, [models]);
 
     useEffect(() => {
@@ -152,25 +161,33 @@ export default function ModelList(props) {
                                 <div>{modelItem.metadata.name}</div>
                                 <div>
                                     <button 
+                                        title="Select"
+                                        className="icon-btn"
                                         data-index={modelIndex}
                                         onClick={onSelectHandler}
-                                    >Select</button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#rocket'}/></button>
                                     <button 
+                                        title="Modify model"
+                                        className="icon-btn"
                                         data-index={modelIndex}
                                         onClick={onModifyHandler}
-                                    >Modify</button>
-                                    <button 
+                                    ><Sicon link={'/assets/images/service_icons.svg#gear'}/></button>
+                                    {/* <button 
                                         data-index={modelIndex}
                                         onClick={onViewHandler}
-                                    >View</button>
+                                    >View</button> */}
                                     <button 
+                                        title="Delete"
+                                        className="icon-btn"
                                         data-index={modelIndex}
                                         onClick={onDeleteHandler}
-                                    >Delete</button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#burn'} /></button>
                                     <button 
+                                        title="Export"
+                                        className="icon-btn"
                                         data-index={modelIndex} 
                                         onClick={onDownloadHandler}
-                                    >Export</button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#chart-file'} /></button>
                                 </div>
                             </>
                         })}

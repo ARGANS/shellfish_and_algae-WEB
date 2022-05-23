@@ -3,7 +3,7 @@
 */
 :root  {
 	--main-link-color: #2764ec;
-	--text-color: #626a70;
+	--text-color: #484d52;
 	--blue-a: #2471cc;
 	--yellow-a: #fceb2e;
 }
@@ -144,3 +144,33 @@ details[open] > summary::before {
 .centr-content > *,
 .centr-content:after{display:inline-block;vertical-align:middle;}
 .centr-content:after{content:"";width:0;height:100%;}
+
+.icon-link {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	border-bottom: 1px solid;
+	border-bottom-color: transparent;
+	padding: 0.1rem 0 0.05rem 0;
+	margin: 0.1rem;
+}
+.icon-link:focus,
+.icon-link:hover {
+	text-decoration: none;
+    border-bottom-color: inherit;
+}
+.icon-link > svg {width: 18px; height: 18px;}
+.icon-link > svg > use {--control-color: var(--main-link-color);}
+.icon-link > svg + span {margin-left: 0.3rem;}
+
+.icon-btn {
+	border: none;
+	--control-color: #57659b;
+}
+.icon-btn:focus,
+.icon-btn:hover {
+	--control-color: #333;
+}
+.icon-btn > svg {width: 18px; height: 18px;}
+.icon-btn > svg > use {}
+.icon-btn + .icon-btn {margin-left: 0.3rem;}

@@ -2,7 +2,7 @@
     --btn-icon-size: 32px;
 }
 body {
-    color: #333;
+    color: var(--text-color);
     font-weight: 400;
     font: 14px/20px 'Montserrat', sans-serif;;
     -webkit-font-smoothing: antialiased;
