@@ -18,7 +18,7 @@ function start {
 	echo "DC_FLAG: $DC_FLAG"
 
 	if [[ "$1" == 'prod' ]]; then
-		if [[ ! -f ~/dshbrd_prod.db ]]; then
+		if [[ ! -f /profils/nmaltsev/dshbrd_prod.db ]]; then
 			cp ./dashboard/dshbrd.db ~/dshbrd_prod.db
 			echo "DB created"
 		fi
