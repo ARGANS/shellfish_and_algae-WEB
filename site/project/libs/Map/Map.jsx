@@ -23,6 +23,10 @@ const files = [
 ];
 
 function getValueFromGeoRasterLayer(layer, leafletPoint) {
+	if (!layer.extent) {
+		// layer.extent provides by georaster-layer-for-leaflet v3.8.0
+		console.warn('Please use georaster-layer-for-leaflet v3.8.0');
+	}
 	const NWtoPoint_y = layer.ymax - leafletPoint.lat; 
 	const NWtoPoint_x = leafletPoint.lng - layer.xmin; 
 	const dy = NWtoPoint_y * ( layer.height / layer.extent.height)
@@ -71,13 +75,9 @@ export default function Map(props) {
 					if (!layer.hasOwnProperty(LAYER_FLAG)) return;
 					const layerBounds = layer.getBounds();
 					if (!layerBounds.contains(selectedGeoPoint)) return;
-					console.log('DEBUG');
-					console.dir([layer, selectedGeoPoint]);
-
-				
+					
 					const value = getValueFromGeoRasterLayer(layer, selectedGeoPoint);
-					console.log('Value %s', value);
-
+					
 					if (!value) return;
 					_popup
 						.setLatLng(selectedGeoPoint)
