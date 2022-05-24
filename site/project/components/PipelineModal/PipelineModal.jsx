@@ -245,7 +245,7 @@ export default function PipelineModal(props) {
             </p>            
             <p>
                 {!!state.postprocessing.completed && <>
-                    <button onClick={showMapHandler}>Map</button>&nbsp;
+                    <button className="btn __small btn-primary" onClick={showMapHandler}>Map</button>&nbsp;
                     <a  title={props.model.destination_postprocessing_path}
                         href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
                         download={props.model.metadata.name + '_images'}

@@ -71,6 +71,8 @@ export default function Map(props) {
 					if (!layer.hasOwnProperty(LAYER_FLAG)) return;
 					const layerBounds = layer.getBounds();
 					if (!layerBounds.contains(selectedGeoPoint)) return;
+					console.log('DEBUG');
+					console.dir(layer, selectedGeoPoint);
 
 				
 					const value = getValueFromGeoRasterLayer(layer, selectedGeoPoint);
