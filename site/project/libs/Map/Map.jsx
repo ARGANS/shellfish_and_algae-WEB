@@ -72,10 +72,12 @@ export default function Map(props) {
 					const layerBounds = layer.getBounds();
 					if (!layerBounds.contains(selectedGeoPoint)) return;
 					console.log('DEBUG');
-					console.dir(layer, selectedGeoPoint);
+					console.dir([layer, selectedGeoPoint]);
 
 				
 					const value = getValueFromGeoRasterLayer(layer, selectedGeoPoint);
+					console.log('Value %s', value);
+
 					if (!value) return;
 					_popup
 						.setLatLng(selectedGeoPoint)
