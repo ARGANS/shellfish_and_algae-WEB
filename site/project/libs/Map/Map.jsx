@@ -26,6 +26,8 @@ function getValueFromGeoRasterLayer(layer, leafletPoint) {
 	if (!layer.extent) {
 		// layer.extent provides by georaster-layer-for-leaflet v3.8.0
 		console.warn('Please use georaster-layer-for-leaflet v3.8.0');
+		// layer.height - px
+		// layer.extent.height - deg
 	}
 	const NWtoPoint_y = layer.ymax - leafletPoint.lat; 
 	const NWtoPoint_x = leafletPoint.lng - layer.xmin; 
