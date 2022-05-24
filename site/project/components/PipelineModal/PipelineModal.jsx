@@ -228,7 +228,11 @@ export default function PipelineModal(props) {
                     <a  title={props.model.destination_dataread_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
                         download={props.model.metadata.name + '_files'}
-                    >Download assets</a>&nbsp;
+                    >Download assets</a>,&nbsp;
+                    <a  title={props.model.destination_postprocessing_path}
+                        href={'/api/v2/file?path=' + props.model.destination_dataread_path + '/error.txt'}
+                        download={props.model.metadata.name + '_dataread_warnings'}
+                    >Download list of warnings</a>,&nbsp;
                     <button className="btn __small btn-secondary" onClick={removeDataReadResults}>Delete</button>
                 </>}
             </p>
@@ -245,7 +249,11 @@ export default function PipelineModal(props) {
                     <a  title={props.model.destination_postprocessing_path}
                         href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
                         download={props.model.metadata.name + '_images'}
-                    >Download assets</a>&nbsp;
+                    >Download assets</a>,&nbsp;
+                    <a  title={props.model.destination_postprocessing_path}
+                        href={'/api/v2/file?path=' + props.model.destination_postprocessing_path + '/error.txt'}
+                        download={props.model.metadata.name + '_postprocessing_warnings'}
+                    >Download list of warnings</a>,&nbsp;
                     <button className="btn __small btn-secondary" onClick={removePostprocessingResults}>Delete</button>
                 </>}
             </p>
