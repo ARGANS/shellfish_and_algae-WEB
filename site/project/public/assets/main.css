@@ -90,8 +90,7 @@ details[open] > summary::before {
 	line-height: 1.6rem;
     font-size: 0.9rem;
 	height: auto;
-	padding: 0.2rem 1rem;
-    box-sizing: border-box;
+	box-sizing: border-box;
 	outline: none;
 }
 .btn {
@@ -105,6 +104,11 @@ details[open] > summary::before {
 }
 .btn:active {
 	outline: none;
+}
+.btn.__small {
+	padding: .5rem .4rem;
+	line-height: 1rem;
+    font-size: 1rem;
 }
 .btn.btn-primary {
 	background-color: #3076df;

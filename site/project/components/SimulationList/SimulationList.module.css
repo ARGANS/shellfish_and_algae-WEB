@@ -6,12 +6,15 @@
 	grid-template-areas: "area1" "area2";
     width: 100%;
     height: 100%;
+    padding: 0.5rem 0 0 0;
+    box-sizing: border-box;
 }
 
 .header {grid-area: area1;}
 .body {
     grid-area: area2;
     position: relative;
+    max-width: 600px;
 }
 .body_inner {
     position: absolute;

@@ -9,9 +9,24 @@
 }
 .header h3 {
     font-size: 1rem;
-    line-height: 1.2rem;
+    /* line-height: 1.2rem; */
     margin: 0;
 }
 .body {
     padding: 0.5rem;
+}
+.closeBtn {
+    border: none;
+    padding: 0;
+}
+.closeBtn > svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    --btn-color: #ACB6C3; 
+}
+
+.closeBtn:hover > svg,
+.closeBtn:focus > svg {
+    --btn-color: #fff;
 }

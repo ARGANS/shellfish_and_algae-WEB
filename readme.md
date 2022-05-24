@@ -12,3 +12,5 @@ export DC_PATH='~/docker-compose'
 
 ## Application hostname 
 https://213.166.43.12/
+https://213-166-43-12.sslip.io/
+https://aqua-d5a62b0c.nip.io

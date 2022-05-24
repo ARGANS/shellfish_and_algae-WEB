@@ -201,51 +201,52 @@ export default function PipelineModal(props) {
 
     return <div className={S.root}>
         {!!state.data_import && <>
-            <h3>#1 Dataset</h3>
+            <p>To get the simulation results, you need to complete three steps.</p>
+            <h3>#1 Import the dataset</h3>
             <p>
-                <span>{typeDataImportStatus(state.data_import)}</span> 
-                {state.data_import.not_started && <button onClick={startDataImportTaskHandler}>Start task</button>}
+                <span>{typeDataImportStatus(state.data_import)}</span> &nbsp;
+                {state.data_import.not_started && <button className="btn __small btn-primary" onClick={startDataImportTaskHandler}>Start task</button>}
             </p>
             <p>
                 {!!state.data_import.completed && <>
                     <a  title={props.model.destination_dataimport_path}
                         href={'/api/v2/archive?path=' + props.model.destination_dataimport_path}
                         download={props.model.metadata.name + '_dataset'}
-                    >Download assets</a>
-                    <button onClick={removeDataImportResults}>Delete</button>
+                    >Download assets</a>&nbsp;
+                    <button className="btn __small btn-secondary" onClick={removeDataImportResults}>Delete</button>
                 </>}
             </p>
         </>}
         {!!state.data_read && <>
-            <h3>#2 Processed data</h3>
+            <h3>#2 Run a simulation of the model</h3>
             <p>
-                <span>{typeDataReadStatus(state.data_read)}</span> 
-                {state.data_read.not_started && state.data_import.completed && <button onClick={startDataReadTaskHandler}>Start task</button>}
+                <span>{typeDataReadStatus(state.data_read)}</span>&nbsp;
+                {state.data_read.not_started && state.data_import.completed && <button className="btn __small btn-primary" onClick={startDataReadTaskHandler}>Start task</button>}
             </p>            
             <p>
                 {!!state.data_read.completed && <>
                     <a  title={props.model.destination_dataread_path}
-                    href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
+                        href={'/api/v2/archive?path=' + props.model.destination_dataread_path}
                         download={props.model.metadata.name + '_files'}
-                    >Download assets</a>
-                    <button onClick={removeDataReadResults}>Delete</button>
+                    >Download assets</a>&nbsp;
+                    <button className="btn __small btn-secondary" onClick={removeDataReadResults}>Delete</button>
                 </>}
             </p>
         </>}
         {!!state.postprocessing && <>
-            <h3>#3 Post-processing</h3>
+            <h3>#3 Generate GeoTIFF files</h3>
             <p>
-                <span>{typeDataReadStatus(state.postprocessing)}</span> 
-                {state.postprocessing.not_started && state.data_read.completed && <button onClick={startPostprocessingTaskHandler}>Start task</button>}
+                <span>{typeDataReadStatus(state.postprocessing)}</span>&nbsp;
+                {state.postprocessing.not_started && state.data_read.completed && <button className="btn __small btn-primary" onClick={startPostprocessingTaskHandler}>Start task</button>}
             </p>            
             <p>
                 {!!state.postprocessing.completed && <>
-                    <button onClick={showMapHandler}>Map</button>
+                    <button onClick={showMapHandler}>Map</button>&nbsp;
                     <a  title={props.model.destination_postprocessing_path}
                         href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
                         download={props.model.metadata.name + '_images'}
-                    >Download assets</a>
-                    <button onClick={removePostprocessingResults}>Delete</button>
+                    >Download assets</a>&nbsp;
+                    <button className="btn __small btn-secondary" onClick={removePostprocessingResults}>Delete</button>
                 </>}
             </p>
         </>}
