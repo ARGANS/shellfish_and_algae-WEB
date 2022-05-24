@@ -140,12 +140,11 @@ function ModelProperties(props) {
             value={model_data.zone_id[zone_name]}
         >{zone_name}</option>)}</select>
 
-        <span></span>
+        <label>Dataset properties</label>
         <div className={S.metadata_list}>
             <label>Depth min</label>
             <label>Depth max</label>
             <label>Year</label>
-            {/* TODO min & max values, step? */}
             <input 
                 type="number" 
                 name="depth_min" 
@@ -221,7 +220,7 @@ function ModelProperties(props) {
                                             data-prop={secPropId}
                                             onChange={onChangeHandler}
                                         />
-                                        {paramMesure && <span className="flex-size-own">{paramMesure}</span> }
+                                        {paramMesure && <span className={S.mes_offset + ' ' + 'flex-size-own'}>{paramMesure}</span> }
                                     </div>
                                 </label>
                             })}
@@ -241,11 +240,10 @@ function ModelProperties(props) {
                 </fieldset>
             </>)
         })}
-        <button type="submit" className={'btn ' + S.submit}>Submit</button>
+        {props.children}
     </form>
 }
 
-// export default ModelProperties
 export default memo(ModelProperties, (props, nextProps) => {
     if (DEBUG_RENDER) {
         console.log('Rerender');

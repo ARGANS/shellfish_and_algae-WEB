@@ -62,3 +62,12 @@
 .list_header1 {
     padding-right: 1rem;
 }
+
+.formBtns {
+    background-color: #eee;
+    position: sticky;
+    bottom: 0;
+    padding: .5rem 0 .5rem 0;
+    grid-column: 1/span 2;
+    border-top: 1px solid #bbb;
+}

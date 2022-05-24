@@ -47,7 +47,6 @@
     margin: 0;
 }
 
-.submit {
-    position: sticky;
-    bottom: 0;
+.mes_offset {
+    margin: 0 0 0 0.5rem;
 }

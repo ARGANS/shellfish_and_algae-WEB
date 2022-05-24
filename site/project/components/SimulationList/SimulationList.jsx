@@ -145,6 +145,11 @@ export default function ModelList(props) {
             })
     }, [debouncedValue])
 
+    const onFormResetHandler = useCallback((e) => {
+        e.preventDefault();
+        showList();
+    })
+
     return <div className={S.root}>
         {model === null ? ( <>
             <div className={S.header}>
@@ -201,9 +206,12 @@ export default function ModelList(props) {
                     disabled={user && model.owner_id !== user.id}
                     parameters={props.model_parameters}
                     onSubmit={handleModelSubmit}
-                />	
-            
-                <button className="btn __secondary" onClick={showList}>[X]</button>
+                >
+                    <div className={S.formBtns}>
+                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button className="btn btn-secondary" onClick={onFormResetHandler}>Go back to the list</button>
+                    </div>
+                </ModelProperties>	
             </div>
         </div>) 
         }

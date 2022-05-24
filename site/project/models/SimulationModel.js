@@ -63,8 +63,9 @@ export default class SimulationModel {
                 date: DateZ.from().DDMMYYYY('-'),    
             },
             depth_min: 0,
-            depth_max: 0,
-            year: new Date().getFullYear()
+            depth_max: 20,
+            // year: new Date().getFullYear()
+            year: 2021
         }
     }
 
