@@ -28,7 +28,8 @@ function docker_logs {
 }
 
 function docker_down {
-	sh -c "${COMPOSE_CMD} $1 --env-file=$2 down --remove-orphans"
+	# `-v` removes all volumes attached
+	sh -c "${COMPOSE_CMD} $1 --env-file=$2 down --remove-orphans -v"
 }
 
 function compose_config {

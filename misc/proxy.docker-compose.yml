@@ -28,3 +28,17 @@ networks:
 
 volumes:
   site_out:
+
+# TODO Try using similar settings so that the application network does not interfere with the adwiseeo network
+# networks:
+#   <network name>:
+#     ipam:
+#       config:
+#         - subnet: 172.22.0.0/24
+
+# services:
+#   <service name>:
+#     container_name: ...
+#     networks:
+#       <network name>:
+#         ipv4_address: 172.22.0.2

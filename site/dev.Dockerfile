@@ -24,6 +24,10 @@ COPY ./project/package.json ./
 ## Serve is an optional dependency
 RUN npm install --production --silent --also=dev
 
+# The `npm install` command does not update already installed packages. 
+# This might be needed if node_modules is on a docker volume so it needs to be updated
+RUN npm update
+
 COPY ./project/. ./
 COPY ./build.sh ./
 

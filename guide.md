@@ -9,6 +9,10 @@ List of virtual machines that we use:
 - VM10 10.27.54.10 - used to host the web application
 - VM11 10.27.54.11 - used to execute tasks in containers
 
+
+![map](misc/images/map.png?raw=true "Map")
+![ui](misc/images/UI.png?raw=true "UI")
+
 -----------------------------------------------------------------------------
 
 ## Web Application
@@ -55,6 +59,7 @@ login: site_admin
 password: Aquaculture.2022
 2. Fill out the form at https://213.166.43.12/api/v1/admin/users/
 
+![users](misc/images/users.png?raw=true "Users")
 
 -----------------------------------------------------------------------------
 
