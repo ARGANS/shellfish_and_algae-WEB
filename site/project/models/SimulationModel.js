@@ -58,7 +58,7 @@ export default class SimulationModel {
             zone: initData.zones[0],
             _suggested: {
                 login: remove_spaces(login),
-                species: 'Alaria',
+                species: 'alaria',
                 zone: remove_spaces(initData.zones[0]),
                 date: DateZ.from().DDMMYYYY('-'),    
             },

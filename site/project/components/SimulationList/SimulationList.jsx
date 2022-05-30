@@ -63,7 +63,7 @@ export default function ModelList(props) {
         const model = findModel(event, models);
         if (!model) return;
 
-        downloadFileFromText(model.metadata.name + '.json', models[index].export(true))
+        downloadFileFromText(model.metadata.name + '.json', model.export(true))
     }, [models]);
 
     const onDeleteHandler = useCallback(async event => {
