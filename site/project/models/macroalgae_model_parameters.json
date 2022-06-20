@@ -34,10 +34,10 @@
                 "description": "long blabla",
                 "parameters": {
                     "mu"      : 0.18,
-                    "V_NH4"   : 100,
-                    "V_NO3"   : 200,
-                    "K_NH4"   : 11,
-                    "K_NO3"   : 200,
+                    "V_NH4"   : 5,
+                    "V_NO3"   : 2.5,
+                    "K_NH4"   : 165,
+                    "K_NO3"   : 75,
                     "Q_max"   : 22,
                     "Q_min"   : 10,
                     "N_to_P"  : 12,
@@ -151,11 +151,9 @@
         "section_name": "Harvesting process",
         "section_description": "blabla",
         "parameters_descriptions": {
-            "harvest_first"     : ["days from start of run to first harvest"                , "days"],
-            "harvest_freq"      : ["days bewteen first harvest and subsequent harvests"     , "days"],
-            "harvest_fraction"  : ["fraction of total biomass to harvest at each harvest"   , ""],
-            "deployment_day"    : ["days from start of run to deployment of seaweed"        , "days"],
-            "deployment_Nf"     : ["amount of seaweed deployed"                             , "mg fixed N per m3"]
+            "deployment_Nf"     : ["amount of seaweed deployed"                                    , "mg fixed N per m3"],
+            "deployment_month"  : ["deployment month (number 1-12), deployed on the first day"     , ""],
+            "harvesting_month"  : ["harvesting month (number 1-12), harvested on the last day"     , ""] 
         },
         "options_descriptions": {},
         "defaults": {
@@ -163,23 +161,19 @@
                 "name": "Winter growth",
                 "description": "long blabla",
                 "parameters":{
-                    "deployment_day"    : 280,
-                    "harvest_first"     : 520,
-                    "harvest_freq"      : 1000,
-                    "harvest_fraction"  : 1,
-                    "deployment_Nf"     : 1000
+                    "deployment_Nf"     : 1000,
+                    "deployment_month"  : 10,
+                    "harvesting_month"  : 6
                 },
                 "options": {}
             },
-            "CCA":{
-                "name": "CCA",
+            "Summer_growth":{
+                "name": "Winter growth",
                 "description": "long blabla",
                 "parameters":{
-                    "deployment_day"    : 2,
-                    "harvest_first"     : 65,
-                    "harvest_freq"      : 50,
-                    "harvest_fraction"  : 0.75,
-                    "deployment_Nf"     : 10000
+                    "deployment_Nf"     : 1000,
+                    "deployment_month"  : 3,
+                    "harvesting_month"  : 9
                 },
                 "options": {}
             }
@@ -194,17 +188,9 @@
             "max_lon"     : ["Maximum longitude"                                     , "degrees east"],
             "min_lat"     : ["Minimum latitude"                                      , "degrees north"],
             "max_lat"     : ["Maximum latitude"                                      , "degrees north"],
-            "n_cores"     : ["Number of processing cores to use"                    , ""]
+            "n_cores"     : ["Number of processing cores to use"                     , ""]
         },
-        "options_descriptions": {
-            "harvest_method": ["no harvesting",
-                               "single winter deployment",
-                               "cut and come again"],
-            "light_scheme":   ["Zollman self-shading scheme",
-                               "Simple vertical light no self shading",
-                               "Solar angle light no self shading",
-                               "Selfshading with solar angle accounted for"]
-        },
+        "options_descriptions": {},
         "defaults": {
             "default": {
                 "name": "default",
@@ -216,10 +202,7 @@
                     "max_lat"             : 90,
                     "n_cores"             : 10
                 },
-                "options": {
-                    "harvest_method": 0,
-                    "light_scheme": 3
-                }
+                "options": {}
             }
         }
     }
