@@ -168,7 +168,7 @@
                 "options": {}
             },
             "Summer_growth":{
-                "name": "Winter growth",
+                "name": "Summer growth",
                 "description": "long blabla",
                 "parameters":{
                     "deployment_Nf"     : 1000,
