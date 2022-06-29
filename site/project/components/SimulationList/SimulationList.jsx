@@ -150,6 +150,8 @@ export default function ModelList(props) {
         showList();
     })
 
+    const isDisabled = user && model && model.owner_id !== user.id;
+    
     return <div className={S.root}>
         {model === null ? ( <>
             <div className={S.header}>
@@ -203,12 +205,12 @@ export default function ModelList(props) {
             <div className={S.formWrapperInner}>
                 <ModelProperties 
                     model={model}
-                    disabled={user && model.owner_id !== user.id}
+                    disabled={isDisabled}
                     parameters={props.model_parameters}
                     onSubmit={handleModelSubmit}
                 >
                     <div className={S.formBtns}>
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        {!isDisabled && <button type="submit" className="btn btn-primary">Submit</button>}
                         <button className="btn btn-secondary" onClick={onFormResetHandler}>Go back to the list</button>
                     </div>
                 </ModelProperties>	

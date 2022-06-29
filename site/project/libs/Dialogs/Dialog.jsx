@@ -24,5 +24,7 @@ export default function Dialog(props) {
 		tabIndex: 1,
 		onKeyDown: handleKeyPress,
 	};
-	return <dialog open {...dialogProps}>{props.children}</dialog>
+	return <dialog open {...dialogProps}>
+		<div className={S.inner}>{props.children}</div>
+	</dialog>
 }

@@ -70,4 +70,5 @@
     padding: .5rem 0 .5rem 0;
     grid-column: 1/span 2;
     border-top: 1px solid #bbb;
+    pointer-events: all;
 }

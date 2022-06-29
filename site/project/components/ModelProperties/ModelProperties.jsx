@@ -5,6 +5,7 @@ import S from './ModelProperties.module.css'
 import model_data from 'models/model_data';
 import SimulationModel from "models/SimulationModel";
 import { getDimension } from "utils/alg";
+import { classList } from "utils/strings";
 
 const {section_order: SECTION_ORDER} = model_data;
 
@@ -119,7 +120,10 @@ function ModelProperties(props) {
     // TODO fix form rerendering on change
     if (DEBUG_RENDER) console.log('RERENDER FORM %s', metadata.zone);
 
-    return <form class={S.root + (props.disabled ? ' ' + S.disabled : '')} onSubmit={onSubmitHandler}>
+    return <form 
+        className={classList(S.root, props.disabled && S.disabled)} 
+        onSubmit={onSubmitHandler}
+    >
         
         <label>Name</label>
         <input 
@@ -190,7 +194,7 @@ function ModelProperties(props) {
                                 <option key={secPropId} value={secPropId} title={secProp.description} selected={keys.indexOf(secPropId) > -1}>{secProp.name}</option>
                             ))
                         }</select>
-                    ) : sectionDefaults.map(([secPropId, secProp]) => (
+                    ) : (sectionDefaults || []).map(([secPropId, secProp]) => (
                         <span>{secProp.name}</span>
                     ))}
                     <p className={S.description}>{sectionData.section_description}</p>
@@ -223,20 +227,25 @@ function ModelProperties(props) {
                                         {paramMesure && <span className={S.mes_offset + ' ' + 'flex-size-own'}>{paramMesure}</span> }
                                     </div>
                                 </label>
-                            })}
-                            {propOptions.length > 0 && propOptions.map(([optionId, optionValue]) => {
-                                const options = sectionData.options_descriptions[optionId]
-                                return (<select 
-                                    defaultValue={optionValue}
-                                    data-section={sectionName}
-                                    data-prop={secPropId}
-                                    name={optionId}
-                                    onChange={onChangeHandler}
-                                >{options.map((optionLabel, index) => (
-                                    <option key={optionLabel} value={index}>{optionLabel}</option>
-                                ))}
-                                </select>)
-                            })}</fieldset>
+                            })
+                    }
+                    {
+                        propOptions.length > 0 && propOptions.map(([optionId, optionValue]) => {
+                            const options = sectionData.options_descriptions[optionId];
+                            if (!Array.isArray(options)) return null;
+
+                            return (<select 
+                                defaultValue={optionValue}
+                                data-section={sectionName}
+                                data-prop={secPropId}
+                                name={optionId}
+                                onChange={onChangeHandler}
+                            >{options.map((optionLabel, index) => (
+                                <option key={optionLabel} value={index}>{optionLabel}</option>
+                            ))}
+                            </select>)
+                        })
+                    }</fieldset>
                 </fieldset>
             </>)
         })}
