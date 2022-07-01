@@ -37,7 +37,7 @@ Necessary steps:
 curl -SL https://github.com/docker/compose/releases/download/v2.5.0/docker-compose-linux-x86_64 -o ~/docker-compose
 chmod +x ~/docker-compose
 ```
-1. You can upload the necessary source code to the VM using the command `./sync.sh `. This bash script loads the source codes into the `/profils/$USER/prj` directory on VM11.
+1. You can upload the necessary source code to the VM using the command `./sync.sh upload`. This bash script loads the source codes into the `/profils/$USER/prj` directory on VM10.
 2. You must connect via ssh to VM11 and go to the directory `/profils/$USER/prj`
 3. Next, you must specify the path to the actual docker-compose utility file and run the bash script:
 ``` SH
