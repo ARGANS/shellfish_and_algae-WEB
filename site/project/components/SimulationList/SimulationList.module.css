@@ -2,11 +2,11 @@
     display: grid;
     grid-template-columns: [col1] 1fr;
 	grid-template-rows: [row1] auto [row2] 1fr;
-	gap: 0.5rem;
+	/* gap: 0.5rem; */
+	gap: 1rem;
 	grid-template-areas: "area1" "area2";
     width: 100%;
     height: 100%;
-    padding: 0.5rem 0 0 0;
     box-sizing: border-box;
 }
 

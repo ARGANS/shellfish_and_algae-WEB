@@ -79,6 +79,9 @@ button {cursor:pointer; background: transparent;}
 .bflex-row.__content-center,
 .bcontainer.__content-center {justify-content: center;}
 
+.bflex-column{display:flex; background-color: yellowgreen;}
+.bflex-column{flex-direction:column;}
+
 .flex-size-own {flex:0 0 auto;}
 .flex-size-fill {flex:1 1 auto;}
 

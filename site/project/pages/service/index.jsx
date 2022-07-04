@@ -2,15 +2,14 @@ import Head from 'next/head'
 import s from './service_page.module.css'
 import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
-import model_parameters from 'models/macroalgae_model_parameters.json'
+import algae_parameters from 'models/macroalgae_model_parameters.json'
 import JobList from 'components/JobList/JobList';
 import "@fontsource/montserrat";
 import Sicon from 'libs/Sicon/Sicon';
+import Tabs from 'libs/Tabs/Tabs';
 
 export default function ServicePage(props) {
 	const title = 'Service';
-	console.log('[Service_props]');
-	console.dir(props);
 
 	return <>
 		<Head>
@@ -21,7 +20,11 @@ export default function ServicePage(props) {
 		</Head>
 		<main className={s.root}>
 			<div className={s.main}>
-				<SimulationList parameters={props.model_parameters}/>
+				<Tabs>
+					<SimulationList id="Algae" parameters={props.algae}/>
+					{/* <SimulationList id="Shellfish" parameters={props.shellfish}/>	 */}
+					<div id="Shellfish" parameters={props.shellfish}>TODO</div>
+				</Tabs>
 				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
 			<div className={s.sidebar}>
@@ -45,6 +48,9 @@ export default function ServicePage(props) {
 
 export async function getStaticProps(context) {
 	return {
-		props: {model_parameters,},
+		props: {
+			algae: algae_parameters,
+			shellfish: {},
+		},
 	}
 }
