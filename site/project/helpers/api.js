@@ -19,6 +19,8 @@ const JSON_HEADERS = {
 };
 
 export function getModels$() {
+    // TODO specify the type of properties
+    // https://localhost:4443/api/v1/data/models?filter_property=properties.metadata.zone&filter_value=IBI
     return fetch(API_PREFIX + '/data/models', {
         method: 'GET',
         headers: JSON_HEADERS
