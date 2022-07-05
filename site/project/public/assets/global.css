@@ -1,13 +1,16 @@
+/* v1 2022/07/05 */
+
 /* NORMALIZATION */
-body {margin:0;-webkit-font-smoothing: antialiased;}
-abbr {font-weight:bold;cursor:help;}
-img {max-width:100%;}
-ul {list-style:none;margin:0;padding:0;}
-table {border-spacing:0;border-collapse:collapse;box-sizing:border-box;}
-table td {vertical-align: top;}
-li {padding:0;}
-dl {margin:0;}
+body{margin:0;-webkit-font-smoothing: antialiased;}
+abbr{font-weight:bold;cursor:help;}
+img{max-width:100%;}
+ul{list-style:none;}
+table{border-spacing:0;border-collapse:collapse;box-sizing:border-box;}
+table td{vertical-align: top;}
+li,legend,fieldset,ul{padding:0;}
+dl,fieldset,ul{margin:0;}
 button {cursor:pointer; background: transparent;}
+fieldset{border: none;}
 
 
 
@@ -49,9 +52,7 @@ button {cursor:pointer; background: transparent;}
 
 
 
-/*
-	Containers
-*/
+/* Containers */
 .bcontainer {
 	display: flow-root;
 	width: 100%;
@@ -65,11 +66,15 @@ button {cursor:pointer; background: transparent;}
 .bcontainer.__wide {
 	--bcontainer-max-width: 100%;
 }
+/* DISPLAY: FLEX */
 .bcontainer.__flex-row,
 .bflex-row,
+.bflex-column,
 .bcentered{display:flex;}
-
+/* FLEX-DIRECTION */
 .bcontainer.__flex-row{flex-direction:row;}
+.bflex-column{flex-direction:column;}
+
 .bcentered,
 .bflex-row.__items-center,
 .bcontainer.__items-center {justify-items: center;}
@@ -79,16 +84,12 @@ button {cursor:pointer; background: transparent;}
 .bflex-row.__content-center,
 .bcontainer.__content-center {justify-content: center;}
 
-.bflex-column{display:flex; background-color: yellowgreen;}
-.bflex-column{flex-direction:column;}
 
 .flex-size-own {flex:0 0 auto;}
 .flex-size-fill {flex:1 1 auto;}
 
 
-/*
-	Offesets
-*/
+/* Offesets */
 .bsector-a {padding-bottom: 4rem;}
 .bsector-a:first-child {padding-top: 4rem;}
 
@@ -145,11 +146,3 @@ button {cursor:pointer; background: transparent;}
 .if_wsxga {display: var(--visible_gr-1680);}
 .in-col_gr-then-992 {flex-direction: var(--col-direction_gr-992);}
 .in-col_gr-then-992 > div + div {margin: var(--col-direction_margin)}
-
-/* For Aquaculture */
-fieldset {
-	border: none;
-	padding: 0;
-	margin: 0;
-}
-legend {padding: 0;}
