@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useState } from "react"
-import model_parameters from 'models/macroalgae_model_parameters.json'
+// ???
+// import model_parameters from 'models/macroalgae_model_parameters.json'
 import { cloneObject, dset } from "../../utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'models/model_data';
@@ -29,15 +30,15 @@ const DEBUG_RENDER = false;
  * @returns 
  */
 function ModelProperties(props) {
-    const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(model_parameters));
+    const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(props.parameters));
     const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data, props.model?.owner_name));
     const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
         const {dataset} = $select;
-        const {options, parameters} = model_parameters[dataset?.section].defaults[$select.value];
+        const {options, parameters} = props.parameters[dataset?.section].defaults[$select.value];
 
-        console.log('[onSectionChange] section:%s val: %s', dataset?.section, $select.value);
-        console.dir(model_parameters[dataset?.section])
+        // console.log('[onSectionChange] section:%s val: %s', dataset?.section, $select.value);
+        // console.dir(props.parameters[dataset?.section])
         
         setState(_state => {
             return {
@@ -108,7 +109,7 @@ function ModelProperties(props) {
         }))
     }, [])
 
-    const sectionOrder = Object.keys(model_parameters)
+    const sectionOrder = Object.keys(props.parameters)
         .sort((section_name1, section_name2) => 
             (SECTION_ORDER[section_name1] || 0) > (SECTION_ORDER[section_name2] || 0) 
                 ? 1
@@ -173,7 +174,7 @@ function ModelProperties(props) {
         </div>
         
         {sectionOrder.map(sectionName => {
-            const sectionData = model_parameters[sectionName];
+            const sectionData = props.parameters[sectionName];
             const sectionDefaults = Object.entries(sectionData.defaults);
             const keys = Object.keys(state[sectionName]);
             const secPropId = keys[0];

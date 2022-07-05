@@ -3,6 +3,7 @@ import s from './service_page.module.css'
 import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
 import algae_parameters from 'models/macroalgae_model_parameters.json'
+import shellfish_parameters from 'models/shellfish_model_parameters.json'
 import JobList from 'components/JobList/JobList';
 import "@fontsource/montserrat";
 import Sicon from 'libs/Sicon/Sicon';
@@ -22,8 +23,7 @@ export default function ServicePage(props) {
 			<div className={s.main}>
 				<Tabs>
 					<SimulationList id="Algae" parameters={props.algae}/>
-					{/* <SimulationList id="Shellfish" parameters={props.shellfish}/>	 */}
-					<div id="Shellfish" parameters={props.shellfish}>TODO</div>
+					<SimulationList id="Shellfish" parameters={props.shellfish}/>	
 				</Tabs>
 				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
@@ -50,7 +50,7 @@ export async function getStaticProps(context) {
 	return {
 		props: {
 			algae: algae_parameters,
-			shellfish: {},
+			shellfish: shellfish_parameters,
 		},
 	}
 }

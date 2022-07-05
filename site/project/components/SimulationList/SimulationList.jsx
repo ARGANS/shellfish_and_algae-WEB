@@ -104,6 +104,8 @@ export default function ModelList(props) {
     }, [models]);
 
     useEffect(() => {
+        console.log('SimulationList');
+        console.dir(props);
         getActiveUser$().
             then(user_data => {
                 if (!user_data) {
@@ -206,7 +208,7 @@ export default function ModelList(props) {
                 <ModelProperties 
                     model={model}
                     disabled={isDisabled}
-                    parameters={props.model_parameters}
+                    parameters={props.parameters}
                     onSubmit={handleModelSubmit}
                 >
                     <div className={S.formBtns}>
