@@ -9,11 +9,13 @@ export default class SimulationModel {
     id = null;
     owner_id = null;
     owner_name = null;
+    type = null;
 
-    constructor(id, owner_id, owner_name) {
+    constructor(id, owner_id, owner_name, type_s) {
         this.id = id;
         this.owner_id = owner_id;
         this.owner_name = owner_name;
+        this.type = type_s;
     }
 
     init(parameters, metadata) {
@@ -25,7 +27,8 @@ export default class SimulationModel {
     get body() {
         return {
             parameters: this.atbd_parameters,
-            metadata: this.metadata
+            metadata: this.metadata,
+            type: this.type,
         }
     }
 
@@ -104,8 +107,8 @@ export default class SimulationModel {
             : addModel$(this.body);
     }
 
-    static fromJSON({id, user_id, user_name, properties : {parameters, metadata}}) {
-        return new SimulationModel(id, user_id, user_name)
+    static fromJSON({id, user_id, user_name, properties : {parameters, metadata, type}}) {
+        return new SimulationModel(id, user_id, user_name, type)
             .init(parameters, metadata);
     }
 }

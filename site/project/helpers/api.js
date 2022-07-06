@@ -18,10 +18,8 @@ const JSON_HEADERS = {
     'Content-Type': 'application/json'
 };
 
-export function getModels$() {
-    // TODO specify the type of properties
-    // https://localhost:4443/api/v1/data/models?filter_property=properties.metadata.zone&filter_value=IBI
-    return fetch(API_PREFIX + '/data/models', {
+export function getModels$(type_s) {
+    return fetch(API_PREFIX + '/data/models' + (type_s ? '?filter_property=properties.type&filter_value=' + type_s : ''), {
         method: 'GET',
         headers: JSON_HEADERS
     })

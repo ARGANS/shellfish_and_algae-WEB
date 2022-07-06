@@ -20,9 +20,7 @@ export default function Tabs(props) {
             />))
         }</ul>
         <div className={classList('flex-size-fill', S.outlet)}>
-            { Array.isArray(props.children) && props.children.map((TabContent, i ) => {
-                console.log('TabContent');
-                console.dir(TabContent);
+            { Array.isArray(props.children) && props.children.map((TabContent) => {
                 return activeTab === TabContent.props.id && TabContent;
             })}
         </div>

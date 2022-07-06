@@ -30,7 +30,7 @@ export default function ModelList(props) {
     const [user, setUser] = useState(null);
 
     const createModel = useCallback(() => {
-        setModel(new SimulationModel(null, user?.id, user?.username))
+        setModel(new SimulationModel(null, user?.id, user?.username, props.id))
     }, [setModel, user])
 
     const showList = useCallback(() => {
@@ -104,7 +104,7 @@ export default function ModelList(props) {
     }, [models]);
 
     useEffect(() => {
-        console.log('SimulationList');
+        console.log('SimulationList %s', props.id);
         console.dir(props);
         getActiveUser$().
             then(user_data => {
@@ -132,7 +132,8 @@ export default function ModelList(props) {
     }, [])
 
     useEffect(() => {
-        getModels$()
+        const typeId_s = props.id;
+        getModels$(typeId_s)
             .then((_models) => {
                 if (DEBUG_POLLING) console.log('[getModels$]')
                 setModels(_ => _models
