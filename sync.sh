@@ -22,9 +22,18 @@ function action__dump {
     sqlite3 $destination/dshbrd_prod.db .schema > ./dshbrd_prod.schema.sql
 }
 
+function action__copy {
+    local destination='/tmp/db_backup'
+    mkdir -p $destination
+    rm -rf $destination/*
+    scp $USER@$HOST_WEB:/profils/$USER/dshbrd_prod.db $destination
+}
+
+
 function help {
     echo './sync.sh upload'
     echo './sync.sh dump'
+    echo './sync.sh copy'
 }
 
 case $1 in
@@ -32,6 +41,8 @@ case $1 in
 		action__upload_sources;;
 	'dump')
 		action__dump;;
+	'copy')
+		action__copy;;
 	*)
 	help;;
 esac

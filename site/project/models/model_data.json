@@ -1,6 +1,6 @@
 {
     "zones": [
-        "Artic",
+        "Arctic",
         "Baltic sea",
         "North West Shelf",
         "Ireland-Biscay-Iberia",
@@ -8,7 +8,7 @@
         "Black sea"
     ],
     "zone_id": {
-        "Artic": "Arctic",
+        "Arctic": "Arctic",
         "Baltic sea": "Baltic",
         "North West Shelf": "NWS",
         "Ireland-Biscay-Iberia": "IBI",

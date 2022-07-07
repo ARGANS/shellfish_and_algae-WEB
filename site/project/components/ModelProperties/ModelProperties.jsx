@@ -31,7 +31,14 @@ const DEBUG_RENDER = false;
  */
 function ModelProperties(props) {
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(props.parameters));
-    const [metadata, setMetadata] = useState(props.model?.metadata || SimulationModel.createDefaultMetadata(model_data, props.model?.owner_name));
+    const [metadata, setMetadata] = useState(
+        props.model?.metadata 
+        || SimulationModel.createDefaultMetadata(
+            model_data.zone_id['Arctic'], 
+            props.model?.owner_name,
+            props.model?.type == 'Algae' ? 'alaria' : 'C_gigas' 
+        )
+    );
     const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
         const {dataset} = $select;

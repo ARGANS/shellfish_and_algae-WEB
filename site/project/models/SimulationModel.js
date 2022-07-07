@@ -15,7 +15,7 @@ export default class SimulationModel {
         this.id = id;
         this.owner_id = owner_id;
         this.owner_name = owner_name;
-        this.type = type_s;
+        this.type = type_s; // Algae | Shellfish
     }
 
     init(parameters, metadata) {
@@ -55,14 +55,14 @@ export default class SimulationModel {
             }, {});
     }
 
-    static createDefaultMetadata(initData, login) {
+    static createDefaultMetadata(defaultZone, login, defaultSpecies) {
         return {
             name: '',
-            zone: initData.zones[0],
+            zone: defaultZone,
             _suggested: {
                 login: remove_spaces(login),
-                species: 'alaria',
-                zone: remove_spaces(initData.zones[0]),
+                species: defaultSpecies, 
+                zone: remove_spaces(defaultZone),
                 date: DateZ.from().DDMMYYYY('-'),    
             },
             depth_min: 0,
