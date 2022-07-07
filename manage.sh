@@ -81,8 +81,8 @@ function help {
 	echo """Commands:
 'manage.sh help' - to see this help	
 'manage.sh connect [dev|prod]'
-'manage.sh config [dev|prod]- to see the dcoker-compose config'
-'manage.sh up [dev|prod]' - to start the applications
+'manage.sh config [dev|prod|sim]- to see the dcoker-compose config'
+'manage.sh up [dev|prod|sim]' - to start the applications
 'manage.sh down [dev|prod]' - to stop the applications
 'manage.sh ps [dev|prod]'
 'manage.sh logs [dev|prod]'
