@@ -7,6 +7,8 @@ function get_env_path {
 	local STAGE
 	if [[ "$1" == 'dev' ]]; then
 		STAGE='dev'
+	elif [[ "$1" == 'sim' ]]; then
+		STAGE='sim'
 	else 
 		STAGE='prod'
 	fi

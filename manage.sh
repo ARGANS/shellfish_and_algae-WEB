@@ -77,12 +77,29 @@ function config {
 	compose_config "$DC_FLAG" "$ENV_PATH"
 }
 
+function action_export {
+	# docker image prune -a
+
+	# network misc_ac_net
+	# volume misc_site_out
+	# volume misc_site_node_modules
+	# volume misc_site_next_dir
+
+	local destination='/home/nmaltsev/Documents/workspace/images'
+
+	for imageName in ac-proxy ac-site ac-dashboard; do
+	# do something like: echo $databaseName
+		local imageId=$(docker inspect --format='{{.Image}}' $imageName)
+		docker save -o $destination/$imageName.tar $imageId
+	done
+}
+
 function help {
 	echo """Commands:
 'manage.sh help' - to see this help	
 'manage.sh connect [dev|prod]'
-'manage.sh config [dev|prod]- to see the dcoker-compose config'
-'manage.sh up [dev|prod]' - to start the applications
+'manage.sh config [dev|prod|sim]- to see the dcoker-compose config'
+'manage.sh up [dev|prod|sim]' - to start the applications
 'manage.sh down [dev|prod]' - to stop the applications
 'manage.sh ps [dev|prod]'
 'manage.sh logs [dev|prod]'
@@ -104,6 +121,8 @@ case $1 in
 		connect;;
 	'config')
 		config $2;;
+	'export')
+		action_export;;
 	*)
 	help;;
 esac

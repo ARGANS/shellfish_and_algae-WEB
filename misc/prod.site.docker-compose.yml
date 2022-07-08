@@ -15,6 +15,7 @@ services:
       - site_out:/opt/app/out
     environment:
       - TODO=1
+    command: ./build.sh
 networks:
   ac_net:
 
