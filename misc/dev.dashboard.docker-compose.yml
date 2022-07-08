@@ -3,6 +3,7 @@ version: '3.9'
 services:
   acdashboard:
     container_name: ac-dashboard
+    image: ac-dashboard_app:latest
     stdin_open: true
     build:
       context: ../dashboard/

@@ -3,6 +3,7 @@ version: '3.9'
 services:
   acsite:
     container_name: ac-site
+    image: ac-site_app:latest
     stdin_open: true
     build:
       context: ../site/

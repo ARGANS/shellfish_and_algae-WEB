@@ -3,6 +3,7 @@ version: '3.9'
 services:
   acproxy:
     container_name: ac-proxy
+    image: ac-proxy_app:latest
     stdin_open: true
     build:
       context: ../
