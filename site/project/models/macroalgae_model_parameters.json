@@ -162,8 +162,8 @@
                 "description": "long blabla",
                 "parameters":{
                     "deployment_Nf"     : 1000,
-                    "deployment_month"  : 10,
-                    "harvesting_month"  : 6
+                    "deployment_month"  : 9,
+                    "harvesting_month"  : 4
                 },
                 "options": {}
             },
@@ -184,6 +184,9 @@
         "section_name": "Simulation options",
         "section_description": "blabla",
         "parameters_descriptions": {
+            "K_d490"         : ["Kd(490)"                                               , "m-1"],
+            "Von_Karman"  : ["Von Kármán constant"                                   , ""],
+            "Detritus"    : ["Background detritus concentration"                     , "mg N per m^3"],
             "min_lon"     : ["Minimum longitude"                                     , "degrees east"],
             "max_lon"     : ["Maximum longitude"                                     , "degrees east"],
             "min_lat"     : ["Minimum latitude"                                      , "degrees north"],
@@ -196,6 +199,9 @@
                 "name": "default",
                 "description": "long blabla",
                 "parameters": {
+                    "K_d490"                 : 0.1,
+                    "Von_Karman"          : 0.4,
+                    "Detritus"            : 0.1,
                     "min_lon"             : -180,
                     "max_lon"             : 180,
                     "min_lat"             : -90,
