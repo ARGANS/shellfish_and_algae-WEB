@@ -25,7 +25,7 @@ services:
       - site_next_dir:/opt/app/.next
       - site_out:/opt/app/out
     environment:
-      - TODO=1
+      - DATASETS_LINK=${DATASETS_LINK}
 networks:
   ac_net:
 

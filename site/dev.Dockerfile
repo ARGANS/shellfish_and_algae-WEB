@@ -33,6 +33,8 @@ COPY ./build.sh ./
 
 RUN chmod +x ./build.sh
 
+# TODO upload csv file
+
 CMD ./build.sh && sh
 
 
