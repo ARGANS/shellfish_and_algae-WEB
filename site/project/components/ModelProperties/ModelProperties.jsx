@@ -7,6 +7,7 @@ import model_data from 'models/model_data';
 import SimulationModel from "models/SimulationModel";
 import { getDimension } from "utils/alg";
 import { classList } from "utils/strings";
+import DatasetForm from "components/DatasetForm/DatasetForm";
 
 const {section_order: SECTION_ORDER} = model_data;
 
@@ -178,6 +179,9 @@ function ModelProperties(props) {
                 value={metadata.year}
                 onChange={metaDataChangeHandler}
             />
+            <div className={S.metadataRow}>
+                <DatasetForm region={metadata.zone}/>
+            </div>
         </div>
         
         {sectionOrder.map(sectionName => {
