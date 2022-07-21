@@ -4,13 +4,4 @@ module.exports = {
       // your project has ESLint errors.
       ignoreDuringBuilds: true,
     },
-    // exportPathMap: async function (
-    //   defaultPathMap,
-    //   { dev, dir, outDir, distDir, buildId }
-    // ) {
-    //   return {
-    //     '/': { page: '/' },
-    //     // '/emails/email1': { page: '/emails/[pid]', query: { pid: 'email1' } },
-    //   }
-    // },
 }

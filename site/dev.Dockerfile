@@ -7,6 +7,7 @@ LABEL maintainer="NM <nmaltsev@argans.eu>" \
 
 EXPOSE 3000
 RUN apk add nano
+RUN apk add curl
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
@@ -30,10 +31,16 @@ RUN npm update
 
 COPY ./project/. ./
 COPY ./build.sh ./
+COPY ./download.sh ./
+COPY ./csv.js ./
+COPY ./list.js ./
 
 RUN chmod +x ./build.sh
+RUN chmod +x ./download.sh
 
-# TODO upload csv file
+# Downloading and parsing a csv file with datasets
+RUN ./download.sh > /opt/app/models/datasets.json
+
 
 CMD ./build.sh && sh
 

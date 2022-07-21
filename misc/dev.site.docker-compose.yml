@@ -26,6 +26,12 @@ services:
       - site_out:/opt/app/out
     environment:
       - DATASETS_LINK=${DATASETS_LINK}
+    entrypoint: ["/bin/sh","-c"]
+    command: 
+      - |
+        npm run build:prod
+        ./download.sh > /opt/app/models/datasets.json
+        sh
 networks:
   ac_net:
 

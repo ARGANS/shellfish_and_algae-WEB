@@ -16,7 +16,9 @@ services:
       - site_out:/opt/app/out
     environment:
       - DATASETS_LINK=${DATASETS_LINK}
-    command: ./build.sh
+    # DEPRECATED
+    # command: ./build.sh
+    command: npm run build:prod
 networks:
   ac_net:
 

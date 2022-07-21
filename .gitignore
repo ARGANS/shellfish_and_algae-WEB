@@ -1,3 +1,4 @@
 *.tgz
 dashboard/dshbrd.db
 log.txt
+site/project/models/datasets.json
