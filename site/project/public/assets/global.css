@@ -1,4 +1,4 @@
-/* v3 2022/07/22 */
+/* v4 2022/07/22 */
 
 /* NORMALIZATION */
 body{margin:0;-webkit-font-smoothing: antialiased;}
@@ -9,8 +9,8 @@ table{border-spacing:0;border-collapse:collapse;box-sizing:border-box;}
 table td{vertical-align: top;}
 li,legend,fieldset,ul{padding:0;}
 dl,fieldset,ul{margin:0;}
-button {cursor:pointer; background: transparent;}
-fieldset{border: none;}
+button{cursor:pointer;background:transparent;}
+fieldset{border:none;}
 
 
 
@@ -164,3 +164,5 @@ fieldset{border: none;}
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.noselect {user-select: none;}
