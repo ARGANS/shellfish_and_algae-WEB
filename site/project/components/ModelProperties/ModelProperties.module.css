@@ -4,6 +4,7 @@
 	grid-template-rows: 1fr;
 	gap: .5rem .5rem;
 	grid-template-areas: "area1" "area2";
+    padding: 0 1rem 0 0;
 }
 .disabled {
     pointer-events: none;

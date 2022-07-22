@@ -1,4 +1,4 @@
-/* v2 2022/07/21 */
+/* v3 2022/07/22 */
 
 /* NORMALIZATION */
 body{margin:0;-webkit-font-smoothing: antialiased;}
@@ -158,7 +158,8 @@ fieldset{border: none;}
     background: inherit;
     align-items: baseline;
 }
-.with-ellipsis > *:not(.without-ellipsis) {
+
+.with-ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
