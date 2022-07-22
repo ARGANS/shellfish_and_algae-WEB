@@ -10,7 +10,11 @@
 
 
 /* LINKS */
-a {color: var(--main-link-color); text-decoration: none; transition: color 0.2s ease;}
+.btn-link,
+a {color: var(--main-link-color); text-decoration: none; transition: color 0.2s ease;cursor: pointer;}
+.btn-link:hover,
+.btn-link:focus,
+.btn-link:active,
 a:hover,
 a:focus,
 a:active {text-decoration: underline; outline:none;}
