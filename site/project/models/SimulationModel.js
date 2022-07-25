@@ -68,7 +68,9 @@ export default class SimulationModel {
             depth_min: 0,
             depth_max: 20,
             // year: new Date().getFullYear()
-            year: 2021
+            year: 2021,
+            scenario: 'A',
+            datasets: {},
         }
     }
 

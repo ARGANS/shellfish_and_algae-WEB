@@ -12,18 +12,35 @@ function Link({value, className}) {
 }
 
 function DatasetList(props){
+    const [defaultDataset, setDefaultDataset] = useState({});
     const onClickHandler = useCallback(() => {
         props.activateParameter(props.isActive ? null : props.parameter)
     })
 
+    const onSelectHandler = useCallback(props.isActive ? (event) => {
+        const index = parseInt(event.target.dataset.index)
+
+        console.log('[onSelectHandler]');
+        console.dir([index, props.parameter, props.datasets[index], JSON.parse(JSON.stringify(props.datasets))]);
+
+        props.onChange(props.parameter, props.datasets[index]);
+    } : null)
+
     useEffect(() => {
-        console.log('[DatasetList]');
-        console.dir(props.datasets);
-    })
+        // console.log('[DatsetList] %s %s', props.parameter, JSON.stringify(props.selectedDataset));
+        // console.dir([
+        //     props.datasets,
+        //     props.datasets.filter((dataset) => JSON.stringify(dataset) !== JSON.stringify(defaultDataset))
+        // ])
+
+        const selectedDatasetReflection = JSON.stringify(props.selectedDataset);
+        const defaultDataset = props.datasets.find((dataset) => JSON.stringify(dataset) === selectedDatasetReflection) || {};
+        // The fact that defaultDataset is non-zero means that the number of options available is props.datasets - 1.
+
+        setDefaultDataset(defaultDataset)
+    }, [props.selectedDataset])
 
     if (props.datasets.length < 1) return null;
-    // TODO refactor
-    const defaultDataset = props.datasets[0];
     
     return (<>
         {RENDER_PPOPERTIES.map((propertyKey) => {
@@ -32,27 +49,8 @@ function DatasetList(props){
                 return <Link value={value} className={props.isActive && S.isActive}/>
             }
             else if (propertyKey === 'Parameter') {
-                return (<div title={value} className={props.isActive && S.isActive}>
-                    <div className="with-ellipsis">{value}</div>
-                    {/* To remove */}
-                    {/* {props.isActive && <div className={S.dropdown}>
-                        {headers.slice(1).map(header => <h5 key={header} className="with-ellipsis">{header}</h5>)}
-                        {props.datasets.map(dataset => {
-                            return <div className={S.dropdownRow}>
-                            return <>
-                                <span>&nbsp;</span>
-                                <span className="with-ellipsis" title={dataset['Name']}>{dataset['Name']}</span>
-                                <span className="with-ellipsis" title={dataset['type']}>{dataset['type']}</span>
-                                <span className="with-ellipsis" title={dataset['level']}>{dataset['level']}</span>
-                                <span className="with-ellipsis" title={dataset['resolution']}>{dataset['resolution']}</span>
-                                <span className="with-ellipsis" title={dataset['first obs']}>{dataset['first obs']}</span>
-                                <span className="with-ellipsis" title={dataset['last obs']}>{dataset['last obs']}</span>
-                                <span className="with-ellipsis" title={dataset['frequency']}>{dataset['frequency']}</span>
-                                <Link value={dataset['link']}/>
-                            </div>
-                            </>
-                        })}
-                    </div>} */}
+                return (<div title={value || props.parameter} className={props.isActive && S.isActive}>
+                    <div className="with-ellipsis">{value || props.parameter}</div>
                 </div>)
             }
             else if (propertyKey === 'Name') {
@@ -66,21 +64,29 @@ function DatasetList(props){
                     }}
                 >
                     <div className="bflex-row">
-                        <span className="flex-size-fill with-ellipsis">{value}</span>
+                        <span className="flex-size-fill with-ellipsis">{value || '-'}</span>
                         <span className="flex-size-own">
-                            {props.isActive ? <i>[-]</i> : <i>[+]</i>}
+                            {defaultDataset && props.datasets.length > 1 && (
+                                props.isActive ? <i>[-]</i> : <i>[+]</i>
+                            )}
                         </span>
                     </div>
                 </div>)
             }
             
-            return (<div title={value} className={classList('with-ellipsis', props.isActive && S.isActive)}>{value}</div>)
+            return (<div title={value} className={classList('with-ellipsis', props.isActive && S.isActive)}>{value || '-'}</div>)
         })}
         {props.isActive && <>
             {props.datasets.map((dataset, index) => {
+                if (JSON.stringify(dataset) === JSON.stringify(defaultDataset)) return;
+
                 return <>
                     <span className={S.dropdowned}>{index + 1}</span>
-                    <span className={classList('with-ellipsis', S.dropdowned, 'btn-link')} title={dataset['Name']}>{dataset['Name']}</span>
+                    <span className={classList('with-ellipsis', S.dropdowned, 'btn-link')} 
+                        title={dataset['Name']}
+                        data-index={index}
+                        onClick={onSelectHandler}
+                        >{dataset['Name']}</span>
                     <span className={classList('with-ellipsis', S.dropdowned)} title={dataset['type']}>{dataset['type']}</span>
                     <span className={classList('with-ellipsis', S.dropdowned)} title={dataset['level']}>{dataset['level']}</span>
                     <span className={classList('with-ellipsis', S.dropdowned)} title={dataset['resolution']}>{dataset['resolution']}</span>
@@ -100,6 +106,7 @@ export default function DatasetForm(props){
     const onParameterActivationHandler = useCallback((parameter) => {
         setActiveParameter(parameter);
     })
+
     useEffect(() => {
         setDatasetPerParameter(datasets_per_region[props.region]);
         setActiveParameter(null);
@@ -114,6 +121,8 @@ export default function DatasetForm(props){
                 parameter={parameter}
                 activateParameter={onParameterActivationHandler}
                 isActive={activeParameter == parameter}
+                onChange={props.onChange}
+                selectedDataset={props.datasets[parameter]}
             />)}
     </fieldset>
 }

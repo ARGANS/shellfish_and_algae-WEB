@@ -1,4 +1,5 @@
 {
+    "scenarios": ["A", "B", "C"],
     "zones": [
         "Arctic",
         "Baltic sea",

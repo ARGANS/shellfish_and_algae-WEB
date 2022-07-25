@@ -117,6 +117,17 @@ function ModelProperties(props) {
         }))
     }, [])
 
+    const onDatasetChangeHandler = useCallback((property, datasetOptions) => {
+        // console.log('[onDatasetChangeHandler] %s %s', property, JSON.stringify(datasetOptions));
+        setMetadata(_metadata => ({
+            ..._metadata,
+            datasets: {
+                ..._metadata.datasets,
+                [property]: datasetOptions,
+            }
+        }))
+    })
+
     const sectionOrder = Object.keys(props.parameters)
         .sort((section_name1, section_name2) => 
             (SECTION_ORDER[section_name1] || 0) > (SECTION_ORDER[section_name2] || 0) 
@@ -180,10 +191,24 @@ function ModelProperties(props) {
                 onChange={metaDataChangeHandler}
             />
             <div className={S.metadataRow}>
-                <DatasetForm region={metadata.zone}/>
+                <DatasetForm 
+                    datasets={metadata.datasets || {}}
+                    region={metadata.zone} 
+                    onChange={onDatasetChangeHandler}
+                />
             </div>
         </div>
-        
+        <label>Scenario</label>
+        <select 
+            name="scenario" 
+            value={metadata.scenario}
+            onChange={metaDataChangeHandler}
+        >{model_data.scenarios.map(scenario_name => <option 
+            key={scenario_name} 
+            selected={metadata.scenario === scenario_name}
+            value={scenario_name}
+        >{scenario_name}</option>)}</select>
+
         {sectionOrder.map(sectionName => {
             const sectionData = props.parameters[sectionName];
             const sectionDefaults = Object.entries(sectionData.defaults);
