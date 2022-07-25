@@ -11,6 +11,10 @@ function Link({value, className}) {
     return <a href={value} target="_blank" className={classList("with-ellipsis", className || '')}>More info</a>
 }
 
+function datasetIsEmpty(dataset){
+    return !dataset || !dataset.hasOwnProperty('Name')
+}
+
 function DatasetList(props){
     const [defaultDataset, setDefaultDataset] = useState({});
     const onClickHandler = useCallback(() => {
@@ -20,14 +24,14 @@ function DatasetList(props){
     const onSelectHandler = useCallback(props.isActive ? (event) => {
         const index = parseInt(event.target.dataset.index)
 
-        console.log('[onSelectHandler]');
-        console.dir([index, props.parameter, props.datasets[index], JSON.parse(JSON.stringify(props.datasets))]);
+        // console.log('[onSelectHandler]');
+        // console.dir([index, props.parameter, props.datasets[index], JSON.parse(JSON.stringify(props.datasets))]);
 
         props.onChange(props.parameter, props.datasets[index]);
     } : null)
 
     useEffect(() => {
-        // console.log('[DatsetList] %s %s', props.parameter, JSON.stringify(props.selectedDataset));
+        
         // console.dir([
         //     props.datasets,
         //     props.datasets.filter((dataset) => JSON.stringify(dataset) !== JSON.stringify(defaultDataset))
@@ -36,6 +40,14 @@ function DatasetList(props){
         const selectedDatasetReflection = JSON.stringify(props.selectedDataset);
         const defaultDataset = props.datasets.find((dataset) => JSON.stringify(dataset) === selectedDatasetReflection) || {};
         // The fact that defaultDataset is non-zero means that the number of options available is props.datasets - 1.
+
+        // console.log('[DatsetList] %s %s && %s == %s', props.parameter, 
+        //     /*JSON.stringify(props.selectedDataset)*/
+        //     JSON.stringify(defaultDataset),
+        //     // datasetIsEmpty(defaultDataset), 
+        //     props.datasets.length > 1,
+        //     datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1
+        // );
 
         setDefaultDataset(defaultDataset)
     }, [props.selectedDataset])
@@ -66,7 +78,7 @@ function DatasetList(props){
                     <div className="bflex-row">
                         <span className="flex-size-fill with-ellipsis">{value || '-'}</span>
                         <span className="flex-size-own">
-                            {defaultDataset && props.datasets.length > 1 && (
+                             {(datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1) && (
                                 props.isActive ? <i>[-]</i> : <i>[+]</i>
                             )}
                         </span>
