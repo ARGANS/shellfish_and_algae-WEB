@@ -29,10 +29,10 @@ function DatasetList(props){
         {RENDER_PPOPERTIES.map((propertyKey) => {
             const value = defaultDataset[propertyKey];
             if (propertyKey === 'link') {
-                return <Link value={value}/>
+                return <Link value={value} className={props.isActive && S.isActive}/>
             }
             else if (propertyKey === 'Parameter') {
-                return (<div title={value} >
+                return (<div title={value} className={props.isActive && S.isActive}>
                     <div className="with-ellipsis">{value}</div>
                     {/* To remove */}
                     {/* {props.isActive && <div className={S.dropdown}>
@@ -60,7 +60,7 @@ function DatasetList(props){
                 return (<div 
                     title={value} 
                     onClick={onClickHandler}
-                    className="noselect"
+                    className={classList('noselect', props.isActive && S.isActive)}
                     style={{
                         cursor: 'pointer'
                     }}
@@ -74,12 +74,12 @@ function DatasetList(props){
                 </div>)
             }
             
-            return (<div title={value} className="with-ellipsis">{value}</div>)
+            return (<div title={value} className={classList('with-ellipsis', props.isActive && S.isActive)}>{value}</div>)
         })}
         {props.isActive && <>
-            {props.datasets.map(dataset => {
+            {props.datasets.map((dataset, index) => {
                 return <>
-                    <span className={S.dropdowned}>&nbsp;</span>
+                    <span className={S.dropdowned}>{index + 1}</span>
                     <span className={classList('with-ellipsis', S.dropdowned, 'btn-link')} title={dataset['Name']}>{dataset['Name']}</span>
                     <span className={classList('with-ellipsis', S.dropdowned)} title={dataset['type']}>{dataset['type']}</span>
                     <span className={classList('with-ellipsis', S.dropdowned)} title={dataset['level']}>{dataset['level']}</span>

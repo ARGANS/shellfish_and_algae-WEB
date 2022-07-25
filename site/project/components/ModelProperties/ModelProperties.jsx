@@ -225,7 +225,7 @@ function ModelProperties(props) {
                                     : [null, null];
 
                                 return <label key={paramId}>
-                                    <div>{patramDescription || paramId} {paramMesure && '(' + paramMesure + ')'}</div>
+                                    <div>{patramDescription || paramId} {paramMesure && ', ' + paramMesure + ''}</div>
                                     <input 
                                         className="flex-size-fill" 
                                         type="number" 
@@ -237,23 +237,6 @@ function ModelProperties(props) {
                                         onChange={onChangeHandler}
                                     />
                                 </label>
-                                // DEPRECATED
-                                // return <label key={paramId}>
-                                //     <div>{patramDescription || paramId}:</div>
-                                //     <div className="bflex-row">
-                                //         <input 
-                                //             className="flex-size-fill" 
-                                //             type="number" 
-                                //             name={paramId} 
-                                //             defaultValue={paramDefValue} 
-                                //             step={step}
-                                //             data-section={sectionName}
-                                //             data-prop={secPropId}
-                                //             onChange={onChangeHandler}
-                                //         />
-                                //         {paramMesure && <span className={S.mes_offset + ' ' + 'flex-size-own'}>{paramMesure}</span> }
-                                //     </div>
-                                // </label>
                             })
                     }
                     {
