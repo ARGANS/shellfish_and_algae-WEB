@@ -11,3 +11,16 @@
 .mapDialog {
     height: 90vh;
 }
+
+.stageList {
+    white-space: nowrap;
+    --description-grid__gap: 0.2rem 1rem;
+    --description-grid__columns: min-content min-content min-content 1fr 1fr;
+}
+.stageList h4 {
+    margin: 0 0 0.5rem 0;
+}
+
+.disabled {
+    opacity: 0.5;
+}

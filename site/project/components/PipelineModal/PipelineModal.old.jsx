@@ -6,8 +6,6 @@ import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
-import { classList } from 'utils/strings';
-import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
 /**
@@ -34,64 +32,22 @@ function typeDataReadStatus(state) {
 }
 
 
-
-const JOB_STATUS = {
-    not_started: 0,
-    in_progress: 1,
-    completed: 2,
-    failed: 3
+const PIPELINE_STATUS = {
+    IDLE: 0,
+    RUN: 1,
+    FINISHED: 2
 }
 
-function typeStepStatus(status) {
-    if (status === JOB_STATUS.not_started) {
-        return 'Not started';
+const pipeline_manifest = [
+    {
+        name: 'Import the dataset',
+        status: PIPELINE_STATUS.IDLE,
+        artefacts: []
     }
-
-    else if (status === JOB_STATUS.in_progress) {
-        return 'In progress';
-    }
-
-    else if (status === JOB_STATUS.failed) {
-        return 'Failed';
-    }
-
-    else if (status === JOB_STATUS.completed) {
-        return 'Completed';
-    }
-
-
-    return 'unknown'
-
-}
+]
 
 
 export default function PipelineModal(props) {
-    const [pipelineState, setPipelineState] = useState([
-        {
-            name: 'Import the dataset',
-            status: JOB_STATUS.not_started,
-            stage_id: 'dataimport',
-            artefacts: [],
-        },
-        {
-            name: 'Pretreat the dataset',
-            status: JOB_STATUS.not_started,
-            stage_id: 'pretreatment',
-            artefacts: [],
-        },
-        {
-            name: 'Run a simulation of the model',
-            status: JOB_STATUS.not_started,
-            stage_id: 'dataread',
-            artefacts: [],
-        },
-        {
-            name: 'Generate GeoTIFF files',
-            status: JOB_STATUS.not_started,
-            stage_id: 'posttreatment',
-            artefacts: [],
-        }
-    ]);
     const [state, setState] = useState({});
     const [watchingContainer, setWatchingContainer] = useState(null);
 
@@ -116,11 +72,6 @@ export default function PipelineModal(props) {
     // Once modal is opened
     useEffect(() => {
         synchronizeState();
-
-        console.log('PipelineModal');
-        const tasks = compilePipelineManifest(pipeline_manifest, props.model)
-        console.dir(tasks);
-
         return () => {}
     }, []);
 
@@ -265,34 +216,6 @@ export default function PipelineModal(props) {
     // TODO
     // Currently the app starts showing logs once the watchingContainer is changing.
     // But The app should listen the changes in the container list to request the log
-
-    return <div className={S.root}>
-            <div className={classList("regular-grid", S.stageList)}>
-                <h4>#</h4>
-                <h4>Name</h4>
-                <h4>Status</h4>
-                <h4>Artefacts</h4>
-                <h4>Actions</h4>
-                {pipelineState.map((stepState, i) => {
-                    const isDisabled = pipelineState[i - 1] ? pipelineState[i - 1].status !== JOB_STATUS.completed : false;
-                    const className = isDisabled ? S.disabled : '';
-                    return (<>
-                        <div className={className}>{i + 1}</div>
-                        <div className={className}>{stepState.name}</div>
-                        <div className={className}>{typeStepStatus(stepState.status)}</div>
-                        <div className={className}>{stepState.stage_id}</div>
-                        <div className={className}>&nbsp;</div>
-                    </>)
-                })}
-            </div>
-            {watchingContainer && <div className={S.logs}>
-                <ContainerLogs 
-                    container_id={watchingContainer} 
-                    onStart={onStartHandler}
-                    onTermination={synchronizeState}
-                />
-            </div>}
-        </div>
 
     return <div className={S.root}>
         {!!state.data_import && <>

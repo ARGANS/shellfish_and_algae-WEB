@@ -202,7 +202,7 @@ export function runDataImportTask$(simulationModel){
         hosts: {},
         volumes: [
             'ac_share:/media/share',
-            '/profils/nmaltsev/models/global:/media/global'
+            'ac_global:/media/global'
         ]
     });
 }
