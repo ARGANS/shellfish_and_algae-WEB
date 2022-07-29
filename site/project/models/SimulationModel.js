@@ -6,6 +6,7 @@ import md5 from 'utils/md5';
 export default class SimulationModel {
     atbd_parameters = null;
     metadata = null;
+    dataset_parameters = null;
     id = null;
     owner_id = null;
     owner_name = null;
@@ -18,9 +19,10 @@ export default class SimulationModel {
         this.type = type_s; // Algae | Shellfish
     }
 
-    init(parameters, metadata) {
+    init(parameters, metadata, dataset_parameters) {
         this.atbd_parameters = parameters;
         this.metadata = metadata;
+        this.dataset_parameters = dataset_parameters;
         return this;
     }
 
@@ -28,6 +30,7 @@ export default class SimulationModel {
         return {
             parameters: this.atbd_parameters,
             metadata: this.metadata,
+            dataset_parameters: this.dataset_parameters,
             type: this.type,
         }
     }
@@ -65,11 +68,16 @@ export default class SimulationModel {
                 zone: remove_spaces(defaultZone),
                 date: DateZ.from().DDMMYYYY('-'),    
             },
-            depth_min: 0,
-            depth_max: 20,
+            scenario: 'A',
+        }
+    }
+
+    static createDefaultDatasetParameters() {
+        return {
+            'depth-min': 0,
+            'depth-max': 20,
             // year: new Date().getFullYear()
             year: 2021,
-            scenario: 'A',
             datasets: {},
         }
     }
@@ -80,11 +88,12 @@ export default class SimulationModel {
      * @returns 
      */
     static validateProperties(data) {
-        return data.properties && data.properties.parameters && data.properties.metadata;
+        return data.properties && data.properties.parameters && data.properties.metadata && data.properties.dataset_parameters;
     }
 
     get dataset_id() {
-        return [this.metadata.zone, this.metadata.year, this.metadata.depth_min, this.metadata.depth_max].join('-')
+        const dataset_serialized = JSON.stringify(this.dataset_parameters);
+        return [md5(dataset_serialized), dataset_serialized];
     }
 
     get dataread_id() {
@@ -92,14 +101,17 @@ export default class SimulationModel {
     }
 
     get destination_dataimport_path() {
+        //  DEPRECATED
         return '/media/share/data/' + this.dataset_id;
     }
 
     get destination_dataread_path() {
+        //  DEPRECATED
         return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
     }
 
     get destination_postprocessing_path() {
+        //  DEPRECATED
         return this.destination_dataread_path + '/posttreatment';
     }
 
@@ -109,8 +121,8 @@ export default class SimulationModel {
             : addModel$(this.body);
     }
 
-    static fromJSON({id, user_id, user_name, properties : {parameters, metadata, type}}) {
+    static fromJSON({id, user_id, user_name, properties : {parameters, metadata, type, dataset_parameters}}) {
         return new SimulationModel(id, user_id, user_name, type)
-            .init(parameters, metadata);
+            .init(parameters, metadata, dataset_parameters);
     }
 }

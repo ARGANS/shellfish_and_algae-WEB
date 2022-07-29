@@ -37,9 +37,9 @@ export default function ModelList(props) {
         setModel(null)
     }, [setModel])
 
-    const handleModelSubmit = useCallback(async (parameters, metadata) => {
+    const handleModelSubmit = useCallback(async (parameters, metadata, dataset_parameters) => {
         await model
-            .init(parameters, metadata)
+            .init(parameters, metadata, dataset_parameters)
             .synchronize()
             .then((response) => {
                 console.log('Model has changed')

@@ -187,20 +187,23 @@ function postJSON$(url, data) {
 }
 
 export function runDataImportTask$(simulationModel){
+    const [dataset_id, dataset_properties] = simulationModel.dataset_id;
+    
+    // TODO describe pipelines in a manifest files
     return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-import/runtime:latest',
         environment: {
-            INPUT_DESTINATION: '/media/share/data/' + simulationModel.dataset_id,
-            INPUT_PARAMETERS: JSON.stringify({
-                zone: simulationModel.metadata.zone,
-                depth_min: simulationModel.metadata.depth_min,
-                depth_max: simulationModel.metadata.depth_max,
-                year: simulationModel.metadata.year
-            }),
+            INPUT_DESTINATION: '/media/share/data/' + dataset_id,
+            INPUT_PARAMETERS: dataset_properties,
+            MOTU_LOGIN: "mjaouen",
+            MOTU_PASSWORD: "Azerty123456",
             PYTHONDONTWRITEBYTECODE: '1',
         },
         hosts: {},
-        volumes: ['ac_share:/media/share']
+        volumes: [
+            'ac_share:/media/share',
+            '/profils/nmaltsev/models/global:/media/global'
+        ]
     });
 }
 

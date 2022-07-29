@@ -1,7 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react"
-// ???
-// import model_parameters from 'models/macroalgae_model_parameters.json'
-import { cloneObject, dset } from "../../utils/deepClone";
+import { cloneObject, dset } from "utils/deepClone";
 import S from './ModelProperties.module.css'
 import model_data from 'models/model_data';
 import SimulationModel from "models/SimulationModel";
@@ -31,7 +29,9 @@ const DEBUG_RENDER = false;
  * @returns 
  */
 function ModelProperties(props) {
+    // TODO rename state to atbd_parameters  
     const [state, setState] = useState(props.model?.atbd_parameters || SimulationModel.createDefaultATBDParameters(props.parameters));
+    // Name, zone, scenario
     const [metadata, setMetadata] = useState(
         props.model?.metadata 
         || SimulationModel.createDefaultMetadata(
@@ -40,6 +40,9 @@ function ModelProperties(props) {
             props.model?.type == 'Algae' ? 'alaria' : 'C_gigas' 
         )
     );
+    // year, depth-min, depth-max, datasets
+    const [datasetParameters, setDatasetParameters] = useState(props.model?.dataset_parameters || SimulationModel.createDefaultDatasetParameters());
+
     const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
         const {dataset} = $select;
@@ -72,9 +75,9 @@ function ModelProperties(props) {
         metadata.name = metadata.name || printSuggestedName(metadata._suggested)
 
         if (props.onSubmit) {
-            props.onSubmit(state, metadata)
+            props.onSubmit(state, metadata, datasetParameters);
         }
-    }, [state, metadata]);
+    }, [state, metadata, datasetParameters]);
 
     const onChangeHandler = useCallback(event => {
         event.preventDefault();
@@ -104,7 +107,7 @@ function ModelProperties(props) {
     const metaDataChangeHandler = useCallback(event => {
         event.preventDefault();
         event.persist();
-        event.stopPropagation()
+        event.stopPropagation();
         const {target: $input} = event;
         // console.log('[metaDataChangeHandler] `%s`', $input.value)
         setMetadata(_metadata => ({
@@ -117,12 +120,24 @@ function ModelProperties(props) {
         }))
     }, [])
 
+    const datasetParameterChangeHandler = useCallback(event => {
+        event.preventDefault();
+        event.persist();
+        event.stopPropagation();
+        const {target: $input} = event;
+        setDatasetParameters(_datasetParameters => ({
+            ..._datasetParameters,
+            [$input.name]: $input.value,
+        }))
+    }, [])
+
+
     const onDatasetChangeHandler = useCallback((property, datasetOptions) => {
         // console.log('[onDatasetChangeHandler] %s %s', property, JSON.stringify(datasetOptions));
-        setMetadata(_metadata => ({
-            ..._metadata,
+        setDatasetParameters(_datasetParameters => ({
+            ..._datasetParameters,
             datasets: {
-                ..._metadata.datasets,
+                ..._datasetParameters.datasets,
                 [property]: datasetOptions,
             }
         }))
@@ -171,15 +186,15 @@ function ModelProperties(props) {
             <label>Year</label>
             <input 
                 type="number" 
-                name="depth_min" 
-                value={metadata.depth_min}
-                onChange={metaDataChangeHandler}    
+                name="depth-min" 
+                value={datasetParameters['depth-min']}
+                onChange={datasetParameterChangeHandler}    
             />
             <input 
                 type="number" 
-                name="depth_max" 
-                value={metadata.depth_max}
-                onChange={metaDataChangeHandler}
+                name="depth-max" 
+                value={datasetParameters['depth-max']}
+                onChange={datasetParameterChangeHandler}
             />
             <input 
                 type="number" 
@@ -187,12 +202,12 @@ function ModelProperties(props) {
                 max="2022" 
                 step="1" 
                 name="year" 
-                value={metadata.year}
-                onChange={metaDataChangeHandler}
+                value={datasetParameters.year}
+                onChange={datasetParameterChangeHandler}
             />
             <div className={S.metadataRow}>
                 <DatasetForm 
-                    datasets={metadata.datasets || {}}
+                    datasets={datasetParameters.datasets || {}}
                     region={metadata.zone} 
                     onChange={onDatasetChangeHandler}
                 />
