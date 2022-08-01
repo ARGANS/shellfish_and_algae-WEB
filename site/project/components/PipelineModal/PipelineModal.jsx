@@ -8,6 +8,7 @@ import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
 import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
+import { useContainers } from 'helpers/container_service';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
 /**
@@ -120,8 +121,14 @@ export default function PipelineModal(props) {
         console.log('PipelineModal');
         const tasks = compilePipelineManifest(pipeline_manifest, props.model)
         console.dir(tasks);
+        // const _handler = emitter.on('container_list_change', (containers, containersChanges) => {
+        //     console.log('[container_list_change]');
+        //     console.dir([containers, containersChanges])
+        // })
 
-        return () => {}
+        // return () => {
+        //     emitter.off('container_list_change', _handler);
+        // }
     }, []);
 
     const startDataImportTaskHandler = useCallback(() => {
@@ -257,7 +264,14 @@ export default function PipelineModal(props) {
                 </div>
             </DialogHeader>
         </Dialog>, 'default');
-    })
+    });
+
+    const containers = useContainers();
+
+    useEffect(() => {
+        console.log('[NEW CONTAINERS]');
+        console.dir(containers);
+    }, [containers])
 
 
     

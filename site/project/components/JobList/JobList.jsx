@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import S from './JobList.module.css'
 import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
+import { emitter, stop } from 'helpers/container_service';
+
 
 function diff(left, right){
     const left_id = left.map(obj => obj.id);
@@ -14,13 +16,14 @@ function compare(prevList, curList) {
     };
 }
 
+
 export default function JobList(props) {
     const [containers, setContainers] = useState([])
     // TODO move outside of the component
     useEffect(() => {
         const _evtSource = new EventSource('/api/v2/container/stream');
-        console.log('START source');
-        console.dir(_evtSource);
+        // console.log('START source');
+        // console.dir(_evtSource);
         let _prev = [];
 
         _evtSource.onmessage = function(e) {
@@ -38,17 +41,21 @@ export default function JobList(props) {
                 .sort((a, b) => a.StartedAt - b.StartedAt)
             
             const containersChanges = compare(_prev, containers);
+
             if (containersChanges.added.length !== 0 || containersChanges.removed.length !== 0) {
-                console.log('[containersChanges]');
-                console.dir(containersChanges);
+                // console.log('[containersChanges]');
+                // console.dir(containersChanges);
+                emitter.emit('container_list_change', containers, containersChanges)
             } 
             _prev = containers;
+
+            
         
             setContainers(containers);
         };
         return () => {
             _evtSource.close();
-            
+            stop();
         }
     }, [])
     

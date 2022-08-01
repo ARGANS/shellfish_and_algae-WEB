@@ -1,3 +1,4 @@
+// v2 2022/08/01
 class EventEmitter {
 	#eventHandlers = Object.create(null)
 	
@@ -8,6 +9,7 @@ class EventEmitter {
 	on(eventName, handler){
 		if (!Array.isArray(this.#eventHandlers[eventName])) this.#eventHandlers[eventName] = [];
 		this.#eventHandlers[eventName].push(handler);
+		return handler;
 	}
 	
 	/**
@@ -16,8 +18,9 @@ class EventEmitter {
 	 */
 	off(eventName, handler) {
 		if (handler) {
-		const handlers = this.#eventHandlers[eventName];
-		if (!Array.isArray(handlers)) return;
+			const handlers = this.#eventHandlers[eventName];
+			if (!Array.isArray(handlers)) return;
+		
 			let i = handlers.length - 1;
 		
 			while (i--> 0) {
@@ -31,12 +34,13 @@ class EventEmitter {
 		}
 	}
 	
-	emit(action_s, ...args) {
-		if (!Array.isArray(this.#eventHandlers[action_s])) return;
+	// Each handler can cancel the event
+	emit(eventName_s, ...args) {
+		if (!Array.isArray(this.#eventHandlers[eventName_s])) return;
 	  
-		const handlers = this.#eventHandlers[action_s];
+		const handlers = this.#eventHandlers[eventName_s];
 		for(let i = 0; i < handlers.length; i++) {
-			handlers[i](...args);
+			if (!handlers[i](...args)) return true;
 		}
 	}
 	
@@ -47,13 +51,13 @@ class EventEmitter {
 	 */
 	listen(handlers_o, withDestructor=false) {
 		const handlers = {};
-		for (let key_s in handlers_o) {
-			handlers[key_s] = this.on(key_s, handlers_o[key_s]);
+		for (let eventName_s in handlers_o) {
+			handlers[eventName_s] = this.on(eventName_s, handlers_o[eventName_s]);
 		}
 	  
 		return withDestructor ? () => {
-			for (let key_s in handlers) {
-				this.off(key_s, handlers[key_s]);
+			for (let eventName_s in handlers) {
+				this.off(eventName_s, handlers[eventName_s]);
 			}
 		} : null;
 	}
