@@ -104,8 +104,8 @@ export default function ModelList(props) {
     }, [models]);
 
     useEffect(() => {
-        console.log('SimulationList %s', props.id);
-        console.dir(props);
+        // console.log('SimulationList %s', props.id);
+        // console.dir(props);
         getActiveUser$().
             then(user_data => {
                 if (!user_data) {

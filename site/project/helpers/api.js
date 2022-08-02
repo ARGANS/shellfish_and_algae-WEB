@@ -68,7 +68,7 @@ const FNF = 'FileNotFound';
 
 
 /**
- * 
+ * DEPRECATED
  * @param {SimulationModel} simulationModel 
  * @returns {Promise<Object>} fileStatus
  *  {bool} fileStatus.data_import.in_progress
@@ -169,7 +169,7 @@ function postJSON$(url, data) {
     return fetch(url, {
         method: 'POST',
         headers: JSON_HEADERS,
-        body: JSON.stringify(data)
+        body: typeof(data) !== 'string' ? JSON.stringify(data) : data
     })
         .then(response => {
             if (!response.ok) {
@@ -186,27 +186,13 @@ function postJSON$(url, data) {
         });
 }
 
-export function runDataImportTask$(simulationModel){
-    const [dataset_id, dataset_properties] = simulationModel.dataset_id;
-    
-    // TODO describe pipelines in a manifest files
-    return postJSON$(NODE_API_PREFIX + '/container', {
-        image: 'ac-import/runtime:latest',
-        environment: {
-            INPUT_DESTINATION: '/media/share/data/' + dataset_id,
-            INPUT_PARAMETERS: dataset_properties,
-            MOTU_LOGIN: "mjaouen",
-            MOTU_PASSWORD: "Azerty123456",
-            PYTHONDONTWRITEBYTECODE: '1',
-        },
-        hosts: {},
-        volumes: [
-            'ac_share:/media/share',
-            'ac_global:/media/global'
-        ]
-    });
+
+export function runContainer$(manifest_s){
+    return postJSON$(NODE_API_PREFIX + '/container', manifest_s);
 }
 
+
+//  DEPRECATED
 export function runDataReadTask$(simulationModel){
     return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-processing/runtime:latest',
@@ -221,6 +207,7 @@ export function runDataReadTask$(simulationModel){
     });
 }
 
+//  DEPRECATED
 export function runPostprocessingTask$(simulationModel){
     return postJSON$(NODE_API_PREFIX + '/container', {
         image: 'ac-posttreatment/runtime:latest',

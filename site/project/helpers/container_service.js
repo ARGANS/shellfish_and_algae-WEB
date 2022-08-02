@@ -31,7 +31,7 @@ export function useContainers(){
     const [state, setState] = useState(_containers.current);
 
     useEffect(() => {
-        const _handler = emitter.on('container_list_change', (containers, containersChanges) => {
+        let _handler = emitter.on('container_list_change', (containers, containersChanges) => {
             setState([containers, containersChanges])
         })
         return () => {

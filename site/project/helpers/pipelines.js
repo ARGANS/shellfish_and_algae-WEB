@@ -2,67 +2,133 @@ export const pipeline_manifest = {
     // [stage_id]: props
     dataimport: {
         status: {
+            // DEPRECATED
             // [check_id]: props
-            in_progress: {
-                action: 'container_exists',
-                container_id: (model) => model.metadata?.containers?.dataimport 
-            },
+            // in_progress: {
+            //     action: 'container_exists',
+            // },
             started: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/start.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/start.mark`
             },
             completed: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/end.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/end.mark`
             }
+        },
+        container: {
+            image: 'ac-import/runtime:latest',
+            environment: {
+                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}`,
+                INPUT_PARAMETERS: (model) => JSON.stringify(model.dataset_parameters),
+                MOTU_LOGIN: "mjaouen",
+                MOTU_PASSWORD: "Azerty123456",
+                PYTHONDONTWRITEBYTECODE: '1',
+            },
+            labels: {
+                'task.model.id': (model) => model.id + '',
+                'task.type': 'dataimport',
+            },
+            volumes: [
+                'ac_share:/media/share',
+                'ac_global:/media/global'
+            ]
         }
     },
     pretreatment: {
         status: {
-            in_progress: {
-                action: 'container_exists',
-                container_id: (model) => model.metadata?.containers?.pretreatment
-            },
+            // DEPRECATED
+            // in_progress: {
+            //     action: 'container_exists',
+            // },
             started: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_pretreated/start.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/start.mark`
             },
             completed: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_pretreated/end.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/end.mark`
             }
+        },
+        container: {
+            image: 'ac-pretreatment/runtime',
+            environment: {
+                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}`,
+                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_pretreated`,
+                PYTHONDONTWRITEBYTECODE: '1',
+            },
+            labels: {
+                'task.model.id': (model) => model.id + '',
+                'task.type': 'pretreatment',
+            },
+            volumes: [
+                'ac_share:/media/share',
+                'ac_global:/media/global'
+            ]
         }
     },
     dataread: {
         status: {
-            in_progress: {
-                action: 'container_exists',
-                container_id: (model) => model.metadata?.containers?.pretreatment
-            },
+            // DEPRECATED
+            // in_progress: {
+            //     action: 'container_exists',
+            // },
             started: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_dataread/${model.dataread_id}/start.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/start.mark`
             },
             completed: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_dataread/${model.dataread_id}/end.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/end.mark`
             }
+        },
+        container: {
+            image: 'ac-dataread/runtime',
+            environment: {
+                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}/_pretreated`,
+                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                INPUT_MODEL_PROPERTIES_JSON: (model) => JSON.stringify(model.body),
+                PYTHONDONTWRITEBYTECODE: '1',
+            },
+            labels: {
+                'task.model.id': (model) => model.id + '',
+                'task.type': 'dataread',
+            },
+            volumes: [
+                'ac_share:/media/share',
+                'ac_global:/media/global'
+            ]
         }
     },
     posttreatment: {
         status: {
-            in_progress: {
-                action: 'container_exists',
-                container_id: (model) => model.metadata?.containers?.pretreatment
-            },
+            // DEPRECATED
+            // in_progress: {
+            //     action: 'container_exists',
+            // },
             started: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_dataread/${model.dataread_id}/posttreatment/start.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/start.mark`
             },
             completed: {
                 action: 'file_exists',
-                path: (model) => `/media/share/data/${model.dataset_id[0]}/_dataread/${model.dataread_id}/posttreatment/end.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/end.mark`
             }
+        },
+        container: {
+            image: 'ac-posttreatment/runtime',
+            environment: {
+                SOURCE_DIR: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                PYTHONDONTWRITEBYTECODE: '1',
+            },
+            labels: {
+                'task.model.id': (model) => model.id + '',
+                'task.type': 'posttreatment',
+            },
+            volumes: [
+                'ac_share:/media/share',
+                'ac_global:/media/global'
+            ]
         }
     }
 }
@@ -74,20 +140,16 @@ export function compilePipelineManifest(manifest, simulationModel) {
     return Object.entries(manifest).reduce((state, [stageName, stageProps]) => {
 
         return Object.entries(stageProps.status).reduce((state, [checkName, checkProps]) => {
-            if (checkProps.action == 'container_exists') {
-                // DEPRECATED
-                // if (!state.containers[stageName])  state.containers[stageName] = {};
-                // state.containers[stageName][checkName] = checkProps.container_id(simulationModel);
-                state.containers.push({
-                    container_id: checkProps.container_id(simulationModel),
-                    stage_id: stageName,
-                    check_id: checkName
-                })
-            }
-            else if (checkProps.action == 'file_exists') {
-                // DEPRECATED
-                // if (!state.files[stageName])  state.files[stageName] = {};
-                // state.files[stageName][checkName] = checkProps.path(simulationModel);
+            // DEPRECATED
+            // if (checkProps.action == 'container_exists') {
+            //     state.containers.push({
+            //         container_labels: stageProps.container.labels,
+            //         stage_id: stageName,
+            //         check_id: checkName
+            //     })
+            // }
+            // else 
+            if (checkProps.action == 'file_exists') {
                 state.files.push({
                     path: checkProps.path(simulationModel),
                     stage_id: stageName,
@@ -99,7 +161,8 @@ export function compilePipelineManifest(manifest, simulationModel) {
         }, state);
 
     }, {
-        containers: [],
+        // DEPRECATED
+        // containers: [],
         files: []
     })
 }

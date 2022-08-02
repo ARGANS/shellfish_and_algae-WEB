@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import S from './PipelineModal.module.css'
-import { getPipelineStatus$, runDataImportTask$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$, deletePostprocessingResults$, runPostprocessingTask$ } from 'helpers/api';
+import { getPipelineStatus$, runDataReadTask$, deleteDataImportResults$, deleteDataReadResults$, deletePostprocessingResults$, runPostprocessingTask$, runContainer$ } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
@@ -47,106 +47,111 @@ function typeStepStatus(status) {
     if (status === JOB_STATUS.not_started) {
         return 'Not started';
     }
-
     else if (status === JOB_STATUS.in_progress) {
         return 'In progress';
     }
-
     else if (status === JOB_STATUS.failed) {
         return 'Failed';
     }
-
     else if (status === JOB_STATUS.completed) {
         return 'Completed';
     }
 
+    return 'unknown'
+}
+
+function jobTitle(jobId) {
+    if (jobId === JOB_STATUS.not_started) {
+        return 'Import the dataset';
+    }
+    else if (jobId === JOB_STATUS.in_progress) {
+        return 'Pretreat the dataset';
+    }
+    else if (jobId === JOB_STATUS.failed) {
+        return 'Run a simulation of the model';
+    }
+    else if (jobId === JOB_STATUS.completed) {
+        return 'Generate GeoTIFF files';
+    }
 
     return 'unknown'
-
 }
+
+const JOB_LIST = ['dataimport', 'pretreatment', 'dataread', 'posttreatment']
+const INIT_JOB_STATUS = {
+    dataimport: JOB_STATUS.not_started,
+    pretreatment: JOB_STATUS.not_started,
+    dataread: JOB_STATUS.not_started,
+    posttreatment: JOB_STATUS.not_started,
+};
 
 
 export default function PipelineModal(props) {
-    const [pipelineState, setPipelineState] = useState([
-        {
-            name: 'Import the dataset',
-            status: JOB_STATUS.not_started,
-            stage_id: 'dataimport',
-            artefacts: [],
-        },
-        {
-            name: 'Pretreat the dataset',
-            status: JOB_STATUS.not_started,
-            stage_id: 'pretreatment',
-            artefacts: [],
-        },
-        {
-            name: 'Run a simulation of the model',
-            status: JOB_STATUS.not_started,
-            stage_id: 'dataread',
-            artefacts: [],
-        },
-        {
-            name: 'Generate GeoTIFF files',
-            status: JOB_STATUS.not_started,
-            stage_id: 'posttreatment',
-            artefacts: [],
-        }
-    ]);
+    const [jobStatus, setJobStatus] = useState(INIT_JOB_STATUS)
     const [state, setState] = useState({});
     const [watchingContainer, setWatchingContainer] = useState(null);
+    const _pipelineManifestRef = useRef();
+    const _containers = useContainers();
 
     const synchronizeState = useCallback(() => {
-        return getPipelineStatus$(props.model)
-            .then(status => {
-                console.log('Pipeline Status:');
-                console.dir(status);
-                setState(_state => ({
-                    ..._state,
-                    ...status
-                }))
+        // _pipelineManifestRef.current
+        const [allContainers,] = _containers;
+        // Docker label values are strings
+        const modelId = props.model.id + '';
 
-                if (status.data_import.in_progress) {
-                    setWatchingContainer(props.model.metadata.data_import_container)
-                } else if (status.data_read.in_progress){
-                    setWatchingContainer(props.model.metadata.data_read_container)
-                }
-            })
-    })
+        console.log('[CALL synchronizeState] modelId: %s', modelId);
+        // console.dir(_pipelineManifestRef.current);
+        console.dir(_containers);
+
+        
+        const containersBelongsToTheModel = allContainers.filter(containerProps => containerProps.labels['task.model.id'] === modelId)
+        const jobsInProgress = containersBelongsToTheModel.map(containerProps => containerProps.labels['task.type']);
+
+        console.log('taskStatuses');
+        console.dir(jobsInProgress);
+
+        // return getPipelineStatus$(props.model)
+        //     .then(status => {
+        //         console.log('Pipeline Status:');
+        //         console.dir(status);
+        //         setState(_state => ({
+        //             ..._state,
+        //             ...status
+        //         }))
+
+        //         if (status.data_import.in_progress) {
+        //             setWatchingContainer(props.model.metadata.data_import_container)
+        //         } else if (status.data_read.in_progress){
+        //             setWatchingContainer(props.model.metadata.data_read_container)
+        //         }
+        //     })
+    }, [_containers])
     
     // Once modal is opened
     useEffect(() => {
+        _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
         synchronizeState();
-
-        console.log('PipelineModal');
-        const tasks = compilePipelineManifest(pipeline_manifest, props.model)
-        console.dir(tasks);
-        // const _handler = emitter.on('container_list_change', (containers, containersChanges) => {
-        //     console.log('[container_list_change]');
-        //     console.dir([containers, containersChanges])
-        // })
-
-        // return () => {
-        //     emitter.off('container_list_change', _handler);
-        // }
     }, []);
 
-    const startDataImportTaskHandler = useCallback(() => {
-        const {model} = props;
-        return runDataImportTask$(model)
+    const startJobHandler = useCallback((e) => {
+        const jobId = e.target.dataset.job;
+        const containerManifest = pipeline_manifest[jobId].container
+        const body_s = JSON.stringify(containerManifest, (key, value) => {
+            if (typeof(value) == 'function') return value(props.model);
+            return value;
+        })
+
+        // console.log('Start Job');
+        // console.dir(jobData);
+        // console.dir(props.model)
+        // console.dir(body_s);
+
+        return runContainer$(body_s)
             .then(data => {
-                console.log('[runDataImportTask$]');
+                console.log('[runDataImportTask]');
                 console.dir(data);
                 synchronizeState();
                 setWatchingContainer(data.id);
-                
-                return model
-                    .init(model.atbd_parameters, {
-                        ...model.metadata,
-                        data_import_container: data.id
-                    })
-                    .synchronize()
-                    .finally(synchronizeState)
             })
     });
 
@@ -253,8 +258,6 @@ export default function PipelineModal(props) {
     }, [])
 
     const showMapHandler = useCallback(() => {
-        // For debug
-		// const resource_link = '/api/v2/file?path=/media/share/ref/';
 		const resource_link = '/api/v2/file?path=' + props.model.destination_postprocessing_path + '/';
 		
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
@@ -266,12 +269,10 @@ export default function PipelineModal(props) {
         </Dialog>, 'default');
     });
 
-    const containers = useContainers();
-
-    useEffect(() => {
-        console.log('[NEW CONTAINERS]');
-        console.dir(containers);
-    }, [containers])
+    // useEffect(() => {
+    //     console.log('[NEW CONTAINERS]');
+    //     console.dir(_containers);
+    // }, [_containers])
 
 
     
@@ -287,15 +288,23 @@ export default function PipelineModal(props) {
                 <h4>Status</h4>
                 <h4>Artefacts</h4>
                 <h4>Actions</h4>
-                {pipelineState.map((stepState, i) => {
-                    const isDisabled = pipelineState[i - 1] ? pipelineState[i - 1].status !== JOB_STATUS.completed : false;
+                {JOB_LIST.map((jobId, i) => {
+                    const isDisabled = JOB_LIST[i - 1] ? jobStatus[JOB_LIST[i - 1]] !== JOB_STATUS.completed : null;
                     const className = isDisabled ? S.disabled : '';
+
                     return (<>
                         <div className={className}>{i + 1}</div>
-                        <div className={className}>{stepState.name}</div>
-                        <div className={className}>{typeStepStatus(stepState.status)}</div>
-                        <div className={className}>{stepState.stage_id}</div>
-                        <div className={className}>&nbsp;</div>
+                        <div className={className}>{jobTitle(jobId)}</div>
+                        <div className={className}>{typeStepStatus(JOB_STATUS[jobId])}</div>
+                        <div className={className}>{jobId}</div>
+                        <div className={className}>
+                            {jobStatus[jobId] === JOB_STATUS.not_started && (
+                                <button 
+                                    className="btn __small btn-primary" 
+                                    data-job={jobId}
+                                    onClick={startJobHandler}>Start task</button>
+                            )}
+                            &nbsp;</div>
                     </>)
                 })}
             </div>

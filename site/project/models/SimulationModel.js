@@ -93,7 +93,7 @@ export default class SimulationModel {
 
     get dataset_id() {
         const dataset_serialized = JSON.stringify(this.dataset_parameters);
-        return [md5(dataset_serialized), dataset_serialized];
+        return md5(dataset_serialized);
     }
 
     get dataread_id() {
