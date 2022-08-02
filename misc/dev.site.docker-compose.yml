@@ -29,8 +29,8 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command: 
       - |
-        npm run build:prod
         ./download.sh > /opt/app/models/datasets.json
+        npm run build:prod
         sh
 networks:
   ac_net:

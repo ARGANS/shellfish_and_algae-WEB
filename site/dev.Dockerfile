@@ -39,9 +39,8 @@ RUN chmod +x ./build.sh
 RUN chmod +x ./download.sh
 
 # Downloading and parsing a csv file with datasets
-RUN ./download.sh > /opt/app/models/datasets.json
 
 
-CMD ./build.sh && sh
+CMD ./download.sh > /opt/app/models/datasets.json && ./build.sh && sh
 
 
