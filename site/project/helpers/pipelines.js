@@ -33,7 +33,8 @@ export const pipeline_manifest = {
                 'ac_share:/media/share',
                 'ac_global:/media/global'
             ]
-        }
+        },
+        dir: (model) => `/media/share/data/${model.dataset_id}`
     },
     pretreatment: {
         status: {
@@ -61,7 +62,8 @@ export const pipeline_manifest = {
                 'ac_share:/media/share',
                 'ac_global:/media/global'
             ]
-        }
+        },
+        dir: (model) => `/media/share/data/${model.dataset_id}`
     },
     dataread: {
         status: {
@@ -90,7 +92,8 @@ export const pipeline_manifest = {
                 'ac_share:/media/share',
                 'ac_global:/media/global'
             ]
-        }
+        },
+        dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
     },
     posttreatment: {
         status: {
@@ -117,7 +120,8 @@ export const pipeline_manifest = {
                 'ac_share:/media/share',
                 'ac_global:/media/global'
             ]
-        }
+        },
+        dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment`
     }
 }
 

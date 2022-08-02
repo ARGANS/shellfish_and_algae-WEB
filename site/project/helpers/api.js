@@ -121,50 +121,53 @@ export function runContainer$(manifest_s){
 
 
 //  DEPRECATED
-export function runDataReadTask$(simulationModel){
-    return postJSON$(NODE_API_PREFIX + '/container', {
-        image: 'ac-processing/runtime:latest',
-        environment: {
-            DATASET_ID: simulationModel.dataset_id,
-            TASK_ID: simulationModel.dataread_id,
-            PARAMETERS_JSON: simulationModel.export(),
-            PYTHONDONTWRITEBYTECODE: '1',
-        },
-        hosts: {},
-        volumes: ['ac_share:/media/share']
-    });
-}
+// export function runDataReadTask$(simulationModel){
+//     return postJSON$(NODE_API_PREFIX + '/container', {
+//         image: 'ac-processing/runtime:latest',
+//         environment: {
+//             DATASET_ID: simulationModel.dataset_id,
+//             TASK_ID: simulationModel.dataread_id,
+//             PARAMETERS_JSON: simulationModel.export(),
+//             PYTHONDONTWRITEBYTECODE: '1',
+//         },
+//         hosts: {},
+//         volumes: ['ac_share:/media/share']
+//     });
+// }
 
 //  DEPRECATED
-export function runPostprocessingTask$(simulationModel){
-    return postJSON$(NODE_API_PREFIX + '/container', {
-        image: 'ac-posttreatment/runtime:latest',
-        environment: {
-            SOURCE_DIR: simulationModel.destination_dataread_path,
-            PYTHONDONTWRITEBYTECODE: '1',
-        },
-        hosts: {},
-        volumes: ['ac_share:/media/share']
-    });
-}
+// export function runPostprocessingTask$(simulationModel){
+//     return postJSON$(NODE_API_PREFIX + '/container', {
+//         image: 'ac-posttreatment/runtime:latest',
+//         environment: {
+//             SOURCE_DIR: simulationModel.destination_dataread_path,
+//             PYTHONDONTWRITEBYTECODE: '1',
+//         },
+//         hosts: {},
+//         volumes: ['ac_share:/media/share']
+//     });
+// }
 
-export function deleteDataImportResults$(simulationModel) {
-    return postJSON$(NODE_API_PREFIX + '/batch', [
-        {'type': 'rm', 'path': simulationModel.destination_dataimport_path},
-    ]);
-}
+// DEPRECATED
+// export function deleteDataImportResults$(simulationModel) {
+//     return postJSON$(NODE_API_PREFIX + '/batch', [
+//         {'type': 'rm', 'path': simulationModel.destination_dataimport_path},
+//     ]);
+// }
 
-export function deleteDataReadResults$(simulationModel) {
-    return postJSON$(NODE_API_PREFIX + '/batch', [
-        {'type': 'rm', 'path': simulationModel.destination_dataread_path},
-    ]);
-}
+// DEPRECATED
+// export function deleteDataReadResults$(simulationModel) {
+//     return postJSON$(NODE_API_PREFIX + '/batch', [
+//         {'type': 'rm', 'path': simulationModel.destination_dataread_path},
+//     ]);
+// }
 
-export function deletePostprocessingResults$(simulationModel) {
-    return postJSON$(NODE_API_PREFIX + '/batch', [
-        {'type': 'rm', 'path': simulationModel.destination_postprocessing_path},
-    ]);
-}
+// DEPRECATED
+// export function deletePostprocessingResults$(simulationModel) {
+//     return postJSON$(NODE_API_PREFIX + '/batch', [
+//         {'type': 'rm', 'path': simulationModel.destination_postprocessing_path},
+//     ]);
+// }
 
 
 export function getLogs$(containerId, limit_n) {

@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import S from './PipelineModal.module.css'
-import { deleteDataImportResults$, deleteDataReadResults$, deletePostprocessingResults$, runContainer$, checkFiles$, FNF } from 'helpers/api';
+import { runContainer$, checkFiles$, FNF } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
@@ -183,6 +183,7 @@ export default function PipelineModal(props) {
         console.dir(_containers)
         if (!_pipelineManifestRef.current) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
+            console.dir(_pipelineManifestRef.current);
         }
         
         synchronizeState();
@@ -256,46 +257,50 @@ export default function PipelineModal(props) {
     //         });
     // });
 
-    const removeDataImportResults = useCallback(() => {
-        const {model} = props;
-        return deleteDataImportResults$(model)
-            .then(() => {
-                synchronizeState();
-                const {data_import_container, ...rest} = model.metadata;
+    // const removeDataImportResults = useCallback(() => {
+    //     const {model} = props;
+    //     return deleteDataImportResults$(model)
+    //         .then(() => {
+    //             synchronizeState();
+    //             const {data_import_container, ...rest} = model.metadata;
                 
-                setWatchingContainer(null);
-                model
-                    .init(props.model.atbd_parameters, {...rest})
-                    .synchronize();
-            })
-    });
+    //             setWatchingContainer(null);
+    //             model
+    //                 .init(props.model.atbd_parameters, {...rest})
+    //                 .synchronize();
+    //         })
+    // });
 
-    const removeDataReadResults = useCallback(() => {
-        const {model} = props;
-        return deleteDataReadResults$(model)
-            .then(() => {
-                synchronizeState();
-                const {data_read_container, ...rest} = model.metadata;
+    // const removeDataReadResults = useCallback(() => {
+    //     const {model} = props;
+    //     return deleteDataReadResults$(model)
+    //         .then(() => {
+    //             synchronizeState();
+    //             const {data_read_container, ...rest} = model.metadata;
                 
-                setWatchingContainer(null);
-                model
-                    .init(model.atbd_parameters, {...rest})
-                    .synchronize();
-            })
-    });
+    //             setWatchingContainer(null);
+    //             model
+    //                 .init(model.atbd_parameters, {...rest})
+    //                 .synchronize();
+    //         })
+    // });
 
-    const removePostprocessingResults = useCallback(() => {
-        const {model} = props;
-        return deletePostprocessingResults$(model)
-            .then(() => {
-                synchronizeState();
-                const {postprocessing_container, ...rest} = model.metadata;
+    const deleteJobHandler = useCallback(() => {
+        const jobId = e.target.dataset.job;
+        const containerManifest = pipeline_manifest[jobId].container
+        alert('TODO')
+        //  DEPREACTED
+        // const {model} = props;
+        // return deletePostprocessingResults$(model)
+        //     .then(() => {
+        //         synchronizeState();
+        //         const {postprocessing_container, ...rest} = model.metadata;
                 
-                setWatchingContainer(null);
-                model
-                    .init(model.atbd_parameters, {...rest})
-                    .synchronize();
-            })
+        //         setWatchingContainer(null);
+        //         model
+        //             .init(model.atbd_parameters, {...rest})
+        //             .synchronize();
+        //     })
     });
 
 
@@ -352,13 +357,12 @@ export default function PipelineModal(props) {
                         <div className={className}>
                             {jobStatus[jobId] === JOB_STATUS.completed && ([
                                 jobId === 'posttreatment' && (<button className="btn __small btn-primary" onClick={showMapHandler}>Map</button>),
-                                // TODO get directrory path
-                                <a  title={props.model.destination_postprocessing_path}
-                                    href={'/api/v2/archive?path=' + props.model.destination_postprocessing_path}
+                                <a  title={props.model.dataset_id}
+                                    href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model)}
                                     download={props.model.metadata.name + '_' + jobId}
                                 >Download assets</a>,
-                                <a  title={props.model.destination_postprocessing_path}
-                                    href={'/api/v2/file?path=' + props.model.destination_postprocessing_path + '/error.txt'}
+                                <a  title={props.model.dataset_id}
+                                    href={'/api/v2/file?path=' + pipeline_manifest[jobId].dir(props.model) + '/error.txt'}
                                     download={props.model.metadata.name + '_postprocessing_warnings'}
                                 >Download list of warnings</a>
                             ])}
@@ -375,7 +379,7 @@ export default function PipelineModal(props) {
                                     data-job={jobId}
                                     onClick={stopJobHandler}>Stop</button>
                             ) : jobStatus[jobId] === JOB_STATUS.completed ? (
-                                <button className="btn __small btn-secondary" onClick={removePostprocessingResults}>Delete</button>
+                                <button className="btn __small btn-secondary" onClick={deleteJobHandler}>Delete</button>
                             ) : null }
                         </div>
                     </>)

@@ -100,20 +100,20 @@ export default class SimulationModel {
         return md5(JSON.stringify(this.atbd_parameters));
     }
 
-    get destination_dataimport_path() {
-        //  DEPRECATED
-        return '/media/share/data/' + this.dataset_id;
-    }
+    // get destination_dataimport_path() {
+    //     //  DEPRECATED
+    //     return '/media/share/data/' + this.dataset_id;
+    // }
 
-    get destination_dataread_path() {
-        //  DEPRECATED
-        return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
-    }
+    // get destination_dataread_path() {
+    //     //  DEPRECATED
+    //     return '/media/share/results/' + this.dataset_id + '/' + this.dataread_id;
+    // }
 
-    get destination_postprocessing_path() {
-        //  DEPRECATED
-        return this.destination_dataread_path + '/posttreatment';
-    }
+    // get destination_postprocessing_path() {
+    //     //  DEPRECATED
+    //     return this.destination_dataread_path + '/posttreatment';
+    // }
 
     synchronize() {
         return this.id !== null 
