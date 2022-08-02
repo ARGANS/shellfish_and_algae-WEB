@@ -1,5 +1,5 @@
 import EventEmitter from "libs/ComponentHeap/eventEmitter";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const emitter = new EventEmitter();
 const _containers = createInitState();
@@ -41,4 +41,8 @@ export function useContainers(){
     }, []);
 
     return state;
+}
+
+export function useGetContainers(){
+    return useRef(_containers.current);
 }

@@ -1,18 +1,18 @@
+const CHECK_ACTIONS = {
+    checkFile: 'file_exists'
+}
+
 export const pipeline_manifest = {
     // [stage_id]: props
     dataimport: {
         status: {
-            // DEPRECATED
-            // [check_id]: props
-            // in_progress: {
-            //     action: 'container_exists',
-            // },
             started: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/start.mark`
             },
             completed: {
-                action: 'file_exists',
+                // Proofs that the task finished, and results are corrected
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/end.mark`
             }
         },
@@ -37,16 +37,12 @@ export const pipeline_manifest = {
     },
     pretreatment: {
         status: {
-            // DEPRECATED
-            // in_progress: {
-            //     action: 'container_exists',
-            // },
             started: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/start.mark`
             },
             completed: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/end.mark`
             }
         },
@@ -69,16 +65,12 @@ export const pipeline_manifest = {
     },
     dataread: {
         status: {
-            // DEPRECATED
-            // in_progress: {
-            //     action: 'container_exists',
-            // },
             started: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/start.mark`
             },
             completed: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/end.mark`
             }
         },
@@ -102,16 +94,12 @@ export const pipeline_manifest = {
     },
     posttreatment: {
         status: {
-            // DEPRECATED
-            // in_progress: {
-            //     action: 'container_exists',
-            // },
             started: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/start.mark`
             },
             completed: {
-                action: 'file_exists',
+                action: CHECK_ACTIONS.checkFile,
                 path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/end.mark`
             }
         },
@@ -140,16 +128,8 @@ export function compilePipelineManifest(manifest, simulationModel) {
     return Object.entries(manifest).reduce((state, [stageName, stageProps]) => {
 
         return Object.entries(stageProps.status).reduce((state, [checkName, checkProps]) => {
-            // DEPRECATED
-            // if (checkProps.action == 'container_exists') {
-            //     state.containers.push({
-            //         container_labels: stageProps.container.labels,
-            //         stage_id: stageName,
-            //         check_id: checkName
-            //     })
-            // }
-            // else 
-            if (checkProps.action == 'file_exists') {
+
+            if (checkProps.action === CHECK_ACTIONS.checkFile) {
                 state.files.push({
                     path: checkProps.path(simulationModel),
                     stage_id: stageName,
@@ -161,24 +141,6 @@ export function compilePipelineManifest(manifest, simulationModel) {
         }, state);
 
     }, {
-        // DEPRECATED
-        // containers: [],
         files: []
     })
 }
-
-
-
-
-///
-// {'type': 'get_file', 'path': destination_dataimport_path + '/task.mark'},
-//         {'type': 'get_file', 'path': destination_dataimport_path + '/parameters.json'},
-//         data_import: {
-//             completed: report[0] !== FNF,
-//             started: report[1] !== FNF, // The task has been started
-//         },
-
-
-// fileStatus.data_import.in_progress = !!dataImportContainerData;
-//         fileStatus.data_import.not_started = !fileStatus.data_import.completed && !fileStatus.data_import.in_progress;
-//         fileStatus.data_import.failed = fileStatus.data_import.started && !fileStatus.data_import.in_progress;
