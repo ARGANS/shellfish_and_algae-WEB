@@ -110,9 +110,10 @@ details[open] > summary::before {
 	outline: none;
 }
 .btn.__small {
-	padding: .5rem .4rem;
-	line-height: 1rem;
-    font-size: 1rem;
+	padding: 0.4rem 0.5rem;
+    line-height: 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 400;
 }
 .btn.btn-primary {
 	background-color: #3076df;

@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import S from './PipelineModal.module.css'
-import { runContainer$, checkFiles$, FNF } from 'helpers/api';
+import { runContainer$, checkFiles$, FNF, deleteResults$, stopContainer$ } from 'helpers/api';
 import ContainerLogs from 'components/ContainerLogs/ContainerLogs';
 import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
@@ -15,25 +15,27 @@ const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
  * 
  * @param {Object} state 
  */
-function typeDataImportStatus(state) {
-    return state.not_started 
-        ? 'Not downloaded' 
-        : state.in_progress 
-            ? 'Downloading now'
-            : state.completed
-                ? 'Already downloaded'
-                : '-'
-}
+// DEPRECATED
+// function typeDataImportStatus(state) {
+//     return state.not_started 
+//         ? 'Not downloaded' 
+//         : state.in_progress 
+//             ? 'Downloading now'
+//             : state.completed
+//                 ? 'Already downloaded'
+//                 : '-'
+// }
 
-function typeDataReadStatus(state) {
-    return state.not_started 
-        ? 'Not processed' 
-        : state.in_progress 
-            ? 'In progress now'
-            : state.completed
-                ? 'Already processed'
-                : '-'
-}
+// DEPRECATED
+// function typeDataReadStatus(state) {
+//     return state.not_started 
+//         ? 'Not processed' 
+//         : state.in_progress 
+//             ? 'In progress now'
+//             : state.completed
+//                 ? 'Already processed'
+//                 : '-'
+// }
 
 const JOB_STATUS = {
     not_started: 0,
@@ -88,7 +90,6 @@ function jobTitle(jobId) {
 
 export default function PipelineModal(props) {
     const [jobStatus, setJobStatus] = useState(INIT_JOB_STATUS)
-    // const [state, setState] = useState({});
     const [watchingContainer, setWatchingContainer] = useState(null);
     const _pipelineManifestRef = useRef();
     const _containersRef = useGetContainers();
@@ -102,8 +103,6 @@ export default function PipelineModal(props) {
 
         // console.log('[CALL synchronizeState] modelId: %s', modelId);
         // console.dir(_pipelineManifestRef.current);
-
-        
         const containersBelongsToTheModel = allContainers.filter(containerProps => containerProps.labels['task.model.id'] === modelId)
         // TODO get container that belong to the active Job type
         const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
@@ -173,8 +172,6 @@ export default function PipelineModal(props) {
 
                     return nextJobStatus;
                 })
-
-                
             });
     });
 
@@ -198,109 +195,17 @@ export default function PipelineModal(props) {
         })
 
         return runContainer$(body_s)
-            // DEPRECATED
-            // .then(data => {
-            //     console.log('[runDataImportTask]');
-            //     console.dir(data);
-            //     synchronizeState();
-            //     setWatchingContainer(data.id);
-            // })
     });
 
-    // DEPRECATED
-    // const startDataReadTaskHandler = useCallback(() => {
-    //     const {model} = props;
-    //     return runDataReadTask$(model)
-    //         .then(data => {
-    //             console.log('[runDataReadTask$]');
-    //             console.dir(data);
-    //             // Does not work properly here
-    //             synchronizeState();
-                
-    //             setWatchingContainer(data.id);
-
-    //             console.log('Model update')
-    //             console.dir(model);
-             
-    //             return model
-    //                 .init(model.atbd_parameters, {
-    //                     ...model.metadata,
-    //                     data_read_container: data.id
-    //                 })
-    //                 .synchronize()
-    //                 .finally(synchronizeState)
-    //         });
-    // });
-
-    // DEPRECATED
-    // const startPostprocessingTaskHandler = useCallback(() => {
-    //     const {model} = props;
-    //     return runPostprocessingTask$(model)
-    //         .then(data => {
-    //             console.log('[runPostprocessingTask$]');
-    //             console.dir(data);
-    //             // Does not work properly here
-    //             synchronizeState();
-                
-    //             setWatchingContainer(data.id);
-
-    //             console.log('Model update')
-    //             console.dir(model);
-             
-    //             return model
-    //                 .init(model.atbd_parameters, {
-    //                     ...model.metadata,
-    //                     postprocessing_container: data.id
-    //                 })
-    //                 .synchronize()
-    //                 .finally(synchronizeState)
-    //         });
-    // });
-
-    // const removeDataImportResults = useCallback(() => {
-    //     const {model} = props;
-    //     return deleteDataImportResults$(model)
-    //         .then(() => {
-    //             synchronizeState();
-    //             const {data_import_container, ...rest} = model.metadata;
-                
-    //             setWatchingContainer(null);
-    //             model
-    //                 .init(props.model.atbd_parameters, {...rest})
-    //                 .synchronize();
-    //         })
-    // });
-
-    // const removeDataReadResults = useCallback(() => {
-    //     const {model} = props;
-    //     return deleteDataReadResults$(model)
-    //         .then(() => {
-    //             synchronizeState();
-    //             const {data_read_container, ...rest} = model.metadata;
-                
-    //             setWatchingContainer(null);
-    //             model
-    //                 .init(model.atbd_parameters, {...rest})
-    //                 .synchronize();
-    //         })
-    // });
-
-    const deleteJobHandler = useCallback(() => {
+    const deleteJobHandler = useCallback((e) => {
         const jobId = e.target.dataset.job;
-        const containerManifest = pipeline_manifest[jobId].container
-        alert('TODO')
-        //  DEPREACTED
-        // const {model} = props;
-        // return deletePostprocessingResults$(model)
-        //     .then(() => {
-        //         synchronizeState();
-        //         const {postprocessing_container, ...rest} = model.metadata;
-                
-        //         setWatchingContainer(null);
-        //         model
-        //             .init(model.atbd_parameters, {...rest})
-        //             .synchronize();
-        //     })
+        // const containerManifest = pipeline_manifest[jobId].container
+        console.log('[deleteJobHandler] %s', jobId)
+        
+        return deleteResults$(pipeline_manifest[jobId].dir(props.model))
+            .then(() => {
+                synchronizeState();
+            })
     });
 
 
@@ -327,11 +232,22 @@ export default function PipelineModal(props) {
     });
 
     const stopJobHandler = useCallback((e) => {
+        // stop container and remove job artifacts
         const jobId = e.target.dataset.job;
-        const containerManifest = pipeline_manifest[jobId].container
-        alert('TODO')
-        // TODO stop container
-        // TODO remove job artifacts
+        const [allContainers,] = _containersRef.current;
+        // Docker label values are strings
+        const modelId = props.model.id + '';
+        const containersBelongsToTheJob = allContainers.filter(containerProps => (containerProps.labels['task.model.id'] === modelId) && (containerProps.labels['task.type'] === jobId))
+        
+        console.log('[stopJobHandler]');
+        console.dir(containersBelongsToTheJob);
+        if (containersBelongsToTheJob.length < 1) return;
+        
+        stopContainer$(containersBelongsToTheJob[0].short_id)
+            .then(() => deleteResults$(pipeline_manifest[jobId].dir(props.model)))
+            .then(() => {
+                synchronizeState();
+            })
     });
     
 
@@ -379,7 +295,10 @@ export default function PipelineModal(props) {
                                     data-job={jobId}
                                     onClick={stopJobHandler}>Stop</button>
                             ) : jobStatus[jobId] === JOB_STATUS.completed ? (
-                                <button className="btn __small btn-secondary" onClick={deleteJobHandler}>Delete</button>
+                                <button 
+                                    className="btn __small btn-secondary" 
+                                    data-job={jobId}
+                                    onClick={deleteJobHandler}>Delete</button>
                             ) : null }
                         </div>
                     </>)

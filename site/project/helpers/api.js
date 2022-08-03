@@ -120,54 +120,35 @@ export function runContainer$(manifest_s){
 }
 
 
-//  DEPRECATED
-// export function runDataReadTask$(simulationModel){
-//     return postJSON$(NODE_API_PREFIX + '/container', {
-//         image: 'ac-processing/runtime:latest',
-//         environment: {
-//             DATASET_ID: simulationModel.dataset_id,
-//             TASK_ID: simulationModel.dataread_id,
-//             PARAMETERS_JSON: simulationModel.export(),
-//             PYTHONDONTWRITEBYTECODE: '1',
-//         },
-//         hosts: {},
-//         volumes: ['ac_share:/media/share']
-//     });
-// }
+export function deleteResults$(path_s) {
+    return postJSON$(NODE_API_PREFIX + '/batch', [
+        {
+            type: 'rm', 
+            path: path_s
+        },
+    ]);
+}
 
-//  DEPRECATED
-// export function runPostprocessingTask$(simulationModel){
-//     return postJSON$(NODE_API_PREFIX + '/container', {
-//         image: 'ac-posttreatment/runtime:latest',
-//         environment: {
-//             SOURCE_DIR: simulationModel.destination_dataread_path,
-//             PYTHONDONTWRITEBYTECODE: '1',
-//         },
-//         hosts: {},
-//         volumes: ['ac_share:/media/share']
-//     });
-// }
 
-// DEPRECATED
-// export function deleteDataImportResults$(simulationModel) {
-//     return postJSON$(NODE_API_PREFIX + '/batch', [
-//         {'type': 'rm', 'path': simulationModel.destination_dataimport_path},
-//     ]);
-// }
-
-// DEPRECATED
-// export function deleteDataReadResults$(simulationModel) {
-//     return postJSON$(NODE_API_PREFIX + '/batch', [
-//         {'type': 'rm', 'path': simulationModel.destination_dataread_path},
-//     ]);
-// }
-
-// DEPRECATED
-// export function deletePostprocessingResults$(simulationModel) {
-//     return postJSON$(NODE_API_PREFIX + '/batch', [
-//         {'type': 'rm', 'path': simulationModel.destination_postprocessing_path},
-//     ]);
-// }
+export function stopContainer$(containerId_s) {
+    const url = NODE_API_PREFIX + '/container/' + containerId_s
+    return fetch(url, {
+        method: 'DELETE',
+        headers: JSON_HEADERS,
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON)
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint %s', url);
+        });
+}
 
 
 export function getLogs$(containerId, limit_n) {
