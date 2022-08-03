@@ -158,7 +158,7 @@ export default function ModelList(props) {
     return <div className={S.root}>
         {model === null ? ( <>
             <div className={S.header}>
-                <button className="btn" onClick={createModel}>+ Create a model</button>
+                <button className="btn" onClick={createModel}>+ Create a new model</button>
             </div>
             <div className={S.body}>
                 <div className={S.body_inner}>
