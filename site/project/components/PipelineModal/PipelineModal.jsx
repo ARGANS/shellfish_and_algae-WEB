@@ -96,59 +96,43 @@ export default function PipelineModal(props) {
     const _containers = useContainers();
 
     const synchronizeState = useCallback(() => {
-        const [allContainers,] = _containersRef.current;
-
-        // Docker label values are strings
-        const modelId = props.model.id + '';
-
-        // console.log('[CALL synchronizeState] modelId: %s', modelId);
-        // console.dir(_pipelineManifestRef.current);
-        const containersBelongsToTheModel = allContainers.filter(containerProps => containerProps.labels['task.model.id'] === modelId)
-        // TODO get container that belong to the active Job type
-        const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
-
-        // console.log('ActiveContainers');
-        // console.dir(activeContainers);
-
-        if (activeContainers.length > 0) {
-            setWatchingContainer(activeContainers[0].short_id)
-        }
-
-        const nextJobStatus = activeContainers.reduce((state, containerProps) => {
-            state[containerProps.labels['task.type']] = JOB_STATUS.in_progress;
-            return state;
-        }, {});
-
-        // console.log('nextJobStatus');
-        // console.dir(nextJobStatus);
-        
-        setJobStatus(curJobStatus => ({
-            ...curJobStatus,
-            ...nextJobStatus
-        }))
-        
         const fileChecks = _pipelineManifestRef.current.files;
+        const fileChecksRequest = fileChecks.map(checkProps => ({
+            type: 'get_file',
+            path: checkProps.path
+        }));
 
-        return checkFiles$(
-                fileChecks.map(checkProps => ({
-                    type: 'get_file',
-                    path: checkProps.path
-                }))
-            ).then((fileContents) => {
+        return checkFiles$(fileChecksRequest)
+            .then((fileContents) => {
+                const [allContainers, {added, removed}] = _containersRef.current;
+                // Docker label values are strings
+                const modelId = props.model.id + '';
+                const filterContainersLinkedToTheModel = containerProps => containerProps.labels['task.model.id'] === modelId;
+                const containersBelongsToTheModel = allContainers.filter(filterContainersLinkedToTheModel)
+                // TODO get container that belong to the active Job type
+                const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
+
+                if (activeContainers.length > 0) {
+                    // console.warn('WATCH container %s', activeContainers.map(c => c.name).join(','))
+                    // console.dir(activeContainers);
+                    setWatchingContainer(activeContainers[0].short_id)
+                }
+
+                const _executingTasks = activeContainers.reduce((state, containerProps) => {
+                    state[containerProps.labels['task.type']] = JOB_STATUS.in_progress;
+                    return state;
+                }, {
+                    ...INIT_JOB_STATUS
+                });
+
                 const fileCheckReports = fileChecks.reduce((report, checkProps, i) => {
                     if (!report.hasOwnProperty(checkProps.stage_id)) report[checkProps.stage_id] = {};
                     report[checkProps.stage_id][checkProps.check_id] = fileContents[i] !== FNF
                     return report;
                 }, {})
                 
-                // console.log('fileCheckReports');
-                // console.dir(fileCheckReports);
-
                 setJobStatus(curJobStatus => {
-                    // console.log('[curJobStatus]');
-                    // console.dir(curJobStatus);
-
-                    const nextJobStatus = Object.entries(curJobStatus)
+                    const nextJobStatus = Object.entries(_executingTasks)
                         .reduce((nextJobStatus, [jobId, curStatus]) => {
                             if (curStatus !== JOB_STATUS.in_progress) {
                                 if (fileCheckReports[jobId].started) {
@@ -161,14 +145,28 @@ export default function PipelineModal(props) {
                                     nextJobStatus[jobId] = JOB_STATUS.not_started
                                 }
                             } else {
-                                nextJobStatus[jobId] = curStatus;
+                                nextJobStatus[jobId] = JOB_STATUS.in_progress;
                             }
 
                             return nextJobStatus;
                         }, {});
 
-                    console.log('[synchronizeState] nextJobStatus:');
-                    console.dir(nextJobStatus);
+                    // console.log('[synchronizeState] nextJobStatus: %s, curJobStatus %s, _executingTasks: %s', 
+                    //     JSON.stringify(nextJobStatus), 
+                    //     JSON.stringify(curJobStatus),
+                    //     JSON.stringify(_executingTasks),
+                        
+                    // );
+                    // console.log('fileCheckReports');
+                    // console.dir(fileCheckReports);
+                    // console.log('Containers: ALL %s/%s, ADDED %s/%s REMOVED %s/%s',
+                    //     allContainers.map(c => c.name).join(','),
+                    //     allContainers.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
+                    //     added.map(c => c.name).join(','),
+                    //     added.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
+                    //     removed.map(c => c.name).join(','),
+                    //     removed.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
+                    // )
 
                     return nextJobStatus;
                 })
@@ -176,7 +174,7 @@ export default function PipelineModal(props) {
     });
 
     useEffect(() => {
-        console.log('[Container List changed]');
+        console.warn('[Container List changed]');
         console.dir(_containers)
         if (!_pipelineManifestRef.current) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
@@ -271,7 +269,7 @@ export default function PipelineModal(props) {
                         <div className={className}>{jobTitle(jobId)}</div>
                         <div className={className}>{typeStepStatus(jobStatus[jobId])}</div>
                         <div className={className}>
-                            {jobStatus[jobId] === JOB_STATUS.completed && ([
+                            {(jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) && ([
                                 jobId === 'posttreatment' && (<button className="btn __small btn-primary" onClick={showMapHandler}>Map</button>),
                                 <a  title={props.model.dataset_id}
                                     href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model)}
@@ -280,7 +278,7 @@ export default function PipelineModal(props) {
                                 <a  title={props.model.dataset_id}
                                     href={'/api/v2/file?path=' + pipeline_manifest[jobId].dir(props.model) + '/error.txt'}
                                     download={props.model.metadata.name + '_postprocessing_warnings'}
-                                >Download list of warnings</a>
+                                >List of warnings</a>
                             ])}
                         </div>
                         <div className={className}>
@@ -294,11 +292,11 @@ export default function PipelineModal(props) {
                                     className="btn __small btn-secondary" 
                                     data-job={jobId}
                                     onClick={stopJobHandler}>Stop</button>
-                            ) : jobStatus[jobId] === JOB_STATUS.completed ? (
+                            ) : (jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) ? (
                                 <button 
                                     className="btn __small btn-secondary" 
                                     data-job={jobId}
-                                    onClick={deleteJobHandler}>Delete</button>
+                                    onClick={deleteJobHandler}>Cancel</button>
                             ) : null }
                         </div>
                     </>)

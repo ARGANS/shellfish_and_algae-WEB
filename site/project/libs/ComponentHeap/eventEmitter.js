@@ -1,4 +1,4 @@
-// v2 2022/08/01
+// v3 2022/08/03
 class EventEmitter {
 	#eventHandlers = Object.create(null)
 	
@@ -40,7 +40,7 @@ class EventEmitter {
 	  
 		const handlers = this.#eventHandlers[eventName_s];
 		for(let i = 0; i < handlers.length; i++) {
-			if (!handlers[i](...args)) return true;
+			if (handlers[i](...args)) return true;
 		}
 	}
 	
