@@ -86,6 +86,19 @@ function jobTitle(jobId) {
     return 'unknown'
 }
 
+function typeContainers(containers) {
+    return containers.map(c => c.name).join(',')
+}
+
+function typeContainerChanges(containersSnapShot) {
+    return 'ALL: ' + 
+        typeContainers(containersSnapShot[0]) + 
+        '; ADDED: ' + 
+        typeContainers(containersSnapShot[1].added) + 
+        '; REMOVED: ' + 
+        typeContainers(containersSnapShot[1].removed);
+}
+
 
 
 export default function PipelineModal(props) {
@@ -96,6 +109,7 @@ export default function PipelineModal(props) {
     const _containers = useContainers();
 
     const synchronizeState = useCallback(() => {
+        // List of files that the application needs to monitor in order to understand what happened to the task
         const fileChecks = _pipelineManifestRef.current.files;
         const fileChecksRequest = fileChecks.map(checkProps => ({
             type: 'get_file',
@@ -105,6 +119,8 @@ export default function PipelineModal(props) {
         return checkFiles$(fileChecksRequest)
             .then((fileContents) => {
                 const [allContainers, {added, removed}] = _containersRef.current;
+                console.log('[synchronizeState] %s', typeContainerChanges(_containersRef.current));
+                // TODO type conatiner list state
                 // Docker label values are strings
                 const modelId = props.model.id + '';
                 const filterContainersLinkedToTheModel = containerProps => containerProps.labels['task.model.id'] === modelId;
@@ -112,11 +128,7 @@ export default function PipelineModal(props) {
                 // TODO get container that belong to the active Job type
                 const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
 
-                if (activeContainers.length > 0) {
-                    // console.warn('WATCH container %s', activeContainers.map(c => c.name).join(','))
-                    // console.dir(activeContainers);
-                    setWatchingContainer(activeContainers[0].short_id)
-                }
+                setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
 
                 const _executingTasks = activeContainers.reduce((state, containerProps) => {
                     state[containerProps.labels['task.type']] = JOB_STATUS.in_progress;
@@ -130,6 +142,9 @@ export default function PipelineModal(props) {
                     report[checkProps.stage_id][checkProps.check_id] = fileContents[i] !== FNF
                     return report;
                 }, {})
+
+                console.log('[synchronizeState]')
+                console.dir([_executingTasks, fileCheckReports])
                 
                 setJobStatus(curJobStatus => {
                     const nextJobStatus = Object.entries(_executingTasks)
@@ -151,22 +166,14 @@ export default function PipelineModal(props) {
                             return nextJobStatus;
                         }, {});
 
-                    // console.log('[synchronizeState] nextJobStatus: %s, curJobStatus %s, _executingTasks: %s', 
-                    //     JSON.stringify(nextJobStatus), 
-                    //     JSON.stringify(curJobStatus),
-                    //     JSON.stringify(_executingTasks),
+                    console.log('[synchronizeState] nextJobStatus: %s, curJobStatus %s, _executingTasks: %s', 
+                        JSON.stringify(nextJobStatus), 
+                        JSON.stringify(curJobStatus),
+                        JSON.stringify(_executingTasks),
                         
-                    // );
-                    // console.log('fileCheckReports');
-                    // console.dir(fileCheckReports);
-                    // console.log('Containers: ALL %s/%s, ADDED %s/%s REMOVED %s/%s',
-                    //     allContainers.map(c => c.name).join(','),
-                    //     allContainers.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
-                    //     added.map(c => c.name).join(','),
-                    //     added.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
-                    //     removed.map(c => c.name).join(','),
-                    //     removed.filter(filterContainersLinkedToTheModel).map(c => c.name).join(','),
-                    // )
+                    );
+                    console.log('fileCheckReports');
+                    console.dir(fileCheckReports);
 
                     return nextJobStatus;
                 })

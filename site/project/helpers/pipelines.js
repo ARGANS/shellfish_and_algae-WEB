@@ -63,7 +63,7 @@ export const pipeline_manifest = {
                 'ac_global:/media/global'
             ]
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}`
+        dir: (model) => `/media/share/data/${model.dataset_id}/_pretreated`
     },
     dataread: {
         status: {
