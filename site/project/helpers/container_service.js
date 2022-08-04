@@ -17,8 +17,9 @@ function createInitState() {
 
 function init() {
     emitter.on('container_list_change', (containers, containersChanges) => {
-        _containers.current[0] = containers;
-        _containers.current[1] = containersChanges;
+        // _containers.current[0] = containers;
+        // _containers.current[1] = containersChanges;
+        _containers.current = [containers, containersChanges];
     })
 }
 
@@ -45,5 +46,6 @@ export function useContainers(){
 }
 
 export function useGetContainers(){
-    return useRef(_containers.current);
+    // return useRef(_containers.current);
+    return useRef(_containers);
 }

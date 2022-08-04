@@ -118,8 +118,8 @@ export default function PipelineModal(props) {
 
         return checkFiles$(fileChecksRequest)
             .then((fileContents) => {
-                const [allContainers, {added, removed}] = _containersRef.current;
-                console.log('[synchronizeState] %s', typeContainerChanges(_containersRef.current));
+                const [allContainers, {added, removed}] = _containersRef.current.current;
+                console.log('[synchronizeState] %s', typeContainerChanges(_containersRef.current.current));
                 // TODO type conatiner list state
                 // Docker label values are strings
                 const modelId = props.model.id + '';
@@ -239,7 +239,7 @@ export default function PipelineModal(props) {
     const stopJobHandler = useCallback((e) => {
         // stop container and remove job artifacts
         const jobId = e.target.dataset.job;
-        const [allContainers,] = _containersRef.current;
+        const [allContainers,] = _containersRef.current.current;
         // Docker label values are strings
         const modelId = props.model.id + '';
         const containersBelongsToTheJob = allContainers.filter(containerProps => (containerProps.labels['task.model.id'] === modelId) && (containerProps.labels['task.type'] === jobId))
