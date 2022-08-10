@@ -225,7 +225,7 @@ export default function PipelineModal(props) {
     }, [])
 
     const showMapHandler = useCallback(() => {
-		const resource_link = '/api/v2/file?path=' + props.model.destination_postprocessing_path + '/';
+        const resource_link = '/api/v2/file?path=' + pipeline_manifest.posttreatment.dir(props.model) + '/';
 		
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
             <DialogHeader title="Map">
@@ -277,8 +277,9 @@ export default function PipelineModal(props) {
                         <div className={className}>{typeStepStatus(jobStatus[jobId])}</div>
                         <div className={className}>
                             {(jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) && ([
-                                jobId === 'posttreatment' && (<button className="btn __small btn-primary" onClick={showMapHandler}>Map</button>),
+                                jobId === 'posttreatment' && (<button className="btn __small btn-primary roffset-d" onClick={showMapHandler}>Map</button>),
                                 <a  title={props.model.dataset_id}
+                                    className="roffset-d"
                                     href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model)}
                                     download={props.model.metadata.name + '_' + jobId}
                                 >Download assets</a>,

@@ -35,7 +35,7 @@ export default function ServicePage(props) {
 				<div className="bflex-row">
 					<div className="flex-size-fill">&nbsp;</div>
 					<div className="flex-size-own">
-						<a className="icon-link" href="/api/v1/auth/logout?redirect=/">
+						<a className="icon-link roffset-d" href="/api/v1/auth/logout?redirect=/">
 							<Sicon link={'/assets/images/service_icons.svg#profile'} text="Log out"/>
 						</a>
 					</div>

@@ -10,6 +10,7 @@ import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import Sicon from 'libs/Sicon/Sicon';
+import { classList } from 'utils/strings';
 
 const DEBUG_POLLING = false;
 const LONG_POLLING_IS_ACTIVE = true;
@@ -163,11 +164,11 @@ export default function ModelList(props) {
             <div className={S.body}>
                 <div className={S.body_inner}>
                     <div className={S.list}>
-                        <div className={S.list_header1}>#</div>
+                        <div className={classList(S.list_header1, 'lpad-d')}>#</div>
                         <div className={S.list_header2}>Title</div>
                         {models.map((modelItem, modelIndex) => {
                             return <>
-                                <div>{modelIndex + 1}</div>
+                                <div className="lpad-d">{modelIndex + 1}</div>
                                 <div>{modelItem.metadata.name}</div>
                                 <div>
                                     <button 

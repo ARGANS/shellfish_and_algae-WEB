@@ -63,12 +63,18 @@ export default function JobList(props) {
     return <div className={S.root}>
         <ul>
             {containers.map(container => (
-                <li key={container.short_id}>
-                    {container.short_id}&nbsp;{container.name && ('(' +  container.name + ')')}&nbsp;{container.status}
-                    {/* TODO render how long ago the container has been started! */}
-                </li>
+                <li key={container.short_id}>{typeContainerStat(container)}</li>
             ))}
         </ul>
+        {/* TODO render how long ago the container has been started! */}
     </div>
 }
 
+function typeContainerStat(container) {
+    return [
+        container.short_id,
+        container.name ? (', ' +  container.name) : '',
+        ' ',
+        container.labels.hasOwnProperty('task.type') ? container.labels['task.type'] : '',
+    ].join('')  
+}

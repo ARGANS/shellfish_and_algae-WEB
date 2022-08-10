@@ -1,4 +1,4 @@
-/* v4 2022/07/22 */
+/* v5 2022/08/10 */
 
 /* NORMALIZATION */
 body{margin:0;-webkit-font-smoothing: antialiased;}
@@ -95,6 +95,9 @@ fieldset{border:none;}
 
 .loffset-a {margin-left:4rem !important;}
 .loffset-b {margin-left:2rem !important;}
+.loffset-c {margin-left:1rem !important;}
+.loffset-d {margin-left:0.5rem !important;}
+
 .roffset-a {margin-right:4rem !important;}
 .roffset-b {margin-right:2rem !important;}
 .roffset-c {margin-right:1rem !important;}
@@ -105,6 +108,8 @@ fieldset{border:none;}
 .boffset-c {margin-bottom:1rem !important;}
 .boffset-d {margin-bottom:0.5rem !important;}
 .boffset-e {margin-bottom:0.2rem !important;}
+
+.lpad-d {padding-left:0.5rem !important;}
 
 
 .bcolumn-grid {
