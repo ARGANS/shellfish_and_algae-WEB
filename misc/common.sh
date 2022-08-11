@@ -58,3 +58,27 @@ function connect {
 	echo "Attaching to the container $container_name"
 	docker exec -it $container_name sh
 }
+
+
+
+function remove_image {
+	local i=0
+	local lines=()
+	while IFS= read -r line; do
+		lines+=( "$line" )
+		if (( $i > 0 )); then 
+			echo "$i $line"
+		fi
+		let 'i=i+1'
+	done < <( docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.CreatedAt}}\t{{.Size}}\t{{.CreatedSince}}" )
+
+	read -p "Enter the number: " input_line  
+
+	IFS=',' read -ra record_ids <<< "$input_line"
+	# IFS=$', '; cols=("${lines[$linenumber]}"); unset IFS;
+	for record_id in "${record_ids[@]}"; do
+		image_id=$(echo "${lines[$record_id]}" | cut -d " " -f 1)
+		echo "RECORD: $record_id, IMAGE_ID: $image_id"
+		docker image rm $image_id
+	done
+}

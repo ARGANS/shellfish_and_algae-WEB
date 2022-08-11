@@ -8,18 +8,18 @@ export const pipeline_manifest = {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/start.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataset/start.mark`
             },
             completed: {
                 // Proofs that the task finished, and results are corrected
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/end.mark`
+                path: (model) => `/media/share/data/${model.dataset_id}/_dataset/end.mark`
             }
         },
         container: {
             image: 'ac-import/runtime:latest',
             environment: {
-                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}`,
+                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
                 INPUT_PARAMETERS: (model) => JSON.stringify(model.dataset_parameters),
                 MOTU_LOGIN: "mjaouen",
                 MOTU_PASSWORD: "Azerty123456",
@@ -34,7 +34,7 @@ export const pipeline_manifest = {
                 'ac_global:/media/global'
             ]
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}`
+        dir: (model) => `/media/share/data/${model.dataset_id}/_dataset`
     },
     pretreatment: {
         status: {
@@ -50,7 +50,7 @@ export const pipeline_manifest = {
         container: {
             image: 'ac-pretreatment/runtime',
             environment: {
-                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}`,
+                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
                 INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_pretreated`,
                 PYTHONDONTWRITEBYTECODE: '1',
             },

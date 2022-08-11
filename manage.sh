@@ -123,6 +123,8 @@ case $1 in
 		config $2;;
 	'export')
 		action_export;;
+	'images')
+		remove_image;;
 	*)
 	help;;
 esac
