@@ -147,7 +147,7 @@ export default function Map(props) {
 
 	return <div className={S.root}>
 		<div className={S.header}>
-			<h3>Switch layers:</h3>
+			<h3>Layers:</h3>
 			<ul className={S.menu}>
 				{files.map(file => (
 					<li 

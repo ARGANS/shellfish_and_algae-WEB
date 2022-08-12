@@ -71,13 +71,13 @@ function typeStepStatus(status) {
 
 function jobTitle(jobId) {
     if (jobId === JOB_LIST[0]) {
-        return 'Import the dataset';
+        return 'Import datasets';
     }
     else if (jobId === JOB_LIST[1]) {
-        return 'Pretreat the dataset';
+        return 'Pretreat datasets';
     }
     else if (jobId === JOB_LIST[2]) {
-        return 'Run a simulation of the model';
+        return 'Run model simulation';
     }
     else if (jobId === JOB_LIST[3]) {
         return 'Generate GeoTIFF files';
@@ -277,19 +277,19 @@ export default function PipelineModal(props) {
                         <div className={className}>{typeStepStatus(jobStatus[jobId])}</div>
                         <div className={className}>
                             {(jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) && ([
-                                jobId === 'posttreatment' && (<button className="btn __small btn-primary roffset-d" onClick={showMapHandler}>Map</button>),
                                 <a  title={props.model.dataset_id}
                                     className="roffset-d"
-                                    href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model)}
-                                    download={props.model.metadata.name + '_' + jobId}
+                                    href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model) + '&filename=' + (props.model.metadata.name + '_' + jobId)}
                                 >Download assets</a>,
                                 <a  title={props.model.dataset_id}
-                                    href={'/api/v2/file?path=' + pipeline_manifest[jobId].dir(props.model) + '/error.txt'}
-                                    download={props.model.metadata.name + '_postprocessing_warnings'}
-                                >List of warnings</a>
+                                    href={'/api/v2/file?path=' + pipeline_manifest[jobId].dir(props.model) + '/error.txt' + '&filename=' + (props.model.metadata.name + '_' + jobId + 'log.txt')}
+                                >Execution log</a>
                             ])}
                         </div>
                         <div className={className}>
+                            {jobStatus[jobId] === JOB_STATUS.completed && jobId === 'posttreatment' && (
+                                <button className="btn __small btn-primary roffset-d" onClick={showMapHandler}>Show map</button>
+                            )}
                             {jobStatus[jobId] === JOB_STATUS.not_started ? (
                                 <button 
                                     className="btn __small btn-primary" 
