@@ -21,6 +21,18 @@
 .stageList h4 {
     margin: 0 0 0.5rem 0;
 }
+.gridWrapper {
+    position: relative;
+}
+.gridBlocker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,2555,.7);
+    text-align: center;
+}
 
 .disabled {
     opacity: 0.5;
