@@ -8,7 +8,7 @@ import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
 import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
-import { useContainers, useGetContainers } from 'helpers/container_service';
+import { useContainers } from 'helpers/container_service';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
 /**
@@ -109,11 +109,11 @@ export default function PipelineModal(props) {
     const [watchingContainer, setWatchingContainer] = useState(null);
     const [isBlocked, setUIBlocked] = useState(false);
     const _pipelineManifestRef = useRef();
-    const _containersRef = useGetContainers();
     const _containers = useContainers();
-    const __containers = useRef();
+    const _containersRef = useRef();
 
-    const synchronizeState = useCallback((containerStateChange) => {
+    // To be good this callback depends on _containers
+    const synchronizeState = useCallback(() => {
         // List of files that the application needs to monitor in order to understand what happened to the task
         const fileChecks = _pipelineManifestRef.current.files;
         const fileChecksRequest = fileChecks.map(checkProps => ({
@@ -121,19 +121,11 @@ export default function PipelineModal(props) {
             path: checkProps.path
         }));
 
-        if (containerStateChange) {
-            console.warn('[synchronizeState] %s', printstate(containerStateChange));
-            console.dir(containerStateChange);
-        }
-        
         return checkFiles$(fileChecksRequest)
             .then((fileContents) => {
-                // const [allContainers, {added, removed}] = _containersRef.current.current;
-                const [allContainers, {added, removed}] = __containers.current;
-                console.log('Continue %s <> %s', printstate(_containersRef.current.current), printstate(__containers.current));
+                const [allContainers, {added, removed}] = _containersRef.current;
+                console.log('Continue %s', printstate(_containersRef.current));
                 
-                // console.log('[synchronizeState] %s', typeContainerChanges(_containersRef.current.current));
-                // TODO type container list state
                 // Docker label values are strings
                 const modelId = props.model.id + '';
                 const filterContainersLinkedToTheModel = containerProps => containerProps.labels['task.model.id'] === modelId;
@@ -200,9 +192,9 @@ export default function PipelineModal(props) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
             console.dir(_pipelineManifestRef.current);
         }
-        __containers.current = _containers;
+        _containersRef.current = _containers;
         
-        synchronizeState(_containers);
+        synchronizeState();
     }, [_containers])
 
 
@@ -263,7 +255,7 @@ export default function PipelineModal(props) {
     const stopJobHandler = useCallback((e) => {
         // stop container and remove job artifacts
         const jobId = e.target.dataset.job;
-        const [allContainers,] = _containersRef.current.current;
+        const [allContainers,] = _containersRef.current;
         // Docker label values are strings
         const modelId = props.model.id + '';
         const containersBelongsToTheJob = allContainers.filter(containerProps => (containerProps.labels['task.model.id'] === modelId) && (containerProps.labels['task.type'] === jobId))

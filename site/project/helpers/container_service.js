@@ -5,32 +5,28 @@ export const emitter = new EventEmitter();
 const _containers = createInitState();
 
 function createInitState() {
-    return {
-        current: [
-            [], {
-                added:[], 
-                removed: []
-            }
-        ]
-    };
+    return [
+        [], {
+            added:[], 
+            removed: []
+        }
+    ];
 }
 
-function init() {
+// The application is watching for changes to the list of containers to provide useContainer with the initial data!
+(function init() {
     emitter.on('container_list_change', (containers, containersChanges) => {
-        // _containers.current[0] = containers;
-        // _containers.current[1] = containersChanges;
-        _containers.current = [containers, containersChanges];
+        _containers[0] = containers;
+        _containers[1] = containersChanges;
     })
-}
+}());
 
 export function stop(){
     emitter.off('container_list_change');
 }
 
-init();
-
 export function useContainers(){
-    const [state, setState] = useState(_containers.current);
+    const [state, setState] = useState(_containers);
 
     useEffect(() => {
         let _handler = emitter.on('container_list_change', (containers, containersChanges) => {
@@ -45,8 +41,3 @@ export function useContainers(){
     return state;
 }
 
-// TODO remove
-export function useGetContainers(){
-    // return useRef(_containers.current);
-    return useRef(_containers);
-}
