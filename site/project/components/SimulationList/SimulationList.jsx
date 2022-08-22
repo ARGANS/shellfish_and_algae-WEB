@@ -182,7 +182,7 @@ export default function ModelList(props) {
                                         className="icon-btn"
                                         data-index={modelIndex}
                                         onClick={onModifyHandler}
-                                    ><Sicon link={'/assets/images/service_icons.svg#gear'}/></button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#edit'}/></button>
                                     {/* <button 
                                         data-index={modelIndex}
                                         onClick={onViewHandler}
@@ -192,13 +192,13 @@ export default function ModelList(props) {
                                         className="icon-btn"
                                         data-index={modelIndex}
                                         onClick={onDeleteHandler}
-                                    ><Sicon link={'/assets/images/service_icons.svg#burn'} /></button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#trash'} /></button>
                                     <button 
                                         title="Export"
                                         className="icon-btn"
                                         data-index={modelIndex} 
                                         onClick={onDownloadHandler}
-                                    ><Sicon link={'/assets/images/service_icons.svg#chart-file'} /></button>
+                                    ><Sicon link={'/assets/images/service_icons.svg#download'} /></button>
                                 </div>
                             </>
                         })}

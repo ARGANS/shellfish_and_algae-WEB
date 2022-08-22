@@ -2,6 +2,7 @@ import datasets_per_region from 'models/datasets.json';
 import { useCallback, useEffect, useState } from 'react';
 import { classList } from 'utils/strings';
 import S from './DataForm.module.css';
+import Sicon from 'libs/Sicon/Sicon';
 
 const headers = 'Parameter,Name,Type,Level,resolution,first obs,last obs,Frequency,Link'.split(',');
 const RENDER_PPOPERTIES = 'Parameter,Name,type,level,resolution,first obs,last obs,frequency,link'.split(',');
@@ -75,13 +76,13 @@ function DatasetList(props){
                         cursor: 'pointer'
                     }}
                 >
-                    <div className="bflex-row">
-                        <span className="flex-size-fill with-ellipsis">{value || '-'}</span>
-                        <span className="flex-size-own">
-                             {(datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1) && (
-                                props.isActive ? <i>[-]</i> : <i>[+]</i>
+                    <div className="bflex-row __align-center">
+                        <div className="flex-size-fill with-ellipsis">{value || '-'}</div>
+                        <div className="flex-size-own">
+                            {(datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1) && (
+                                <Sicon className={S.icon} link={props.isActive ? '/assets/images/service_icons.svg#arrow-down' : '/assets/images/service_icons.svg#arrow-up'}/>
                             )}
-                        </span>
+                        </div>
                     </div>
                 </div>)
             }

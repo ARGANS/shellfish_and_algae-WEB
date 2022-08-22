@@ -18,3 +18,8 @@
 .isActive {
     background-color: rgb(255,255,255);
 }
+.icon {
+    display: block;
+    width: 14px;
+    height: 14px;
+}

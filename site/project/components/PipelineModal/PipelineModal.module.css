@@ -36,5 +36,8 @@
 
 .disabled {
     opacity: 0.5;
+}
+
+.disabled button {
     pointer-events: none;
 }
