@@ -29,6 +29,8 @@ function DatasetList(props){
         // console.dir([index, props.parameter, props.datasets[index], JSON.parse(JSON.stringify(props.datasets))]);
 
         props.onChange(props.parameter, props.datasets[index]);
+        // Close dropdown list after item selection
+        props.activateParameter(null)
     } : null)
 
     useEffect(() => {
@@ -67,7 +69,6 @@ function DatasetList(props){
                 </div>)
             }
             else if (propertyKey === 'Name') {
-                // TODO find icon 
                 return (<div 
                     title={value} 
                     onClick={onClickHandler}
@@ -77,7 +78,7 @@ function DatasetList(props){
                     }}
                 >
                     <div className="bflex-row __align-center">
-                        <div className="flex-size-fill with-ellipsis">{value || '-'}</div>
+                        <div className={"flex-size-fill with-ellipsis "  + S.datasetName }>{value || '-'}</div>
                         <div className="flex-size-own">
                             {(datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1) && (
                                 <Sicon className={S.icon} link={props.isActive ? '/assets/images/service_icons.svg#arrow-down' : '/assets/images/service_icons.svg#arrow-up'}/>

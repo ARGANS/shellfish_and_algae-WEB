@@ -23,3 +23,6 @@
     width: 14px;
     height: 14px;
 }
+.datasetName:hover {
+    color: var(--main-link-color);
+}
