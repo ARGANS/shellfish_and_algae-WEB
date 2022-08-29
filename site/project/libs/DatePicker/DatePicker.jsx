@@ -89,7 +89,7 @@ export default function DatePicker(props) {
           </div>
           <div class={s.dateGrid} data-role="dp-calendar-grid">{Array(daysInMonth).fill(0)
             .map((_, index) => {
-              const className = s.day;
+              let className = s.day;
               if (year === actualDate.getFullYear() 
                 && month === actualDate.getMonth()
                 && (index + 1) === actualDate.getDate()  
