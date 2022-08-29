@@ -14,3 +14,11 @@ export DC_PATH='~/docker-compose'
 https://213.166.43.12/
 https://213-166-43-12.sslip.io/
 https://aqua-d5a62b0c.nip.io
+
+The user is able to download tiff files of a number of interest variables:
+	Dry weight (per volume, per length of line, per unit area)
+	Full weight(per volume, per length of line, per unit area)
+	Kcal per unit area
+	Protein weight per unit area
+	Biomass CO2 per volume
+	CO2 uptake per unit area

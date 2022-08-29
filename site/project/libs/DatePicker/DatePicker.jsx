@@ -89,18 +89,18 @@ export default function DatePicker(props) {
           </div>
           <div class={s.dateGrid} data-role="dp-calendar-grid">{Array(daysInMonth).fill(0)
             .map((_, index) => {
-              const classList = s.day;
+              const className = s.day;
               if (year === actualDate.getFullYear() 
                 && month === actualDate.getMonth()
                 && (index + 1) === actualDate.getDate()  
               ) {
-                classList += ' ' + s.actual;
+                className += ' ' + s.actual;
               }
 
               return <time 
                 tabIndex="0"
                 key={index} 
-                className={classList} 
+                className={className} 
                 onClick={onSelectDayHandler} 
                 data-day={index + 1} 
                 datetime={DateZ.from(year, month, index + 1).DDMMYYYY('-')}>{index + 1}</time>
