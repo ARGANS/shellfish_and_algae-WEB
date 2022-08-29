@@ -183,3 +183,29 @@ details[open] > summary::before {
 .icon-btn > svg {width: 18px; height: 18px;}
 .icon-btn > svg > use {}
 .icon-btn + .icon-btn {margin-left: 0.3rem;}
+
+.ui-spinner{
+	display:inline-block;
+	animation:spin 600ms infinite linear;
+	border:2px solid #eaeaea;
+	border-radius:50%;
+	border-top:2px solid #0187f3;
+	height:16px;
+	width:16px
+}
+@media (min-width: 560px){
+	.ui-spinner{
+		height:24px;
+		width:24px
+	}
+}
+@keyframes spin{
+	0%{
+		-webkit-transform:rotate(0);
+		transform:rotate(0)
+	}
+	100%{
+		-webkit-transform:rotate(359deg);
+		transform:rotate(359deg)
+	}
+}

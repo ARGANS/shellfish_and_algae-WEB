@@ -9,6 +9,7 @@ import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
 import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
 import { useContainers } from 'helpers/container_service';
+import Sicon from 'libs/Sicon/Sicon';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
 /**
@@ -331,7 +332,9 @@ export default function PipelineModal(props) {
                 </div>
                 {isBlocked && (
                     <div className={classList(S.gridBlocker, 'vmiddle')}>
-                        <div className="vmiddle-inner">[TODO] progress...</div>
+                        <div className="vmiddle-inner">
+                            <Sicon link={'/assets/images/service_icons.svg#spinner2'} className="ui-spinner"/>
+                        </div>
                     </div>
                 )}
             </div>
