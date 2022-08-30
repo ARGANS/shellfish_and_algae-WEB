@@ -81,7 +81,13 @@ export default function ModelList(props) {
         if (!model) return;
 
         addComponent(<Dialog key={Math.random()} dialogKey={'TaskManager1'}>
-            <DialogHeader title={'Steps to execute the model: ' + model.metadata.name}>
+            <DialogHeader title={'Steps to execute the model:'}>
+                <div className={classList('regular-grid', S.modelProps)}>
+                    <h4>Name:</h4>
+                    <div>{model.metadata.name}</div>
+                    <h4>Id:</h4>
+                    <div>{model.id}</div>
+                </div>
                 <PipelineModal model={model}/>
             </DialogHeader>
         </Dialog>, 'default');
