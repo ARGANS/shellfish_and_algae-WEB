@@ -81,7 +81,7 @@ function DatasetList(props){
                         <div className={"flex-size-fill with-ellipsis "  + S.datasetName }>{value || '-'}</div>
                         <div className="flex-size-own">
                             {(datasetIsEmpty(defaultDataset) ? true : props.datasets.length > 1) && (
-                                <Sicon className={S.icon} link={props.isActive ? '/assets/images/service_icons.svg#arrow-down' : '/assets/images/service_icons.svg#arrow-up'}/>
+                                <Sicon className={S.icon} link={props.isActive ? '/assets/images/service_icons.svg#arrow-up' : '/assets/images/service_icons.svg#arrow-down'}/>
                             )}
                         </div>
                     </div>

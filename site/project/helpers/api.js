@@ -65,6 +65,7 @@ export function getActiveUser$() {
 }
 
 export const FNF = 'FileNotFound';
+const BATCH_ACTION_ENDPOINT = '/batch2'; //'/batch'
 
 export function checkFiles$(checkList) {
     const commands = checkList.map(checkProps => ({
@@ -72,7 +73,7 @@ export function checkFiles$(checkList) {
         path: checkProps.path
     })) 
     
-    return fetch(NODE_API_PREFIX + '/batch', {
+    return fetch(NODE_API_PREFIX + BATCH_ACTION_ENDPOINT, {
         method: 'POST',
         headers: JSON_HEADERS,
         body: JSON.stringify(commands)
@@ -87,7 +88,7 @@ export function checkFiles$(checkList) {
                 .then(parseJSON);
         })
         .catch(error => {
-            console.log('Cannot request the endpoint /batch');
+            console.log('Cannot request the endpoint %s', BATCH_ACTION_ENDPOINT);
             console.dir(error)
         })
 }
@@ -121,7 +122,7 @@ export function runContainer$(manifest_s){
 
 
 export function deleteResults$(path_s) {
-    return postJSON$(NODE_API_PREFIX + '/batch', [
+    return postJSON$(NODE_API_PREFIX + BATCH_ACTION_ENDPOINT, [
         {
             type: 'rm', 
             path: path_s

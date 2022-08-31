@@ -16,14 +16,14 @@ function compare(prevList, curList) {
     };
 }
 
+// const CONTAINER_STREAM_ENDPOINT = '/api/v2/container/stream';
+const CONTAINER_STREAM_ENDPOINT = '/api/v2/container/stream2';
 
 export default function JobList(props) {
     const [containers, setContainers] = useState([])
     // TODO move outside of the component
     useEffect(() => {
-        const _evtSource = new EventSource('/api/v2/container/stream');
-        // console.log('START source');
-        // console.dir(_evtSource);
+        const _evtSource = new EventSource(CONTAINER_STREAM_ENDPOINT);
         let _prev = [];
 
         _evtSource.onmessage = function(e) {
@@ -48,24 +48,32 @@ export default function JobList(props) {
                 emitter.emit('container_list_change', containers, containersChanges)
             } 
             _prev = containers;
-
-            
-        
             setContainers(containers);
         };
         return () => {
             _evtSource.close();
             stop();
         }
-    }, [])
+    }, []);
+
+    const clickHandler = useCallback((e) => {
+        const containerId = e.target.dataset.id;
+        const containerData = containers.find(container => container.short_id === containerId);
+        console.log('Container %s', containerId);
+        console.dir(containerData);
+    }, [containers]);
     
    
     return <div className={S.root}>
-        <ul>
+        <ol>
             {containers.map(container => (
-                <li key={container.short_id}>{typeContainerStat(container)}</li>
+                <li 
+                    className="regular_vlink"
+                    key={container.short_id} 
+                    data-id={container.short_id} 
+                    onClick={clickHandler}>{typeContainerStat(container)}</li>
             ))}
-        </ul>
+        </ol>
         {/* TODO render how long ago the container has been started! */}
     </div>
 }
