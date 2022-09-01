@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import s from './service_page.module.css'
-import DatePicker from 'libs/DatePicker/DatePicker';
+// import DatePicker from 'libs/DatePicker/DatePicker';
 import SimulationList from 'components/SimulationList/SimulationList';
 import algae_parameters from 'models/macroalgae_model_parameters.json'
 import shellfish_parameters from 'models/shellfish_model_parameters.json'

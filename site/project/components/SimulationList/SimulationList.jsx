@@ -87,11 +87,13 @@ export default function ModelList(props) {
                     <div>{model.metadata.name}</div>
                     <h4>Id:</h4>
                     <div>{model.id}</div>
+                    <h4>Owner:</h4>
+                    <div>{model.owner_name}/{model.owner_id}</div>
                 </div>
-                <PipelineModal model={model}/>
+                <PipelineModal model={model} user={user}/>
             </DialogHeader>
         </Dialog>, 'default');
-    }, [models]);
+    }, [models, user]);
 
     const onModifyHandler = useCallback(event => {
         event.preventDefault();

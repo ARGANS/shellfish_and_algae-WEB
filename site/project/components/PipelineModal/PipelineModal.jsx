@@ -209,9 +209,10 @@ export default function PipelineModal(props) {
         const body_s = JSON.stringify(containerManifest, (key, value) => {
             if (typeof(value) == 'function') return value(props.model);
             return value;
-        });
-
+        }).replaceAll('{{user}}', props.user.username);
         setUIBlocked(true);
+        // console.log('StartJobHandler %s', props.user.username);
+        // console.dir(JSON.stringify(props.user, null, '\t'));
 
         return runContainer$(body_s)
     });

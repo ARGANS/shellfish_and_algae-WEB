@@ -28,6 +28,7 @@ export const pipeline_manifest = {
             labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'dataimport',
+                'task.user': '{{user}}'
             },
             volumes: [
                 'ac_share:/media/share',
@@ -57,6 +58,7 @@ export const pipeline_manifest = {
             labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'pretreatment',
+                'task.user': '{{user}}'
             },
             volumes: [
                 'ac_share:/media/share',
@@ -87,6 +89,7 @@ export const pipeline_manifest = {
             labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'dataread',
+                'task.user': '{{user}}'
             },
             volumes: [
                 'ac_share:/media/share',
@@ -115,6 +118,7 @@ export const pipeline_manifest = {
             labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'posttreatment',
+                'task.user': '{{user}}'
             },
             volumes: [
                 'ac_share:/media/share',
