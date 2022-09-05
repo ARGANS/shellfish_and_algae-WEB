@@ -1,6 +1,19 @@
 const CHECK_ACTIONS = {
     checkFile: 'file_exists'
 }
+const CONTAINER_CONF = {
+    Volumes: {
+        "/media/global": {},
+        "/media/share": {}
+    },
+    HostConfig: {
+        "AutoRemove": true,
+        "Binds": [
+            "ac_share:/media/share",
+            "ac_global:/media/global"
+        ],
+    },
+}
 
 export const pipeline_manifest = {
     // [stage_id]: props
@@ -17,23 +30,41 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            image: 'ac-import/runtime:latest',
-            environment: {
-                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
-                INPUT_PARAMETERS: (model) => JSON.stringify(model.dataset_parameters),
-                MOTU_LOGIN: "mjaouen",
-                MOTU_PASSWORD: "Azerty123456",
-                PYTHONDONTWRITEBYTECODE: '1',
-            },
-            labels: {
+            // TODO comment in the task-runner
+            // image: 'ac-import/runtime:latest',
+            // environment: {
+            //     INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
+            //     INPUT_PARAMETERS: (model) => JSON.stringify(model.dataset_parameters),
+            //     MOTU_LOGIN: "mjaouen",
+            //     MOTU_PASSWORD: "Azerty123456",
+            //     PYTHONDONTWRITEBYTECODE: '1',
+            // },
+            // labels: {
+            //     'task.model.id': (model) => model.id + '',
+            //     'task.type': 'dataimport',
+            //     'task.user': '{{user}}'
+            // },
+            // volumes: [
+            //     'ac_share:/media/share',
+            //     'ac_global:/media/global'
+            // ],
+
+
+            //  TODO use ... for common settings
+            ...CONTAINER_CONF,
+            Image: 'ac-import/runtime:latest',
+            Env: (model) => ([
+                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_dataset`,
+                'INPUT_PARAMETERS=' + JSON.stringify(model.dataset_parameters) + '',
+                'MOTU_LOGIN=mjaouen',
+                'MOTU_PASSWORD=Azerty123456',
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'dataimport',
                 'task.user': '{{user}}'
             },
-            volumes: [
-                'ac_share:/media/share',
-                'ac_global:/media/global'
-            ]
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataset`
     },
@@ -49,21 +80,18 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            image: 'ac-pretreatment/runtime',
-            environment: {
-                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
-                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_pretreated`,
-                PYTHONDONTWRITEBYTECODE: '1',
-            },
-            labels: {
+            Image: 'ac-pretreatment/runtime',
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `INPUT_SOURCE=/media/share/data/${model.dataset_id}/_dataset`,
+                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_pretreated`,
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'pretreatment',
                 'task.user': '{{user}}'
             },
-            volumes: [
-                'ac_share:/media/share',
-                'ac_global:/media/global'
-            ]
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_pretreated`
     },
@@ -79,22 +107,19 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            image: 'ac-dataread/runtime',
-            environment: {
-                INPUT_SOURCE: (model) => `/media/share/data/${model.dataset_id}/_pretreated`,
-                INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
-                INPUT_MODEL_PROPERTIES_JSON: (model) => JSON.stringify(model.body),
-                PYTHONDONTWRITEBYTECODE: '1',
-            },
-            labels: {
+            Image: 'ac-dataread/runtime',
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `INPUT_SOURCE=/media/share/data/${model.dataset_id}/_pretreated`,
+                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                'INPUT_MODEL_PROPERTIES_JSON='+ JSON.stringify(model.body),
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'dataread',
                 'task.user': '{{user}}'
             },
-            volumes: [
-                'ac_share:/media/share',
-                'ac_global:/media/global'
-            ]
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
     },
@@ -110,20 +135,17 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            image: 'ac-posttreatment/runtime',
-            environment: {
-                SOURCE_DIR: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
-                PYTHONDONTWRITEBYTECODE: '1',
-            },
-            labels: {
+            Image: 'ac-posttreatment/runtime',
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `SOURCE_DIR=/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
                 'task.model.id': (model) => model.id + '',
                 'task.type': 'posttreatment',
                 'task.user': '{{user}}'
             },
-            volumes: [
-                'ac_share:/media/share',
-                'ac_global:/media/global'
-            ]
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment`
     }

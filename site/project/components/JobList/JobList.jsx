@@ -17,7 +17,7 @@ function compare(prevList, curList) {
 }
 
 // const CONTAINER_STREAM_ENDPOINT = '/api/v2/container/stream';
-const CONTAINER_STREAM_ENDPOINT = '/api/v2/container/stream2';
+const CONTAINER_STREAM_ENDPOINT = '/api/v2/stream/container';
 
 export default function JobList(props) {
     const [containers, setContainers] = useState([])

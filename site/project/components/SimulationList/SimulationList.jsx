@@ -89,6 +89,8 @@ export default function ModelList(props) {
                     <div>{model.id}</div>
                     <h4>Owner:</h4>
                     <div>{model.owner_name}/{model.owner_id}</div>
+                    <h4>dataset_id:</h4>
+                    <div>{model.dataset_id}</div>
                 </div>
                 <PipelineModal model={model} user={user}/>
             </DialogHeader>

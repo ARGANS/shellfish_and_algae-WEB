@@ -11,7 +11,7 @@ export default function ContainerLogs(props) {
     useEffect(() => {
         console.log('[ContainerLogs] %s', props.container_id);
         const _esource = new ListenEvent(
-            NODE_API_PREFIX + '/container/log/stream?id=' + props.container_id, 
+            NODE_API_PREFIX + '/log/stream/container?id=' + props.container_id, 
             // On message:
             ({data: message}) => {
                 // console.log('Message: %s', message);

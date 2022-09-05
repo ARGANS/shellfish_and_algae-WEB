@@ -134,8 +134,12 @@ export default function PipelineModal(props) {
                 // TODO get container that belong to the active Job type
                 const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
 
-                setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
+                if (false) {
+                    // TODO: Disabled
+                    setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
+                }
 
+                
                 const _executingTasks = activeContainers.reduce((state, containerProps) => {
                     state[containerProps.labels['task.type']] = JOB_STATUS.in_progress;
                     return state;
@@ -149,8 +153,8 @@ export default function PipelineModal(props) {
                     return report;
                 }, {})
 
-                // console.log('[synchronizeState]')
-                // console.dir([_executingTasks, fileCheckReports])
+                console.log('[synchronizeState]')
+                console.dir([_executingTasks, fileCheckReports])
                 
                 setJobStatus(curJobStatus => {
                     const nextJobStatus = Object.entries(_executingTasks)
