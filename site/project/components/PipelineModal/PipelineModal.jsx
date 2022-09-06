@@ -8,7 +8,7 @@ import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
 import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
-import { useContainers } from 'helpers/container_service';
+import { useContainers, printstate } from 'helpers/container_service';
 import Sicon from 'libs/Sicon/Sicon';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 
@@ -100,11 +100,6 @@ function typeContainerChanges(containersSnapShot) {
         typeContainers(containersSnapShot[1].removed);
 }
 
-function printstate(stat) {
-    if (!stat) return '';
-    return [stat[0].length, stat[1].added.length, stat[1].removed.length].join('.')
-}
-
 export default function PipelineModal(props) {
     const [jobStatus, setJobStatus] = useState(INIT_JOB_STATUS)
     const [watchingContainer, setWatchingContainer] = useState(null);
@@ -191,7 +186,7 @@ export default function PipelineModal(props) {
     });
 
     useEffect(() => {
-        // console.warn('[Container List changed]');
+        console.warn('[Container List changed] %s',  printstate(_containers));
         // console.dir(_containers)
         if (!_pipelineManifestRef.current) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);

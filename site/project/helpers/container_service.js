@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from "react";
 export const emitter = new EventEmitter();
 const _containers = createInitState();
 
+// if (typeof(window) != 'undefined') {
+//     window._emitter = emitter;
+// }
+
+
 function createInitState() {
     return [
         [], {
@@ -25,13 +30,19 @@ export function stop(){
     emitter.off('container_list_change');
 }
 
+export function printstate(stat) {
+    if (!stat) return '';
+    return stat[0].length + ' +' + stat[1].added.length + ' -' + stat[1].removed.length;
+}
+
 export function useContainers(){
     const [state, setState] = useState(_containers);
 
     useEffect(() => {
-        let _handler = emitter.on('container_list_change', (containers, containersChanges) => {
-            setState([containers, containersChanges])
-        })
+        let _handler = emitter.on('container_list_change', (...stat) => {
+            console.log('[ON container_list_change HOOK %s]', printstate(stat));
+            setState(stat)
+        });
         return () => {
             emitter.off('container_list_change', _handler);
             _handler = null;

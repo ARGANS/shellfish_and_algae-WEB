@@ -43,8 +43,8 @@ export default function JobList(props) {
             const containersChanges = compare(_prev, containers);
 
             if (containersChanges.added.length !== 0 || containersChanges.removed.length !== 0) {
-                console.log('\t\tEmit [container_list_change]');
-                console.dir(containersChanges);
+                // console.log('\t\tEmit [container_list_change]');
+                // console.dir(containersChanges);
                 emitter.emit('container_list_change', containers, containersChanges)
             } 
             _prev = containers;

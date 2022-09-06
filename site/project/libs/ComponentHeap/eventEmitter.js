@@ -1,4 +1,4 @@
-// v3 2022/08/03
+// v4 2022/09/06
 class EventEmitter {
 	#eventHandlers = Object.create(null)
 	
@@ -11,7 +11,7 @@ class EventEmitter {
 		this.#eventHandlers[eventName].push(handler);
 		return handler;
 	}
-	
+
 	/**
 	 * @param {string} [eventName]
 	 * @param {function} [handler] 
@@ -21,10 +21,10 @@ class EventEmitter {
 			const handlers = this.#eventHandlers[eventName];
 			if (!Array.isArray(handlers)) return;
 		
-			let i = handlers.length - 1;
+			let pos = handlers.indexOf(handler);
 		
-			while (i--> 0) {
-		  		handlers.splice(i, 1);
+			if (pos > -1) {
+		  		handlers.splice(pos, 1);
 			}
 	  	} else if (eventName) {
 			if (!Array.isArray(this.#eventHandlers[eventName])) return;
@@ -39,7 +39,12 @@ class EventEmitter {
 		if (!Array.isArray(this.#eventHandlers[eventName_s])) return;
 	  
 		const handlers = this.#eventHandlers[eventName_s];
+		// console.log('\t[Emit %s] handlers: %s', eventName_s, handlers.length);
 		for(let i = 0; i < handlers.length; i++) {
+			// if (eventName_s === 'container_list_change') {
+			// 	console.log('\t\tH %s %s', i, handlers[i] + '');
+			// }
+			
 			if (handlers[i](...args)) return true;
 		}
 	}
