@@ -16,7 +16,6 @@ function compare(prevList, curList) {
     };
 }
 
-// const CONTAINER_STREAM_ENDPOINT = '/api/v2/container/stream';
 const CONTAINER_STREAM_ENDPOINT = '/api/v2/stream/container';
 
 export default function JobList(props) {
@@ -43,8 +42,8 @@ export default function JobList(props) {
             const containersChanges = compare(_prev, containers);
 
             if (containersChanges.added.length !== 0 || containersChanges.removed.length !== 0) {
-                // console.log('\t\tEmit [container_list_change]');
-                // console.dir(containersChanges);
+                console.warn('[Emit container_list_change]');
+                console.dir(containersChanges);
                 emitter.emit('container_list_change', containers, containersChanges)
             } 
             _prev = containers;
