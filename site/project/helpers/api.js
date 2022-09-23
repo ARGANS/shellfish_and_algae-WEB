@@ -153,7 +153,7 @@ export function stopContainer$(containerId_s) {
 
 
 export function getLogs$(containerId, limit_n) {
-    const link = NODE_API_PREFIX + '/container/log?id=' + containerId + '&tail=' + limit_n;
+    const link = NODE_API_PREFIX + '/log/container?id=' + containerId + '&tail=' + limit_n;
     return fetch(link, {
         method: 'GET',
         headers: JSON_HEADERS

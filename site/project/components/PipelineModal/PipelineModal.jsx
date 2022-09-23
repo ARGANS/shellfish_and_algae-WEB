@@ -129,7 +129,7 @@ export default function PipelineModal(props) {
                 // TODO get container that belong to the active Job type
                 const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
 
-                if (false) {
+                if (true) {
                     // TODO: Disabled
                     setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
                 }
