@@ -41,6 +41,7 @@ RUN chmod +x ./download.sh
 # Downloading and parsing a csv file with datasets
 
 
-CMD ./download.sh > /opt/app/models/datasets.json && ./build.sh && sh
-
+CMD ./download.sh $ALGAE_DATASETS_LINK /opt/app/models/algae_datasets.json A && \
+	./download.sh $SHELLFISH_DATASETS_LINK /opt/app/models/shellfish_datasets.json S && \
+	./build.sh && sh
 

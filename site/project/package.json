@@ -7,7 +7,7 @@
         "export": "next export",
         "update": "next build; next export",
         "build:prod": "npx next telemetry disable && npx next build && npx next export",
-        "update:datasets": "./download.sh > /opt/app/models/datasets.json",
+        "update:datasets": "./download.sh $ALGAE_DATASETS_LINK /opt/app/models/algae_datasets.json A && ./download.sh $SHELLFISH_DATASETS_LINK /opt/app/models/shellfish_datasets.json S",
         "dev": "next dev",
         "build": "next build",
         "start": "next start"

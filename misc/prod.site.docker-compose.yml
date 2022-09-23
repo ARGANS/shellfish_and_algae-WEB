@@ -15,12 +15,15 @@ services:
       - site_next_dir:/opt/app/.next
       - site_out:/opt/app/out
     environment:
-      - DATASETS_LINK=${DATASETS_LINK}
+      - ALGAE_DATASETS_LINK=${ALGAE_DATASETS_LINK}
+      - SHELLFISH_DATASETS_LINK=${SHELLFISH_DATASETS_LINK}
     entrypoint: ["/bin/sh","-c"]
     command: 
       - |
-        ./download.sh > /opt/app/models/datasets.json
-        cp /opt/app/models/datasets.json /opt/app/public/_datasets.json
+        ./download.sh $ALGAE_DATASETS_LINK /opt/app/models/algae_datasets.json A
+        ./download.sh $SHELLFISH_DATASETS_LINK /opt/app/models/shellfish_datasets.json S
+        cp /opt/app/models/algae_datasets.json /opt/app/public/_algae_datasets.json
+        cp /opt/app/models/shellfish_datasets.json /opt/app/public/_shellfish_datasets.json
         npm run build:prod
 networks:
   ac_net:

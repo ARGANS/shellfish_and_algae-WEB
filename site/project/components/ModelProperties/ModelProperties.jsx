@@ -207,23 +207,25 @@ function ModelProperties(props) {
             />
             <div className={S.metadataRow}>
                 <DatasetForm 
+                    type={props.model?.type}
                     datasets={datasetParameters.datasets || {}}
                     region={metadata.zone} 
                     onChange={onDatasetChangeHandler}
                 />
             </div>
         </div>
-        <label>Scenario</label>
-        <select 
-            name="scenario" 
-            value={metadata.scenario}
-            onChange={metaDataChangeHandler}
-        >{model_data.scenarios.map(scenario_name => <option 
-            key={scenario_name} 
-            selected={metadata.scenario === scenario_name}
-            value={scenario_name}
-        >{scenario_name}</option>)}</select>
-
+        {props.model?.type == 'Algae' ? <>
+            <label>Scenario</label>
+            <select 
+                name="scenario" 
+                value={metadata.scenario}
+                onChange={metaDataChangeHandler}
+            >{model_data.scenarios.map(scenario_name => <option 
+                key={scenario_name} 
+                selected={metadata.scenario === scenario_name}
+                value={scenario_name}
+            >{scenario_name}</option>)}</select>
+        </> : <input type="hidden" name="scenario" defaultValue={model_data.scenarios[0]}/>}
         {sectionOrder.map(sectionName => {
             const sectionData = props.parameters[sectionName];
             const sectionDefaults = Object.entries(sectionData.defaults);

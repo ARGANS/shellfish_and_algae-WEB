@@ -37,7 +37,13 @@ if (process.stdin.isTTY) {
             return JSON.parse(input);
         })
         .then(function (input) {
-            const parameters = 'Temperature,eastward_Water_current,northward_Water_current,Nitrate,Ammonium,Phosphate,par'.split(',');
+            
+            if (!process.argv[2]) {
+                process.stdout.write('No columns')
+                return;
+            }
+            // const parameters = 'Temperature,eastward_Water_current,northward_Water_current,Nitrate,Ammonium,Phosphate,par'.split(',');
+            const parameters = process.argv[2].split(',');
             // TODO parametrize 
             const collection = groupByColumn(
                 input.filter(row => parameters.indexOf(row.Parameter) > -1),

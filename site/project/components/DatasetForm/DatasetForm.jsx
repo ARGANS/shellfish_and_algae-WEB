@@ -1,4 +1,5 @@
-import datasets_per_region from 'models/datasets.json';
+import algae_datasets_per_region from 'models/algae_datasets.json';
+import shellfish_datasets_per_region from 'models/shellfish_datasets.json';
 import { useCallback, useEffect, useState } from 'react';
 import { classList } from 'utils/strings';
 import S from './DataForm.module.css';
@@ -122,7 +123,12 @@ export default function DatasetForm(props){
     })
 
     useEffect(() => {
-        setDatasetPerParameter(datasets_per_region[props.region]);
+        setDatasetPerParameter(
+            (props.type === 'Algae' 
+                ? algae_datasets_per_region
+                : shellfish_datasets_per_region
+            )[props.region]
+        );
         setActiveParameter(null);
     }, [props.region])
 
