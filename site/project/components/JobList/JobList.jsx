@@ -1,57 +1,20 @@
 import { useEffect, useState, useCallback } from 'react'
 import S from './JobList.module.css'
 import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
-import { emitter, stop } from 'helpers/container_service';
-
-
-function diff(left, right){
-    const left_id = left.map(obj => obj.id);
-    return right.filter(obj => left_id.indexOf(obj.id) === -1);
-}
-
-function compare(prevList, curList) {
-    return {
-        added: diff(prevList, curList),
-        removed: diff(curList, prevList)
-    };
-}
-
-const CONTAINER_STREAM_ENDPOINT = '/api/v2/stream/container';
+import {containerService} from 'helpers/container2_service';
 
 export default function JobList(props) {
     const [containers, setContainers] = useState([])
-    // TODO move outside of the component
+
     useEffect(() => {
-        const _evtSource = new EventSource(CONTAINER_STREAM_ENDPOINT);
-        let _prev = [];
-
-        _evtSource.onmessage = function(e) {
-            const response = JSON.parse(e.data)
-            const containers = response
-                .map(containerData => {
-                    const {state} = containerData;
-                    state.StartedAt = Date.parse(state.StartedAt)
-                    state.FinishedAt = Date.parse(state.FinishedAt)
-                    if (state.FinishedAt < 0) {
-                        state.FinishedAt = null;
-                    }
-                    return containerData;
-                })
-                .sort((a, b) => a.StartedAt - b.StartedAt)
-            
-            const containersChanges = compare(_prev, containers);
-
-            if (containersChanges.added.length !== 0 || containersChanges.removed.length !== 0) {
-                console.warn('[Emit container_list_change]');
-                console.dir(containersChanges);
-                emitter.emit('container_list_change', containers, containersChanges)
-            } 
-            _prev = containers;
+        const callback = containerService.emitter.on('container_list_change', (containers, removedContainer) => {
+            console.log('[container_list_change2]')
+            console.dir([containers, removedContainer]);
             setContainers(containers);
-        };
+        });
+
         return () => {
-            _evtSource.close();
-            stop();
+            containerService.emitter.off('container_list_change', callback);
         }
     }, []);
 
@@ -73,7 +36,6 @@ export default function JobList(props) {
                     onClick={clickHandler}>{typeContainerStat(container)}</li>
             ))}
         </ol>
-        {/* TODO render how long ago the container has been started! */}
     </div>
 }
 

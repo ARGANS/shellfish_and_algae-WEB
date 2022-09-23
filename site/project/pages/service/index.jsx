@@ -8,8 +8,15 @@ import JobList from 'components/JobList/JobList';
 import "@fontsource/montserrat";
 import Sicon from 'libs/Sicon/Sicon';
 import Tabs from 'libs/Tabs/Tabs';
+import {containerService} from 'helpers/container2_service';
+import { useEffect } from 'react';
 
 export default function ServicePage(props) {
+	// useEffect(() => {
+	// 	return () => {
+	// 		containerService.destroy();
+	// 	}
+	// })
 	const title = 'Service';
 
 	return <>

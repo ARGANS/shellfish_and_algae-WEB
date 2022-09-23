@@ -8,9 +8,9 @@ import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
 import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
-import { useContainers, printstate } from 'helpers/container_service';
 import Sicon from 'libs/Sicon/Sicon';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
+import {containerService} from 'helpers/container2_service';
 
 /**
  * 
@@ -105,8 +105,8 @@ export default function PipelineModal(props) {
     const [watchingContainer, setWatchingContainer] = useState(null);
     const [isBlocked, setUIBlocked] = useState(false);
     const _pipelineManifestRef = useRef();
-    const _containers = useContainers();
     const _containersRef = useRef();
+    const _prevJobStatusRef = useRef();
 
     // To be good this callback depends on _containers
     const synchronizeState = useCallback(() => {
@@ -119,8 +119,8 @@ export default function PipelineModal(props) {
 
         return checkFiles$(fileChecksRequest)
             .then((fileContents) => {
-                const [allContainers, {added, removed}] = _containersRef.current;
-                console.log('Continue %s', printstate(_containersRef.current));
+                const allContainers = _containersRef.current;
+                console.log('Continue %s', _containersRef.current.length);
                 
                 // Docker label values are strings
                 const modelId = props.model.id + '';
@@ -186,20 +186,39 @@ export default function PipelineModal(props) {
     });
 
     useEffect(() => {
-        console.warn('[Container List changed] %s',  printstate(_containers));
-        // console.dir(_containers)
+        console.warn('[INIT PipelineDialog]');
         if (!_pipelineManifestRef.current) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
             console.dir(_pipelineManifestRef.current);
         }
-        _containersRef.current = _containers;
-        
+
+        const callback = containerService.emitter.on('container_list_change', (containers, removedContainer) => {
+            console.log('[container_list_change3]')
+            console.dir([containers, removedContainer]);
+
+            _containersRef.current = containers;
+            synchronizeState();
+        });
+
+        _containersRef.current = containerService._state
         synchronizeState();
-    }, [_containers])
+
+        return () => {
+            containerService.emitter.off('container_list_change', callback);
+        }
+    }, []);
 
 
     useEffect(() => {
-        setUIBlocked(false);
+        // console.log('Job statsu schanged');
+        // console.dir(jobStatus);
+        const jobStatusHash = Object.values(jobStatus).map(code => code + '').join('')
+
+        if (_prevJobStatusRef.current && _prevJobStatusRef.current !== jobStatusHash) {
+            setUIBlocked(false);
+        }
+
+        _prevJobStatusRef.current = jobStatusHash;
     }, [jobStatus]);
 
     const startJobHandler = useCallback((e) => {
@@ -256,7 +275,7 @@ export default function PipelineModal(props) {
     const stopJobHandler = useCallback((e) => {
         // stop container and remove job artifacts
         const jobId = e.target.dataset.job;
-        const [allContainers,] = _containersRef.current;
+        const allContainers = _containersRef.current;
         // Docker label values are strings
         const modelId = props.model.id + '';
         const containersBelongsToTheJob = allContainers.filter(containerProps => (containerProps.labels['task.model.id'] === modelId) && (containerProps.labels['task.type'] === jobId))

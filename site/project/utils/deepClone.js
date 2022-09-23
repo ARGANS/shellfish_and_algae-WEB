@@ -24,7 +24,7 @@ function isObjectContainer(value) {
     return value.__proto__ && value.__proto__.constructor === Object;
 }
 
-function cloneArray(originalArray) {
+export function cloneArray(originalArray) {
     const list = originalArray.slice(0);
 
     for (let i = 0; i < list.length; i++) {
@@ -60,3 +60,15 @@ export function dset(obj, name, value){
 	}
     return obj;
 };
+
+function diff(left, right){
+    const left_id = left.map(obj => obj.id);
+    return right.filter(obj => left_id.indexOf(obj.id) === -1);
+}
+
+function compare(prevList, curList) {
+    return {
+        added: diff(prevList, curList),
+        removed: diff(curList, prevList)
+    };
+}
