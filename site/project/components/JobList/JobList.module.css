@@ -3,3 +3,22 @@
     margin: 0;
     padding: 0 0 0 1rem;
 }
+
+.containerProps_root,
+.containerProps {
+    --description-grid__gap: 0.2rem 1rem;
+    --description-grid__columns: min-content 1fr;
+    margin: 0 0 1rem 0;
+}
+.containerProps_root {
+    white-space: nowrap;
+}
+.containerProps_root > dt {
+    font-weight: bold;
+}
+.containerProps_root dd {
+    margin: 0;
+}
+.containerProps > dd {
+    white-space: normal;
+}

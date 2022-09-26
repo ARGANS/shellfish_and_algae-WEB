@@ -18,6 +18,16 @@ export class DateZ {
         return this.constructor.withLeadingZero(this._date.getDate());
     }
 
+	get HOUR() {
+		return this.constructor.withLeadingZero(this._date.getHours());
+	}
+	get MIN() {
+		return this.constructor.withLeadingZero(this._date.getMinutes());
+	}
+	get SEC() {
+		return this.constructor.withLeadingZero(this._date.getSeconds());
+	}
+
     static withLeadingZero(n) {
         return (n < 10 ? '0' : '') + n;
     }
@@ -61,7 +71,7 @@ export class DateZ {
 	}
 
 	t(pattern) {
-		return pattern.replace(/YYYY|MM|DD|ML/g, (match) => {
+		return pattern.replace(/YYYY|MM|DD|ML|HOUR|MIN|SEC/g, (match) => {
 			if (this[match]) return this[match];
 			else return match;
 		})
