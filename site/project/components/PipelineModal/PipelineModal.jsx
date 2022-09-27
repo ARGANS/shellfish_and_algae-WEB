@@ -325,11 +325,11 @@ export default function PipelineModal(props) {
                             <div className={className}>{typeStepStatus(jobStatus[jobId])}</div>
                             <div className={className}>
                                 {(jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) && ([
-                                    <a  title={props.model.dataset_id}
+                                    <a  title={pipeline_manifest[jobId].dir(props.model)}
                                         className="roffset-d"
                                         href={'/api/v2/archive?path=' + pipeline_manifest[jobId].dir(props.model) + '&filename=' + (props.model.metadata.name + '_' + jobId)}
                                     >Download assets</a>,
-                                    <a  title={props.model.dataset_id}
+                                    <a  title={pipeline_manifest[jobId].dir(props.model)}
                                         href={'/api/v2/file?path=' + pipeline_manifest[jobId].dir(props.model) + '/error.txt' + '&filename=' + (props.model.metadata.name + '_' + jobId + 'log.txt')}
                                     >Execution log</a>
                                 ])}

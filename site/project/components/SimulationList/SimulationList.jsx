@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { deleteModel$, getActiveUser$, getModels$ } from 'helpers/api';
+import { deleteModel$, deleteResults$, getActiveUser$, getModels$ } from 'helpers/api';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
@@ -72,6 +72,7 @@ export default function ModelList(props) {
         const model = findModel(event, models);
         if (!model) return;
         await deleteModel$(model.id);
+        await deleteResults$(`/media/share/data/${model.id}`)
         triggeRecheck(value => !value);
     }, [models]);
     

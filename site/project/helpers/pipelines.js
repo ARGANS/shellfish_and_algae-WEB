@@ -21,19 +21,19 @@ export const pipeline_manifest = {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataset/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataset/start.mark`
             },
             completed: {
                 // Proofs that the task finished, and results are corrected
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataset/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataset/end.mark`
             }
         },
         container: {
             ...CONTAINER_CONF,
             Image: 'ac-import/runtime:latest',
             Env: (model) => ([
-                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_dataset`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_dataset`,
                 'INPUT_PARAMETERS=' + JSON.stringify(model.dataset_parameters) + '',
                 'MOTU_LOGIN=mjaouen',
                 'MOTU_PASSWORD=Azerty123456',
@@ -46,25 +46,25 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}/_dataset`
+        dir: (model) => `/media/share/data/${model.id}/_dataset`
     },
     pretreatment: {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_pretreated/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_pretreated/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_pretreated/end.mark`
             }
         },
         container: {
             Image: 'ac-pretreatment/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `INPUT_SOURCE=/media/share/data/${model.dataset_id}/_dataset`,
-                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_pretreated`,
+                `INPUT_SOURCE=/media/share/data/${model.id}/_dataset`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_pretreated`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
@@ -74,25 +74,25 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}/_pretreated`
+        dir: (model) => `/media/share/data/${model.id}/_pretreated`
     },
     dataread: {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/end.mark`
             }
         },
         container: {
             Image: 'ac-dataread/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `INPUT_SOURCE=/media/share/data/${model.dataset_id}/_pretreated`,
-                `INPUT_DESTINATION=/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                `INPUT_SOURCE=/media/share/data/${model.id}/_pretreated`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
                 'INPUT_MODEL_PROPERTIES_JSON='+ JSON.stringify(model.body),
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
@@ -103,24 +103,24 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+        dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
     },
     posttreatment: {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment/end.mark`
             }
         },
         container: {
             Image: 'ac-posttreatment/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `SOURCE_DIR=/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
+                `SOURCE_DIR=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
@@ -130,7 +130,7 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment`
+        dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment`
     }
 }
 
