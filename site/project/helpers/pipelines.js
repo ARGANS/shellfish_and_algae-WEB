@@ -30,27 +30,6 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            // TODO comment in the task-runner
-            // image: 'ac-import/runtime:latest',
-            // environment: {
-            //     INPUT_DESTINATION: (model) => `/media/share/data/${model.dataset_id}/_dataset`,
-            //     INPUT_PARAMETERS: (model) => JSON.stringify(model.dataset_parameters),
-            //     MOTU_LOGIN: "mjaouen",
-            //     MOTU_PASSWORD: "Azerty123456",
-            //     PYTHONDONTWRITEBYTECODE: '1',
-            // },
-            // labels: {
-            //     'task.model.id': (model) => model.id + '',
-            //     'task.type': 'dataimport',
-            //     'task.user': '{{user}}'
-            // },
-            // volumes: [
-            //     'ac_share:/media/share',
-            //     'ac_global:/media/global'
-            // ],
-
-
-            //  TODO use ... for common settings
             ...CONTAINER_CONF,
             Image: 'ac-import/runtime:latest',
             Env: (model) => ([
@@ -61,9 +40,10 @@ export const pipeline_manifest = {
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
-                'task.model.id': (model) => model.id + '',
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the dataimport task has been completed.',
+                'task.model.id': '{{model_id}}',
                 'task.type': 'dataimport',
-                'task.user': '{{user}}'
+                'task.user': '{{user_username}}'
             },
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataset`
@@ -88,9 +68,10 @@ export const pipeline_manifest = {
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
-                'task.model.id': (model) => model.id + '',
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the pretreatment task has been completed.',
+                'task.model.id': '{{model_id}}',
                 'task.type': 'pretreatment',
-                'task.user': '{{user}}'
+                'task.user': '{{user_username}}'
             },
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_pretreated`
@@ -116,9 +97,10 @@ export const pipeline_manifest = {
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
-                'task.model.id': (model) => model.id + '',
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the dataread task has been completed.',
+                'task.model.id': '{{model_id}}',
                 'task.type': 'dataread',
-                'task.user': '{{user}}'
+                'task.user': '{{user_username}}'
             },
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}`,
@@ -142,9 +124,10 @@ export const pipeline_manifest = {
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
-                'task.model.id': (model) => model.id + '',
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the posttreatment task has been completed.',
+                'task.model.id': '{{model_id}}',
                 'task.type': 'posttreatment',
-                'task.user': '{{user}}'
+                'task.user': '{{user_username}}'
             },
         },
         dir: (model) => `/media/share/data/${model.dataset_id}/_dataread/${model.dataread_id}/posttreatment`

@@ -178,7 +178,7 @@ export default function ModelList(props) {
                         <div className={S.list_header2}>Title</div>
                         {models.map((modelItem, modelIndex) => {
                             return <>
-                                <div className="lpad-d">{modelIndex + 1}</div>
+                                <div className="lpad-d">{modelItem.id}</div>
                                 <div>{modelItem.metadata.name}</div>
                                 <div>
                                     <button 

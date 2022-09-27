@@ -223,11 +223,20 @@ export default function PipelineModal(props) {
 
     const startJobHandler = useCallback((e) => {
         const jobId = e.target.dataset.job;
-        const containerManifest = pipeline_manifest[jobId].container
+        const containerManifest = pipeline_manifest[jobId].container;
+
+        if (!props.user.email) {
+            delete containerManifest.Labels['container.action:termination.notification.link'];
+        }
+
         const body_s = JSON.stringify(containerManifest, (key, value) => {
             if (typeof(value) == 'function') return value(props.model);
             return value;
-        }).replaceAll('{{user}}', props.user.username);
+        })
+            .replaceAll('{{user_username}}', props.user.username)
+            .replaceAll('{{user_email}}', props.user.email)
+            .replaceAll('{{model_id}}', props.model.id)
+
         setUIBlocked(true);
         // console.log('StartJobHandler %s', props.user.username);
         // console.dir(JSON.stringify(props.user, null, '\t'));
