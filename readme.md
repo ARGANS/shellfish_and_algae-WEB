@@ -22,3 +22,7 @@ The user is able to download tiff files of a number of interest variables:
 	Protein weight per unit area
 	Biomass CO2 per volume
 	CO2 uptake per unit area
+
+```
+docker-compose -f ./misc/proxy.docker-compose.yml -f ./misc/prod.dashboard.docker-compose.yml -f ./misc/prod.site.docker-compose.yml --env-file=./misc/sim.env up --build -d acsite
+```
