@@ -35,7 +35,7 @@ export default function ServicePage(props) {
 				{/* <DatePicker date={new Date()} className={s.dp} onChange={date => console.log('Selected %s', date)}/> */}
 			</div>
 			<div className={s.sidebar}>
-				<h3 className={s.sidebar_title}>List of containers</h3>
+				<h3 className={s.sidebar_title}>Containers</h3>
 				<JobList/>
 			</div>
 			<div className={s.header}>
