@@ -165,7 +165,7 @@ export default function ModelList(props) {
         showList();
     })
 
-    const isDisabled = user && model && model.owner_id !== user.id;
+    const isDisabled = false; // user && model && model.owner_id !== user.id;
     
     return <div className={S.root}>
         {model === null ? ( <>

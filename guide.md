@@ -66,46 +66,6 @@ password: Aquaculture.2022
 ## Models and subprojects
 [Github](https://github.com/ARGANS/shellfish_and_algae-MODEL.git)
 
-### Commands for updating images on VM11
-
-If you have changed the source code, you must update the images on VM11:
-1. Upload the source code to VM11 using the command `./sync.sh `;
-2. This command should upload the source code to the `/profils/$USER/models` directory;
-
-3. Connect via SSh to VM11 and go to the `~/models` directory
-4. Use the following commands to build images:
-``` SH 
-./manage_dataimport.sh build
-./miscellaneous/manage.sh build_dataread
-./miscellaneous/manage.sh build_posttreatment
-```
-
-### Commands for local debugging of subprojects in containers
-
-Since we have 3 subprojects that connect in a pipeline, there will be 3 sets of commands for independent debugging of each subproject
-
-1. Dataimport subproject
-``` SH
-# To build the `ac-import/runtime` image
-./manage_dataimport.sh build
-# To start the container and establish a bash session with the container. Then you will be able to debug the application interactively.
-./manage_dataimport.sh run
-# To run the container in command mode. Application execution is controlled by environment variables. You must specify the necessary variables in the environment variable to control the application running in the container.
-./manage_dataimport.sh execute
-```
-2. Dataread subproject
-``` SH
-./miscellaneous/manage.sh build_dataread
-./miscellaneous/manage.sh execute_dataread
-```
-3. Posttreatment subproject
-``` SH
-./miscellaneous/manage.sh build_posttreatment
-./miscellaneous/manage.sh execute_posttreatment
-```
-### start.sh scripts
-All subproject directories contain one bash script file named `start.sh`. These files are the main executables that run in containers and are controlled by environment variables provided to the container. These scripts create all necessary files and directories and execute Python and R scripts.
-
 -----------------------------------------------------------------------------------------
 
 ## Application for running tasks/containers on a virtual machine (task runner)
