@@ -23,7 +23,7 @@ export const containerService = new (class {
             console.dir(containers);
 
             return containers.map(containerData => {
-                containerData.started_at = Date.parse(containerData.started_at)
+                containerData.started_at = Date.parse(containerData.started_at ? containerData.started_at : containerData.state.StartedAt)
                 return containerData;
             })
                 .sort((a, b) => b.started_at - a.started_at);
@@ -109,6 +109,23 @@ export const containerService = new (class {
         @return ret.short_id
     */
     static transformContainerEventToContainerModel(data) {
+        if (!data.hasOwnProperty('Actor')) {
+            console.log('[No Actor]');
+            console.dir(data);
+        }
+
+        if (data.hasOwnProperty('original')) {
+            return {
+                id: data.id,
+                image: data.original.Actor.Attributes.image,
+                name: data.original.Actor.Attributes.name,
+                short_id: data.id.substr(10),
+                labels: data.original.Actor.Attributes,
+                started_at: new Date((data.time -0) * 1000),
+                _origin: data.original,    
+            }
+        }
+
         return {
             id: data.id,
             image: data.Actor.Attributes.image,
