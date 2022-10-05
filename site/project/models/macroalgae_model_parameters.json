@@ -34,10 +34,10 @@
                 "description": "long blabla",
                 "parameters": {
                     "mu"      : 0.18,
-                    "V_NH4"   : 5,
-                    "V_NO3"   : 2.5,
-                    "K_NH4"   : 165,
-                    "K_NO3"   : 75,
+                    "V_NH4"   : 100,
+                    "V_NO3"   : 200,
+                    "K_NH4"   : 11,
+                    "K_NO3"   : 200,
                     "Q_max"   : 22,
                     "Q_min"   : 10,
                     "N_to_P"  : 12,
@@ -151,9 +151,11 @@
         "section_name": "Harvesting process",
         "section_description": "blabla",
         "parameters_descriptions": {
-            "deployment_Nf"     : ["amount of seaweed deployed"                                    , "mg fixed N per m3"],
-            "deployment_month"  : ["deployment month (number 1-12), deployed on the first day"     , ""],
-            "harvesting_month"  : ["harvesting month (number 1-12), harvested on the last day"     , ""] 
+            "harvest_first"     : ["days from start of run to first harvest"                , "days"],
+            "harvest_freq"      : ["days bewteen first harvest and subsequent harvests"     , "days"],
+            "harvest_fraction"  : ["fraction of total biomass to harvest at each harvest"   , ""],
+            "deployment_day"    : ["days from start of run to deployment of seaweed"        , "days"],
+            "deployment_Nf"     : ["amount of seaweed deployed"                             , "mg fixed N per m3"]
         },
         "options_descriptions": {},
         "defaults": {
@@ -161,19 +163,23 @@
                 "name": "Winter growth",
                 "description": "long blabla",
                 "parameters":{
-                    "deployment_Nf"     : 1000,
-                    "deployment_month"  : 9,
-                    "harvesting_month"  : 4
+                    "deployment_day"    : 280,
+                    "harvest_first"     : 520,
+                    "harvest_freq"      : 1000,
+                    "harvest_fraction"  : 1,
+                    "deployment_Nf"     : 1000
                 },
                 "options": {}
             },
-            "Summer_growth":{
-                "name": "Summer growth",
+            "CCA":{
+                "name": "CCA",
                 "description": "long blabla",
                 "parameters":{
-                    "deployment_Nf"     : 1000,
-                    "deployment_month"  : 3,
-                    "harvesting_month"  : 9
+                    "deployment_day"    : 2,
+                    "harvest_first"     : 65,
+                    "harvest_freq"      : 50,
+                    "harvest_fraction"  : 0.75,
+                    "deployment_Nf"     : 10000
                 },
                 "options": {}
             }
@@ -184,31 +190,36 @@
         "section_name": "Simulation options",
         "section_description": "blabla",
         "parameters_descriptions": {
-            "K_d490"         : ["Kd(490)"                                               , "m-1"],
-            "Von_Karman"  : ["Von Kármán constant"                                   , ""],
-            "Detritus"    : ["Background detritus concentration"                     , "mg N per m^3"],
             "min_lon"     : ["Minimum longitude"                                     , "degrees east"],
             "max_lon"     : ["Maximum longitude"                                     , "degrees east"],
             "min_lat"     : ["Minimum latitude"                                      , "degrees north"],
             "max_lat"     : ["Maximum latitude"                                      , "degrees north"],
-            "n_cores"     : ["Number of processing cores to use"                     , ""]
+            "n_cores"     : ["Number of processing cores to use"                    , ""]
         },
-        "options_descriptions": {},
+        "options_descriptions": {
+            "harvest_method": ["no harvesting",
+                               "single winter deployment",
+                               "cut and come again"],
+            "light_scheme":   ["Zollman self-shading scheme",
+                               "Simple vertical light no self shading",
+                               "Solar angle light no self shading",
+                               "Selfshading with solar angle accounted for"]
+        },
         "defaults": {
             "default": {
                 "name": "default",
                 "description": "long blabla",
                 "parameters": {
-                    "K_d490"                 : 0.1,
-                    "Von_Karman"          : 0.4,
-                    "Detritus"            : 0.1,
                     "min_lon"             : -180,
                     "max_lon"             : 180,
                     "min_lat"             : -90,
                     "max_lat"             : 90,
                     "n_cores"             : 10
                 },
-                "options": {}
+                "options": {
+                    "harvest_method": 0,
+                    "light_scheme": 3
+                }
             }
         }
     }
