@@ -13,7 +13,7 @@
 }
 
 .root select {width:100%;}
-.root input[type=number] {text-align: right;}
+.root input[type=number][step] {text-align: right;}
 .root label {display: block; margin: 0 0 0.5rem 0;}
 
 .section {
