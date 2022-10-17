@@ -11,6 +11,7 @@ import PipelineModal from 'components/PipelineModal/PipelineModal';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import Sicon from 'libs/Sicon/Sicon';
 import { classList } from 'utils/strings';
+import { ConfirmDialog } from 'libs/ConfirmDialog/ConfirmDialog';
 
 const DEBUG_POLLING = false;
 const LONG_POLLING_IS_ACTIVE = true;
@@ -21,6 +22,15 @@ function findModel(event, _models) {
 
     if (!model || model.id === undefined) return;
     return model;
+}
+
+function removeModelAndFiles$(model) {
+    if (!model) return;
+    
+    return deleteModel$(model.id)
+        .then(function() {
+            deleteResults$(`/media/share/data/${model.id}`)
+        })
 }
 
 export default function ModelList(props) {
@@ -67,13 +77,21 @@ export default function ModelList(props) {
         downloadFileFromText(model.metadata.name + '.json', model.export(true))
     }, [models]);
 
-    const onDeleteHandler = useCallback(async event => {
+    const onDeleteHandler = useCallback(event => {
         event.preventDefault();
         const model = findModel(event, models);
-        if (!model) return;
-        await deleteModel$(model.id);
-        await deleteResults$(`/media/share/data/${model.id}`)
-        triggeRecheck(value => !value);
+
+        addComponent(<Dialog key={Math.random()} dialogKey={'confirmDialog1'}>
+            <ConfirmDialog 
+                title='This action requires confirmation' 
+                onResolve={() => removeModelAndFiles$(model)}
+            >
+                <p className="boffset-c">Are you sure you want to delete this model?</p>
+            </ConfirmDialog>
+        </Dialog>)
+
+        // TODO deprecated
+        // triggeRecheck(value => !value);
     }, [models]);
     
     const onSelectHandler = useCallback(event => {

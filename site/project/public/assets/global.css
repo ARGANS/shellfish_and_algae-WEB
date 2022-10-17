@@ -1,4 +1,4 @@
-/* v5 2022/08/10 */
+/* v6 2022/10/17 */
 
 /* NORMALIZATION */
 body{margin:0;-webkit-font-smoothing: antialiased;}
@@ -171,3 +171,5 @@ fieldset{border:none;}
 }
 
 .noselect {user-select: none;}
+
+.ta-c {text-align: center;}
