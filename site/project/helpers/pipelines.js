@@ -88,7 +88,7 @@ export const pipeline_manifest = {
             }
         },
         container: {
-            Image: 'ac-dataread/runtime',
+            Image: (model) => model.type === 'Algae' ? 'ac-dataread/runtime' : 'ac-dataread_shellfish/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
                 `INPUT_SOURCE=/media/share/data/${model.id}/_pretreated`,
@@ -99,7 +99,7 @@ export const pipeline_manifest = {
             Labels: {
                 'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the dataread task has been completed.',
                 'task.model.id': '{{model_id}}',
-                'task.type': 'dataread',
+                'task.type': 'dataread {{model_type}}',
                 'task.user': '{{user_username}}'
             },
         },

@@ -232,6 +232,7 @@ export default function PipelineModal(props) {
             delete containerManifest.Labels['container.action:termination.notification.link'];
         }
 
+        // TODO refactor manifest properties interpolation
         const body_s = JSON.stringify(containerManifest, (key, value) => {
             if (typeof(value) == 'function') return value(props.model);
             return value;
@@ -239,8 +240,8 @@ export default function PipelineModal(props) {
             .replaceAll('{{user_username}}', props.user.username)
             .replaceAll('{{user_email}}', props.user.email)
             .replaceAll('{{model_id}}', props.model.id)
+            .replaceAll('{{model_type}}', props.model.type)
 
-        // console.dir(body_s);
         setUIBlocked(true);
         // console.log('StartJobHandler %s', props.user.username);
         // console.dir(JSON.stringify(props.user, null, '\t'));
