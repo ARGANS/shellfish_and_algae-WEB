@@ -240,7 +240,7 @@ export default function PipelineModal(props) {
             .replaceAll('{{user_email}}', props.user.email)
             .replaceAll('{{model_id}}', props.model.id)
 
-        console.dir(body_s);
+        // console.dir(body_s);
         setUIBlocked(true);
         // console.log('StartJobHandler %s', props.user.username);
         // console.dir(JSON.stringify(props.user, null, '\t'));
