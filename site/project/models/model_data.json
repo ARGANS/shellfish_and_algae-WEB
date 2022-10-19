@@ -20,7 +20,8 @@
         "species": 1,
         "farm": 2,
         "harvest": 3,
-        "run": 4
+        "run": 4,
+        "OptimalFarmsRepartition": 5
     }
 }
 
