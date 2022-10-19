@@ -76,9 +76,8 @@ export default function JobList(props) {
 
 function typeContainerStat(container) {
     return [
-        container.short_id,
-        container.name ? (', ' +  container.name) : '',
-        ' ',
-        container.labels.hasOwnProperty('task.type') ? container.labels['task.type'] : '',
-    ].join('')  
+        container.name || container.short_id,
+        container.labels.hasOwnProperty('task.model.id') && '#' + container.labels['task.model.id'],
+        container.labels.hasOwnProperty('task.type') && container.labels['task.type'],
+    ].filter(v => !!v).join(' ')  
 }
