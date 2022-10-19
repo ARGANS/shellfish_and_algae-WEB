@@ -11,6 +11,7 @@ import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
 import Sicon from 'libs/Sicon/Sicon';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 import {containerService} from 'helpers/container2_service';
+import model_data from 'models/model_data';
 
 /**
  * 
@@ -280,11 +281,14 @@ export default function PipelineModal(props) {
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
             <DialogHeader title="Map">
                 <div className={S.mapDialog}>
-                    <DynamicMap dir={resource_link}/>
+                    <DynamicMap 
+                        dir={resource_link} 
+                        files={model_data.files[props.model.type]}
+                    />
                 </div>
             </DialogHeader>
         </Dialog>, 'default');
-    });
+    }, [props.model]);
 
     const stopJobHandler = useCallback((e) => {
         // stop container and remove job artifacts

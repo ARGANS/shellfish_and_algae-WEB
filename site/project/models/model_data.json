@@ -22,6 +22,29 @@
         "harvest": 3,
         "run": 4,
         "OptimalFarmsRepartition": 5
+    },
+    "files": {
+        "Algae": [
+            "Biomass_CO2.tif",
+            "CO2_uptake_PUA.tif",
+            "DW.tif",
+            "DW_line.tif",
+            "DW_PUA.tif",
+            "FW.tif",
+            "FW_line.tif",
+            "FW_PUA.tif",
+            "kcal_PUA.tif",
+            "protein_PUA.tif"
+        ],
+        "Shellfish": [
+            "NH4_production.tif",
+            "CO2_production.tif",
+            "DSTW.tif",
+            "SHL.tif",
+            "STE.tif",
+            "FW.tif",
+            "DWW.tif"
+        ]
     }
 }
 

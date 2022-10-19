@@ -9,18 +9,6 @@ const OPEN_POPUP = true;
 const MAP_NODE = 'leaflet-map';
 const LAYER_FLAG = '__name';
 
-const files = [
-	'Biomass_CO2.tif',
-	'CO2_uptake_PUA.tif',
-	'DW.tif',
-	'DW_line.tif',
-	'DW_PUA.tif',
-	'FW.tif',
-	'FW_line.tif',
-	'FW_PUA.tif',
-	'kcal_PUA.tif',
-	'protein_PUA.tif',
-];
 
 function getValueFromGeoRasterLayer(layer, leafletPoint) {
 	if (!layer.extent) {
@@ -149,7 +137,7 @@ export default function Map(props) {
 		<div className={S.header}>
 			<h3>Layers:</h3>
 			<ul className={S.menu}>
-				{files.map(file => (
+				{props.files.map(file => (
 					<li 
 						key={file} 
 						name={file}
