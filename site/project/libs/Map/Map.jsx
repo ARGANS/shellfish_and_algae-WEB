@@ -118,7 +118,9 @@ export default function Map(props) {
 				const raster = layer.georasters[0];
 				let title;
 				if (raster.gdalmetadata) {
-					title = raster.gdalmetadata.NETCDF_VARNAME + ', ' + raster.gdalmetadata.UNITTYPE;
+					title = raster.gdalmetadata.NETCDF_VARNAME + (raster.gdalmetadata.UNITTYPE ? ', ' + raster.gdalmetadata.UNITTYPE : '');
+					console.log('raster.gdalmetadata');
+					console.dir(raster.gdalmetadata);
 				}
 
 				setLegendSettings({
