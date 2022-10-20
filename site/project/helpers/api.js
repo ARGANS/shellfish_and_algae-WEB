@@ -221,14 +221,11 @@ export function getContainers$() {
 export function uploadFiles$(formData) {
     const link = NODE_API_PREFIX + '/upload';
     
-    return;
-    // TODO
     return fetch(link, {
         method: 'POST',
         body: formData,
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
         }
     })
         .then(response => {

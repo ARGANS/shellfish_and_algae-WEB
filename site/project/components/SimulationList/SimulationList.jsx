@@ -55,14 +55,14 @@ export default function ModelList(props) {
             .then((response) => {
                 console.log('Model has changed')
                 console.dir(model)
-                console.dir(response);
-                console.log('TODO upload files to the drive');
-                console.dir(pendingTasks);
                 const formData = new FormData();
-                const filesToUpload = Object.values(pendingTasks).filter(task => task.action === 'addFile').map(task => task.value);
-                formData.append('files', filesToUpload);
-                formData.append('destination', '/media/share/data/' + model.id);
-                uploadFiles$(formData)
+                const filesToUpload = Object.values(pendingTasks).filter(task => task.action === 'addFile').map(task => task.payload);
+                
+                if (filesToUpload.length > 0) {
+                    formData.append('destination', '/media/share/data/' + model.id);
+                    filesToUpload.forEach(file => formData.append('file', file));
+                    uploadFiles$(formData)
+                }
             })
             .catch(e => {
                 console.log('Fail to change the model')
