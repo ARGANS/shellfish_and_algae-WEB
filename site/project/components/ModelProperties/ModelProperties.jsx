@@ -260,14 +260,15 @@ function ModelProperties(props) {
                 value={datasetParameters.year}
                 onChange={datasetParameterChangeHandler}
             />
-            <div className={S.metadataRow}>
-                <DatasetForm 
-                    type={props.model?.type}
-                    datasets={datasetParameters.datasets || {}}
-                    region={metadata.zone} 
-                    onChange={onDatasetChangeHandler}
-                />
-            </div>
+            { metadata.zone !== 'Europe' && <div className={S.metadataRow}>
+                    <DatasetForm 
+                        type={props.model?.type}
+                        datasets={datasetParameters.datasets || {}}
+                        region={metadata.zone} 
+                        onChange={onDatasetChangeHandler}
+                    />
+                </div>
+            }
         </div>
         {props.model?.type == 'Algae' ? <>
             <label>Scenario</label>
