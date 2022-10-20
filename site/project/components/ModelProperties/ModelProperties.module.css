@@ -72,3 +72,9 @@
 .mes_offset {
     margin: 0 0 0 0.5rem;
 }
+
+.removeIcon {
+    width: 16px;
+    height: 16px;
+    --btn-color: #333;
+}

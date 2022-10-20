@@ -6,6 +6,7 @@ import SimulationModel from "models/SimulationModel";
 import { getDimension } from "utils/alg";
 import { classList } from "utils/strings";
 import DatasetForm from "components/DatasetForm/DatasetForm";
+import Sicon from "libs/Sicon/Sicon";
 
 const {section_order: SECTION_ORDER} = model_data;
 
@@ -42,6 +43,7 @@ function ModelProperties(props) {
     );
     // year, depth-min, depth-max, datasets
     const [datasetParameters, setDatasetParameters] = useState(props.model?.dataset_parameters || SimulationModel.createDefaultDatasetParameters());
+    const [pendingTasks, setPendingTasks] = useState({});
 
     const onSectionChange = useCallback((event) => {
         const {target: $select} = event;
@@ -71,11 +73,12 @@ function ModelProperties(props) {
 
     const onSubmitHandler = useCallback(event => {
         event.preventDefault();
+        // TODO handle file 
 
         metadata.name = metadata.name || printSuggestedName(metadata._suggested)
 
         if (props.onSubmit) {
-            props.onSubmit(state, metadata, datasetParameters);
+            props.onSubmit(state, metadata, datasetParameters, pendingTasks);
         }
     }, [state, metadata, datasetParameters]);
 
@@ -103,6 +106,58 @@ function ModelProperties(props) {
         })
     }, []);
 
+    const onFileChangeHandler = useCallback(event => {
+        event.preventDefault();
+        event.persist();
+        event.stopPropagation()
+        const {target} = event;
+        const {dataset} = target;
+        const fileName = target.files[0].name;
+        const topicId = [
+            dataset?.section, 
+            dataset?.prop, 
+            'parameters',
+            target.name
+        ].join('.')
+
+        // save filename in the model
+        setState(_state => {
+            const nextState = dset(
+                cloneObject(_state),
+                topicId,
+                fileName
+            )
+
+            return nextState
+        })
+        // add this file to the pending list
+        setPendingTasks(_state => ({
+            ..._state,
+            [topicId]: {action: 'addFile', payload: target.files[0]} 
+        }));
+    })
+    const onDeleteFile = useCallback(event => {
+        event.preventDefault();
+        event.persist();
+        event.stopPropagation();
+        const $target = event.target.closest('button') 
+        const topicId = $target.dataset.topic;
+        setState(_state => {
+            const nextState = dset(
+                cloneObject(_state),
+                topicId,
+                null
+            )
+
+            return nextState
+        })
+
+        // TODO
+        // setPendingTasks(_state => ({
+        //     ..._state,
+        //     [topicId]: {action: 'deleteFile', payload: topicId} 
+        // }));
+    })
 
     const metaDataChangeHandler = useCallback(event => {
         event.preventDefault();
@@ -253,7 +308,7 @@ function ModelProperties(props) {
                     ))}
                     <p className={S.description}>{sectionData.section_description}</p>
                 </div>
-                <fieldset key={sectionName} class={S.section}>
+                <fieldset key={sectionName} className={S.section}>
                     <fieldset 
                         className={S.subsection} 
                         key={secPropId} 
@@ -261,13 +316,42 @@ function ModelProperties(props) {
                     >{
                         Object.entries(secProp.parameters)
                             .map(([paramId, paramDefValue]) => {
-                                const step = getDimension(paramId, paramDefValue);
-                                const [patramDescription, paramMesure] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
+                                const [paramDescription, paramMesure, paramType] = sectionData.parameters_descriptions.hasOwnProperty(paramId) 
                                     ? sectionData.parameters_descriptions[paramId]
                                     : [null, null];
 
+                                if (paramType === 'file') {
+                                    return <label key={paramId}>
+                                        <div>{paramDescription || paramId} {paramMesure && ', ' + paramMesure + ''}</div>
+                                        {paramDefValue ? <div className="bflex-row">
+                                                {/* <input className="flex-size-fill" type="text" disabled defaultValue={paramDefValue}/> */}
+                                                <a href="javascript:void(0)" className="flex-size-fill regular_vlink" >{paramDefValue}</a>
+                                                <button 
+                                                    className="flex-size-own"
+                                                    data-topic={sectionName  + '.' + secPropId + '.parameters.' + paramId}
+                                                    onClick={onDeleteFile}
+                                                >
+                                                    <Sicon 
+                                                        link={'/assets/images/service_icons.svg#close'} 
+                                                        className={S.removeIcon}
+                                                    />
+                                                </button>
+                                            </div>
+                                        : <input 
+                                            className="flex-size-fill" 
+                                            type="file" 
+                                            name={paramId} 
+                                            data-section={sectionName}
+                                            data-prop={secPropId}
+                                            onChange={onFileChangeHandler}
+                                        />}
+                                    </label>
+                                }
+
+                                const step = getDimension(paramId, paramDefValue);
+
                                 return <label key={paramId}>
-                                    <div>{patramDescription || paramId} {paramMesure && ', ' + paramMesure + ''}</div>
+                                    <div>{paramDescription || paramId} {paramMesure && ', ' + paramMesure + ''}</div>
                                     <input 
                                         className="flex-size-fill" 
                                         type="number" 

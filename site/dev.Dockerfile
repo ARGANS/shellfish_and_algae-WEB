@@ -10,6 +10,7 @@ RUN apk add nano
 RUN apk add curl
 
 ENV NEXT_TELEMETRY_DISABLED=1
+# production | test | development
 ENV NODE_ENV=production
 ENV PORT=3000
 

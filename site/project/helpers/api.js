@@ -217,3 +217,32 @@ export function getContainers$() {
             return null;
         });
 }
+
+export function uploadFiles$(formData) {
+    const link = NODE_API_PREFIX + '/upload';
+    
+    return;
+    // TODO
+    return fetch(link, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                // This trick helps to avoid messages about exception in the JSON.parse method and get a right reason of the error
+                return Promise.reject(response);
+            }
+            return Promise.resolve(response)
+                .then(validateJSONResponse)
+                .then(parseJSON);
+        })
+        .catch(error => {
+            console.log('Cannot request the endpoint %s', link);
+            console.dir(error)
+            return null;
+        });
+}

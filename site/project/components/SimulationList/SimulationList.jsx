@@ -4,7 +4,7 @@ import ModelProperties from 'components/ModelProperties/ModelProperties';
 import { downloadFileFromText } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
-import { deleteModel$, deleteResults$, getActiveUser$, getModels$ } from 'helpers/api';
+import { deleteModel$, deleteResults$, getActiveUser$, getModels$, uploadFiles$ } from 'helpers/api';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import PipelineModal from 'components/PipelineModal/PipelineModal';
@@ -48,7 +48,7 @@ export default function ModelList(props) {
         setModel(null)
     }, [setModel])
 
-    const handleModelSubmit = useCallback(async (parameters, metadata, dataset_parameters) => {
+    const handleModelSubmit = useCallback(async (parameters, metadata, dataset_parameters, pendingTasks) => {
         await model
             .init(parameters, metadata, dataset_parameters)
             .synchronize()
@@ -56,6 +56,13 @@ export default function ModelList(props) {
                 console.log('Model has changed')
                 console.dir(model)
                 console.dir(response);
+                console.log('TODO upload files to the drive');
+                console.dir(pendingTasks);
+                const formData = new FormData();
+                const filesToUpload = Object.values(pendingTasks).filter(task => task.action === 'addFile').map(task => task.value);
+                formData.append('files', filesToUpload);
+                formData.append('destination', '/media/share/data/' + model.id);
+                uploadFiles$(formData)
             })
             .catch(e => {
                 console.log('Fail to change the model')
@@ -243,7 +250,7 @@ export default function ModelList(props) {
                     onSubmit={handleModelSubmit}
                 >
                     <div className={S.formBtns}>
-                        {!isDisabled && <button type="submit" className="btn btn-primary">Submit</button>}
+                        {!isDisabled && <button type="submit" className="btn btn-primary">{!model.id ? 'Submit' : 'Update'}</button>}
                         <button className="btn btn-secondary" onClick={onFormResetHandler}>Go back to the list</button>
                     </div>
                 </ModelProperties>	

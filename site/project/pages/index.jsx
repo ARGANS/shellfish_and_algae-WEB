@@ -14,7 +14,7 @@ function IndexPage(props) {
 			<link rel="stylesheet" type="text/css" href="/assets/index.css" />
 		</Head>
 		<main className="introsection">
-            <video playsinline autoPlay muted loop preload="none" className="introsection-video">
+            <video playsInline autoPlay muted loop preload="none" className="introsection-video">
                 <source src="/assets/pexels-kindel-media-8823621.mp4" type="video/mp4"></source>
             </video>
             <div className="introsection-inner">

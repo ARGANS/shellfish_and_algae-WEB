@@ -19,7 +19,7 @@ export default class SiteDocument extends Document {
 				<link rel="apple-touch-icon" href="/favicons/touch-icon-iphone-retina_180.png" />
 				<link rel="manifest" href="/manifest.webmanifest" />
 				<link rel="dns-prefetch" href="//fonts.googleapis.com"></link>
-				<link href="https://fonts.googleapis.com" crossorigin="" rel="preconnect"></link>
+				<link href="https://fonts.googleapis.com" crossOrigin="" rel="preconnect"></link>
 				<meta name="robots" content="index, follow"></meta>
 				<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"></meta>
 				<meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"></meta>
