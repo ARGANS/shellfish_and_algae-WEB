@@ -53,6 +53,11 @@ const INIT_JOB_STATUS = {
     posttreatment: JOB_STATUS.not_started,
 };
 
+function getPart(str) {
+    const pos = str.indexOf(' ');
+    if (pos < 0) return str;
+    return str.substr(0, pos)
+}
 
 function typeStepStatus(status) {
     if (status === JOB_STATUS.not_started) {
@@ -137,7 +142,7 @@ export default function PipelineModal(props) {
 
                 
                 const _executingTasks = activeContainers.reduce((state, containerProps) => {
-                    state[containerProps.labels['task.type']] = JOB_STATUS.in_progress;
+                    state[getPart(containerProps.labels['task.type'])] = JOB_STATUS.in_progress;
                     return state;
                 }, {
                     ...INIT_JOB_STATUS
@@ -296,7 +301,10 @@ export default function PipelineModal(props) {
         const allContainers = _containersRef.current;
         // Docker label values are strings
         const modelId = props.model.id + '';
-        const containersBelongsToTheJob = allContainers.filter(containerProps => (containerProps.labels['task.model.id'] === modelId) && (containerProps.labels['task.type'] === jobId))
+        const containersBelongsToTheJob = allContainers.filter(
+            containerProps => (containerProps.labels['task.model.id'] === modelId) 
+                && (getPart(containerProps.labels['task.type']) === jobId)
+        )
         
         console.log('[stopJobHandler]');
         console.dir(containersBelongsToTheJob);

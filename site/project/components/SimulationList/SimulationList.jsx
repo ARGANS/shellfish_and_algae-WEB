@@ -97,8 +97,6 @@ export default function ModelList(props) {
             </ConfirmDialog>
         </Dialog>)
 
-        // TODO deprecated
-        // triggeRecheck(value => !value);
     }, [models]);
     
     const onSelectHandler = useCallback(event => {

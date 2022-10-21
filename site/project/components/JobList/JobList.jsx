@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
 import S from './JobList.module.css'
-import { removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
+import { filterComponents, removeAllComponents } from 'libs/ComponentHeap/ComponentHeap';
 import {containerService} from 'helpers/container2_service';
 import { DateZ } from 'libs/DatePicker/dates';
 import { classList } from "utils/strings";
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
+import { ConfirmDialog } from 'libs/ConfirmDialog/ConfirmDialog';
+import { stopContainer$ } from 'helpers/api';
 
 export default function JobList(props) {
     const [containers, setContainers] = useState([])
@@ -22,6 +24,25 @@ export default function JobList(props) {
             containerService.emitter.off('container_list_change', callback);
         }
     }, []);
+
+    const stopContainerHandler= useCallback((e) => {
+        const container_id = e.target.dataset.container;
+
+        return new Promise((resolve) => {
+            addComponent(<Dialog key={Math.random()} dialogKey={'confirmDialog1'}>
+                <ConfirmDialog 
+                    title='This action requires confirmation' 
+                    onResolve={resolve}
+                >
+                    <p className="boffset-c">Are you sure you want to stop this container?</p>
+                </ConfirmDialog>
+            </Dialog>)
+        }).
+            then(() => stopContainer$(container_id)).
+            then(() => filterComponents(comp => {
+                return comp.props.dialogKey !== 'ContainerData1'
+            }))
+    })
 
     const clickHandler = useCallback((e) => {
         const containerId = e.target.dataset.id;
@@ -55,6 +76,9 @@ export default function JobList(props) {
                             </div>
                         </dd>
                     </dl>
+                    <div>
+                        <button className="btn btn-secondary" onClick={stopContainerHandler} data-container={containerData.short_id}>Stop container</button>
+                    </div>
                 </div>
             </DialogHeader>
         </Dialog>, 'default');

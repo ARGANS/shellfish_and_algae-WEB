@@ -352,6 +352,7 @@ function ModelProperties(props) {
                                             data-section={sectionName}
                                             data-prop={secPropId}
                                             onChange={onFileChangeHandler}
+                                            accept="image/tif, image/tiff" 
                                         />}
                                     </label>
                                 }
