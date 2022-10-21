@@ -292,11 +292,28 @@ function ModelProperties(props) {
         {sectionOrder.map(sectionName => {
             const sectionData = props.parameters[sectionName];
             const sectionDefaults = Object.entries(sectionData.defaults);
-            const keys = Object.keys(state[sectionName]);
-            const secPropId = keys[0];
-            const secProp = state[sectionName][secPropId];
-            const propOptions = Object.entries(secProp.options);
+            let secPropId;
+
+            if (state.hasOwnProperty(sectionName)) {
+                const keys = Object.keys(state[sectionName]);
+                secPropId = keys[0];
+            } else {
+                [secPropId, ] = sectionDefaults[0];
+            }
+
+            const secProp = {
+                parameters: {
+                    ...sectionDefaults[0][1].parameters,
+                    ...(state.hasOwnProperty(sectionName) ? state[sectionName][secPropId].parameters : {})
+                },
+                options: {
+                    ...sectionDefaults[0][1].options,
+                    ...(state.hasOwnProperty(sectionName)? state[sectionName][secPropId].options : {})
+                }
+            }
             
+            const propOptions = Object.entries(secProp.options);
+
             return (<>
                 <label>{sectionData.section_name}</label>
                 <div>
@@ -307,8 +324,13 @@ function ModelProperties(props) {
                             onChange={onSectionChange}
                             data-section={sectionName}
                         >{
-                            sectionDefaults.map(([secPropId, secProp], index) => (
-                                <option key={secPropId} value={secPropId} title={secProp.description} selected={keys.indexOf(secPropId) > -1}>{secProp.name}</option>
+                            sectionDefaults.map(([_secPropId, secProp], index) => (
+                                <option 
+                                    key={_secPropId} 
+                                    value={_secPropId} 
+                                    title={secProp.description} 
+                                    selected={_secPropId === secPropId}
+                                >{secProp.name}</option>
                             ))
                         }</select>
                     ) : (sectionDefaults || []).map(([secPropId, secProp]) => (
@@ -332,7 +354,7 @@ function ModelProperties(props) {
                                     return <label key={paramId}>
                                         <div>{paramDescription || paramId} {paramMesure && ', ' + paramMesure + ''}</div>
                                         {paramDefValue ? <div className="bflex-row">
-                                                {/* <input className="flex-size-fill" type="text" disabled defaultValue={paramDefValue}/> */}
+                                                {/* TODO add link to the file */}
                                                 <a href="javascript:void(0)" className="flex-size-fill regular_vlink" >{paramDefValue}</a>
                                                 <button 
                                                     className="flex-size-own"
