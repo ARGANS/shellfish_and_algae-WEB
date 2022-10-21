@@ -173,6 +173,13 @@ function ModelProperties(props) {
             },
             [$input.name]: $input.value,
         }))
+
+        if ($input.name === 'zone') {
+            setDatasetParameters(_datasetParameters => ({
+                ..._datasetParameters,
+                zone: $input.value,
+            }))
+        }
     }, [])
 
     const datasetParameterChangeHandler = useCallback(event => {
