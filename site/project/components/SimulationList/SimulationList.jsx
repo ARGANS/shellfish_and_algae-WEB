@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import S from './SimulationList.module.css'
 import ModelProperties from 'components/ModelProperties/ModelProperties';
-import { downloadFileFromText } from "utils/downloadFile";
+import { downloadFileFromText, downloadLink } from "utils/downloadFile";
 import SimulationModel from 'models/SimulationModel';
 import useDebounce from 'utils/useDebounce';
 import { deleteModel$, deleteResults$, getActiveUser$, getModels$, uploadFiles$ } from 'helpers/api';
@@ -12,6 +12,7 @@ import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import Sicon from 'libs/Sicon/Sicon';
 import { classList } from 'utils/strings';
 import { ConfirmDialog } from 'libs/ConfirmDialog/ConfirmDialog';
+import { DateZ } from "libs/DatePicker/dates";
 
 const DEBUG_POLLING = false;
 const LONG_POLLING_IS_ACTIVE = true;
@@ -138,6 +139,17 @@ export default function ModelList(props) {
         console.dir(model);
     }, [models]);
 
+
+    const onBackupHandler = useCallback(event => {
+        event.preventDefault();
+        const model = findModel(event, models);
+        if (!model) return;
+
+        const archive_name = 'model_' + model.id + '_' + DateZ.from().t('DD-MM-YYYY_HOUR-MIN-SEC')
+
+        downloadLink(`/api/v2/archive?path=/media/share/data/${model.id}&filename=${archive_name}`, archive_name + '.zip' );
+    }, [models]);
+
     useEffect(() => {
         // console.log('SimulationList %s', props.id);
         // console.dir(props);
@@ -232,6 +244,12 @@ export default function ModelList(props) {
                                         className="icon-btn"
                                         data-index={modelIndex} 
                                         onClick={onDownloadHandler}
+                                    ><Sicon link={'/assets/images/service_icons.svg#download'} /></button>
+                                    <button 
+                                        title="Backup"
+                                        className="icon-btn"
+                                        data-index={modelIndex} 
+                                        onClick={onBackupHandler}
                                     ><Sicon link={'/assets/images/service_icons.svg#download'} /></button>
                                 </div>
                             </>

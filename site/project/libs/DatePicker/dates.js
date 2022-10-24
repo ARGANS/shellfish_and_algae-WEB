@@ -38,7 +38,7 @@ export class DateZ {
 
 	/**
 	 * 
-	 * @param  {int[] | string[]} args 
+	 * @param  {int[] | string[] | undefined} args 
 	 * @return {DateZ | null}
 	 */
     static from(...args) {
