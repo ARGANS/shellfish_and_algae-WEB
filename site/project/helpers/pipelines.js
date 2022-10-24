@@ -16,8 +16,10 @@ const CONTAINER_CONF = {
 }
 
 export const pipeline_manifest = {
+    _JOB_LIST: ['dataimport', 'pretreatment', 'dataread', 'posttreatment', 'OptimalFarmsRepartition'],
     // [stage_id]: props
     dataimport: {
+        title: 'Import datasets',
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
@@ -49,6 +51,7 @@ export const pipeline_manifest = {
         dir: (model) => `/media/share/data/${model.id}/_dataset`
     },
     pretreatment: {
+        title: 'Pretreat datasets',
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
@@ -76,7 +79,11 @@ export const pipeline_manifest = {
         },
         dir: (model) => `/media/share/data/${model.id}/_pretreated`
     },
+
+    // TODO `/_dataread/${model.dataread_id}` -> `/_dataread`
+    
     dataread: {
+        title: 'Run model simulation',
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
@@ -108,6 +115,7 @@ export const pipeline_manifest = {
         dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
     },
     posttreatment: {
+        title: 'Generate GeoTIFF files',
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
@@ -133,14 +141,45 @@ export const pipeline_manifest = {
             },
         },
         dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment`
+    },
+    OptimalFarmsRepartition: {
+        title: 'Calculate the optimal repartition of farms',
+        status: {
+            started: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_farmrepartition/start.mark`
+            },
+            completed: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_farmrepartition/end.mark`
+            }
+        },
+        container: {
+            Image: 'ac-farmrepartition/runtime',
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `INPUT_SOURCE=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_farmrepartition`,
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the posttreatment task has been completed.',
+                'task.model.id': '{{model_id}}',
+                'task.type': 'posttreatment',
+                'task.user': '{{user_username}}'
+            },
+        },
+        dir: (model) => `/media/share/data/${model.id}/_farmrepartition`
     }
 }
-
-// TODO get/check containers from the service. Create this service from the component used to display the list of containers.
 
 export function compilePipelineManifest(manifest, simulationModel) {
     // Return s the list of containers and files to check
     return Object.entries(manifest).reduce((state, [stageName, stageProps]) => {
+        if (stageName.startsWith('_')) {
+            // Skip all manifest properties that start with an underscore
+            return state;
+        }
 
         return Object.entries(stageProps.status).reduce((state, [checkName, checkProps]) => {
 

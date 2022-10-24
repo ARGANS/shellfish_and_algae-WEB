@@ -45,7 +45,6 @@ const JOB_STATUS = {
     completed: 2,
     failed: 3
 }
-const JOB_LIST = ['dataimport', 'pretreatment', 'dataread', 'posttreatment']
 const INIT_JOB_STATUS = {
     dataimport: JOB_STATUS.not_started,
     pretreatment: JOB_STATUS.not_started,
@@ -71,23 +70,6 @@ function typeStepStatus(status) {
     }
     else if (status === JOB_STATUS.completed) {
         return 'Completed';
-    }
-
-    return 'unknown'
-}
-
-function jobTitle(jobId) {
-    if (jobId === JOB_LIST[0]) {
-        return 'Import datasets';
-    }
-    else if (jobId === JOB_LIST[1]) {
-        return 'Pretreat datasets';
-    }
-    else if (jobId === JOB_LIST[2]) {
-        return 'Run model simulation';
-    }
-    else if (jobId === JOB_LIST[3]) {
-        return 'Generate GeoTIFF files';
     }
 
     return 'unknown'
@@ -332,13 +314,13 @@ export default function PipelineModal(props) {
                     <h4>Status</h4>
                     <h4>Artifacts</h4>
                     <h4>Actions</h4>
-                    {JOB_LIST.map((jobId, i) => {
-                        const isDisabled = JOB_LIST[i - 1] ? jobStatus[JOB_LIST[i - 1]] !== JOB_STATUS.completed : null;
+                    {pipeline_manifest._JOB_LIST.map((jobId, i) => {
+                        const isDisabled = pipeline_manifest._JOB_LIST[i - 1] ? jobStatus[pipeline_manifest._JOB_LIST[i - 1]] !== JOB_STATUS.completed : null;
                         const className = isDisabled ? S.disabled : '';
 
                         return (<>
                             <div className={className}>{i + 1}</div>
-                            <div className={className}>{jobTitle(jobId)}</div>
+                            <div className={className}>{pipeline_manifest[jobId].title || 'unknown'}</div>
                             <div className={className}>{typeStepStatus(jobStatus[jobId])}</div>
                             <div className={className}>
                                 {(jobStatus[jobId] === JOB_STATUS.completed || jobStatus[jobId] === JOB_STATUS.failed) && ([
