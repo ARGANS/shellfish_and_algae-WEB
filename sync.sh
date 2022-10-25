@@ -5,7 +5,7 @@ USER="${2:-`whoami`}"
 DESTINATION_DIR="/profils/$USER/prj"
 
 function action__upload_sources {
-    commands="\
+    local commands="\
 rm -rf $DESTINATION_DIR;\
 mkdir -p $DESTINATION_DIR;\
 tar zx -C $DESTINATION_DIR\
@@ -29,11 +29,25 @@ function action__copy {
     scp $USER@$HOST_WEB:/profils/$USER/dshbrd_prod.db $destination
 }
 
+function action__rebuild {
+    local commands="/profils/$USER/docker-compose -f $DESTINATION_DIR/misc/proxy.docker-compose.yml -f $DESTINATION_DIR/misc/prod.dashboard.docker-compose.yml -f $DESTINATION_DIR/misc/prod.site.docker-compose.yml --env-file=$DESTINATION_DIR/misc/sim.env up --build -d acsite"
+
+    ssh "$USER@$HOST_WEB" "$commands"
+}
+
+function action__rebuild_world {
+    local commands="cd $DESTINATION_DIR; ./manage.sh up prod"
+
+    ssh "$USER@$HOST_WEB" "$commands"
+}
+
 
 function help {
     echo './sync.sh upload'
     echo './sync.sh dump'
     echo './sync.sh copy'
+    echo './sync.sh rebuild'
+    echo './sync.sh rebuild_worldw'
 }
 
 case $1 in
@@ -43,6 +57,10 @@ case $1 in
 		action__dump;;
 	'copy')
 		action__copy;;
+   	'rebuild')
+	    action__rebuild;;
+    'rebuild_world')
+	    action__rebuild_world;;
 	*)
 	help;;
 esac
