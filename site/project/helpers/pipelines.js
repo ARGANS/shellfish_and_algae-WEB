@@ -147,29 +147,29 @@ export const pipeline_manifest = {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_farmrepartition/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_farmdistribution/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_farmrepartition/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_farmdistribution/end.mark`
             }
         },
         container: {
             Image: 'ac-farmrepartition/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `INPUT_SOURCE=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
-                `INPUT_DESTINATION=/media/share/data/${model.id}/_farmrepartition`,
+                `INPUT_SOURCE=/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_farmdistribution`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
-                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the posttreatment task has been completed.',
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the farm distribution task has been completed.',
                 'task.model.id': '{{model_id}}',
                 'task.type': 'posttreatment',
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.id}/_farmrepartition`
+        dir: (model) => `/media/share/data/${model.id}/_farmdistribution`
     }
 }
 

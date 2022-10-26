@@ -45,12 +45,10 @@ const JOB_STATUS = {
     completed: 2,
     failed: 3
 }
-const INIT_JOB_STATUS = {
-    dataimport: JOB_STATUS.not_started,
-    pretreatment: JOB_STATUS.not_started,
-    dataread: JOB_STATUS.not_started,
-    posttreatment: JOB_STATUS.not_started,
-};
+const INIT_JOB_STATUS = pipeline_manifest._JOB_LIST.reduce((init_state, jobId) => {
+    init_state[jobId] = JOB_STATUS.not_started;
+    return init_state;
+}, {})
 
 function getPart(str) {
     const pos = str.indexOf(' ');
