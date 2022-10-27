@@ -2,6 +2,10 @@ import EventEmitter from "libs/ComponentHeap/eventEmitter";
 import { cloneArray } from "utils/deepClone";
 import { getContainers$ } from "./api";
 
+function fromPythonDate(date) {
+    return new Date((date - 0) * 1000);
+}
+
 export const containerService = new (class {
     constructor() {
         this._state = [];
@@ -119,9 +123,9 @@ export const containerService = new (class {
                 id: data.id,
                 image: data.original.Actor.Attributes.image,
                 name: data.original.Actor.Attributes.name,
-                short_id: data.id.substr(10),
+                short_id: data.id.substr(0, 10),
                 labels: data.original.Actor.Attributes,
-                started_at: new Date((data.time -0) * 1000),
+                started_at: fromPythonDate(data.time),
                 _origin: data.original,    
             }
         }
@@ -130,9 +134,9 @@ export const containerService = new (class {
             id: data.id,
             image: data.Actor.Attributes.image,
             name: data.Actor.Attributes.name,
-            short_id: data.id.substr(10),
+            short_id: data.id.substr(0, 10),
             labels: data.Actor.Attributes,
-            started_at: new Date((data.time -0) * 1000),
+            started_at: fromPythonDate(data.time),
             _origin: data,
         }
     }

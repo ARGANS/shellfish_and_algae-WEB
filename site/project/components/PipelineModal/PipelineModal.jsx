@@ -106,7 +106,7 @@ export default function PipelineModal(props) {
         return checkFiles$(fileChecksRequest)
             .then((fileContents) => {
                 const allContainers = _containersRef.current;
-                console.log('Continue %s', _containersRef.current.length);
+                // console.log('Continue %s', _containersRef.current.length);
                 
                 // Docker label values are strings
                 const modelId = props.model.id + '';
@@ -116,8 +116,11 @@ export default function PipelineModal(props) {
                 const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
 
                 if (true) {
+                    console.warn('activeContainers:')
+                    console.dir(activeContainers);
                     // TODO: Disabled
-                    setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
+                    // setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
+                    setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].id : null)
                 }
 
                 
@@ -134,8 +137,8 @@ export default function PipelineModal(props) {
                     return report;
                 }, {})
 
-                console.log('[synchronizeState]')
-                console.dir([_executingTasks, fileCheckReports])
+                // console.log('[synchronizeState]')
+                // console.dir([_executingTasks, fileCheckReports])
                 
                 setJobStatus(curJobStatus => {
                     const nextJobStatus = Object.entries(_executingTasks)

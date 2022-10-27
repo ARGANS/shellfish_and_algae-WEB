@@ -165,6 +165,7 @@ export const pipeline_manifest = {
             Labels: {
                 'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the farm distribution task has been completed.',
                 'task.model.id': '{{model_id}}',
+                // task.type label must be equal to the stage_id
                 'task.type': 'OptimalFarmsRepartition',
                 'task.user': '{{user_username}}'
             },
