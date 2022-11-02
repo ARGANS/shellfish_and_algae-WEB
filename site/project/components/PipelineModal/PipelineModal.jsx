@@ -174,6 +174,14 @@ export default function PipelineModal(props) {
             })
     });
 
+    const containerListChangeHandler = useCallback((allContainers, removedContainer) => {
+        console.log('[container_list_change3]')
+        console.dir([allContainers, removedContainer]);
+
+        _containersRef.current = allContainers;
+        synchronizeState();
+    }, [synchronizeState])
+
     useEffect(() => {
         console.warn('[INIT PipelineDialog]');
         if (!_pipelineManifestRef.current) {
@@ -181,17 +189,10 @@ export default function PipelineModal(props) {
             console.dir(_pipelineManifestRef.current);
         }
 
-        const callback = containerService.emitter.on('container_list_change', (containers, removedContainer) => {
-            console.log('[container_list_change3]')
-            console.dir([containers, removedContainer]);
-
-            _containersRef.current = containers;
-            synchronizeState();
-        });
-
-        _containersRef.current = containerService._state
+        _containersRef.current = containerService._state;
         synchronizeState();
 
+        const callback = containerService.emitter.on('container_list_change', containerListChangeHandler);
         return () => {
             containerService.emitter.off('container_list_change', callback);
         }
@@ -232,10 +233,25 @@ export default function PipelineModal(props) {
             .replaceAll('{{model_type}}', props.model.type)
 
         setUIBlocked(true);
-        // console.log('StartJobHandler %s', props.user.username);
-        // console.dir(JSON.stringify(props.user, null, '\t'));
 
-        return runContainer$(body_s)
+        return runContainer$(body_s).then((data) => {
+            const eventData = {
+                id: data.Id,
+                time: Date.parse(data.Created) / 1000,
+                Action: 'create',
+                Actor: {
+                    Attributes: {
+                        ...data?.Config?.Labels,
+                        name: data.Name,
+                        image: data.Image,
+                    },
+                }
+            }
+            // updates the list of containers only for proper removal of spinner in case SSE is not working properly
+            containerService._evtSource.onmessage({
+                data: eventData
+            })
+        });
     });
 
     const deleteJobHandler = useCallback((e) => {

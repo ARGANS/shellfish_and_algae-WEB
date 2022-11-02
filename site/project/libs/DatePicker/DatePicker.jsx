@@ -72,13 +72,13 @@ export default function DatePicker(props) {
         onClick={toggleHandler} 
       >{DateZ.from(actualDate).t('DD-MM-YYYY')}</div>
       {isOpened && <div data-role="dp-dropdown" onMouseOut={mouseOutHandler} onClick={event => event.stopPropagation()}>
-        <div data-role="dp-calendar" class={s.calendar} style={{'--first-day-number': firstDayNumber}}>
-          <div data-role="dp-calendar-nav" class={s.monthIndicator}>
+        <div data-role="dp-calendar" className={s.calendar} style={{'--first-day-number': firstDayNumber}}>
+          <div data-role="dp-calendar-nav" className={s.monthIndicator}>
             <div data-role="dp-prev" onClick={prevClickHandler} tabIndex="0">Prev</div>
             <time data-role="dp-month" datetime={year + '-' + DateZ.withLeadingZero(month + 1)}>{DateZ.from(year, month).t('YYYY ML')}</time>
             <div data-role="dp-next" onClick={nextClickHandler} tabIndex="0">Next</div>
           </div>
-          <div class={s.dayOfWeek} data-role="dp-calendar-days">
+          <div className={s.dayOfWeek} data-role="dp-calendar-days">
             <div>Mo</div>
             <div>Tu</div>
             <div>We</div>
@@ -87,7 +87,7 @@ export default function DatePicker(props) {
             <div>Sa</div>
             <div>Su</div>
           </div>
-          <div class={s.dateGrid} data-role="dp-calendar-grid">{Array(daysInMonth).fill(0)
+          <div className={s.dateGrid} data-role="dp-calendar-grid">{Array(daysInMonth).fill(0)
             .map((_, index) => {
               let className = s.day;
               if (year === actualDate.getFullYear() 

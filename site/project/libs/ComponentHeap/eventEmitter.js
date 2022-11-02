@@ -39,12 +39,7 @@ class EventEmitter {
 		if (!Array.isArray(this.#eventHandlers[eventName_s])) return;
 	  
 		const handlers = this.#eventHandlers[eventName_s];
-		// console.log('\t[Emit %s] handlers: %s', eventName_s, handlers.length);
 		for(let i = 0; i < handlers.length; i++) {
-			// if (eventName_s === 'container_list_change') {
-			// 	console.log('\t\tH %s %s', i, handlers[i] + '');
-			// }
-			
 			if (handlers[i](...args)) return true;
 		}
 	}

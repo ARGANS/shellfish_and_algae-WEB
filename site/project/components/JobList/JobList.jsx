@@ -12,18 +12,19 @@ import { stopContainer$ } from 'helpers/api';
 
 export default function JobList(props) {
     const [containers, setContainers] = useState([])
+    const containerListChangeHandler = useCallback((allContainers, removedContainer) => {
+        console.log('[container_list_change2]')
+        console.dir([allContainers, removedContainer]);
+        setContainers(allContainers);
+    }, [setContainers])
 
     useEffect(() => {
-        const callback = containerService.emitter.on('container_list_change', (containers, removedContainer) => {
-            console.log('[container_list_change2]')
-            console.dir([containers, removedContainer]);
-            setContainers(containers);
-        });
+        const callback = containerService.emitter.on('container_list_change', containerListChangeHandler);
 
         return () => {
             containerService.emitter.off('container_list_change', callback);
         }
-    }, []);
+    }, [containerListChangeHandler]);
 
     const stopContainerHandler= useCallback((e) => {
         const container_id = e.target.dataset.container;
