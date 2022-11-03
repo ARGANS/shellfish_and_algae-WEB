@@ -23,13 +23,24 @@ export const containerService = new (class {
         console.warn('INIT Container2_service')
 
         getContainers$().then((containers) => {
-            console.log('[Container]')
+            console.log('[Containers]')
             console.dir(containers);
+            const containersWithErrors = containers
+                .filter(containerData => !!containerData.hasOwnProperty('error'))
 
-            return containers.map(containerData => {
-                containerData.started_at = Date.parse(containerData.started_at ? containerData.started_at : containerData.state.StartedAt)
-                return containerData;
-            })
+            if (containersWithErrors.length > 0) {
+                console.warn('Containers with errors:');
+                console.dir(containersWithErrors)
+            }
+
+            return containers
+                .filter(containerData => !containerData.hasOwnProperty('error'))
+                .map(containerData => {
+                    containerData.started_at = Date.parse(containerData.started_at
+                        ? containerData.started_at
+                        : containerData.state.StartedAt)
+                    return containerData;
+                })
                 .sort((a, b) => b.started_at - a.started_at);
         }).then((containers) => {
             this.setState(containers)
