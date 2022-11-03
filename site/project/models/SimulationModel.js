@@ -75,7 +75,7 @@ export default class SimulationModel {
     static createDefaultDatasetParameters() {
         return {
             'depth-min': 0,
-            'depth-max': 20,
+            'depth-max': 5,
             // year: new Date().getFullYear()
             year: 2021,
             datasets: {},
