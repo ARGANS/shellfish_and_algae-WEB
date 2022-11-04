@@ -123,7 +123,7 @@ export const pipeline_manifest = {
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_dataread`
+                path: (model) => `/media/share/data/${model.id}/_posttreatment/end.mark`
             }
         },
         container: {
@@ -131,7 +131,7 @@ export const pipeline_manifest = {
             ...CONTAINER_CONF,
             Env: (model) => ([
                 `SOURCE_DIR=/media/share/data/${model.id}/_dataread`,
-                `INPUT_DESTINATION=/media/share/data/${model.id}/_farmdistribution`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_posttreatment`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
