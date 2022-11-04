@@ -87,11 +87,11 @@ export const pipeline_manifest = {
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread/end.mark`
             }
         },
         container: {
@@ -99,7 +99,7 @@ export const pipeline_manifest = {
             ...CONTAINER_CONF,
             Env: (model) => ([
                 `INPUT_SOURCE=/media/share/data/${model.id}/_pretreated`,
-                `INPUT_DESTINATION=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_dataread`,
                 'INPUT_MODEL_PROPERTIES_JSON='+ JSON.stringify(model.body),
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
@@ -112,25 +112,26 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
+        dir: (model) => `/media/share/data/${model.id}/_dataread`,
     },
     posttreatment: {
         title: 'Generate GeoTIFF files',
         status: {
             started: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment/start.mark`
+                path: (model) => `/media/share/data/${model.id}/_posttreatment/start.mark`
             },
             completed: {
                 action: CHECK_ACTIONS.checkFile,
-                path: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment/end.mark`
+                path: (model) => `/media/share/data/${model.id}/_dataread`
             }
         },
         container: {
             Image: 'ac-posttreatment/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `SOURCE_DIR=/media/share/data/${model.id}/_dataread/${model.dataread_id}`,
+                `SOURCE_DIR=/media/share/data/${model.id}/_dataread`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_farmdistribution`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
@@ -140,7 +141,7 @@ export const pipeline_manifest = {
                 'task.user': '{{user_username}}'
             },
         },
-        dir: (model) => `/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment`
+        dir: (model) => `/media/share/data/${model.id}/_posttreatment`
     },
     OptimalFarmsRepartition: {
         title: 'Calculate the optimal repartition of farms',
@@ -158,7 +159,7 @@ export const pipeline_manifest = {
             Image: 'ac-farmrepartition/runtime',
             ...CONTAINER_CONF,
             Env: (model) => ([
-                `INPUT_SOURCE=/media/share/data/${model.id}/_dataread/${model.dataread_id}/posttreatment`,
+                `INPUT_SOURCE=/media/share/data/${model.id}/_posttreatment`,
                 `INPUT_DESTINATION=/media/share/data/${model.id}/_farmdistribution`,
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),

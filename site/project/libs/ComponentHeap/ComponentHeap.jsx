@@ -48,6 +48,7 @@ function useComponentHost(hostId = DEFAULT_CHANNEL) {
 	useEffect(() => {
 		const emitter = new EventEmitter();
 
+		// TODO use useCallback for all callbacks
 		// emitter.on('add', component => setComponentList(list => [...list, component]));
 		emitter.on('add', component => setComponentList(list => list.concat(component)));
 		emitter.on('removeAll', () => setComponentList(() => []));
