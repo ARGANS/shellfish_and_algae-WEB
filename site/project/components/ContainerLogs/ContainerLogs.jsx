@@ -9,7 +9,7 @@ export default function ContainerLogs(props) {
 
     // Depends on props.container_id
     useEffect(() => {
-        console.log('[ContainerLogs] %s', props.container_id);
+        // console.log('[ContainerLogs] %s', props.container_id);
         const _esource = new ListenEvent(
             NODE_API_PREFIX + '/log/stream/container?id=' + props.container_id, 
             // On message:

@@ -7,48 +7,13 @@ import Dialog from 'libs/Dialogs/Dialog';
 import DialogHeader from 'libs/DialogHeader/DialogHeader';
 import { addComponent } from 'libs/ComponentHeap/ComponentHeap';
 import { classList } from 'utils/strings';
-import { compilePipelineManifest, pipeline_manifest } from 'helpers/pipelines';
+import { compilePipelineManifest, pipeline_manifest, JOB_STATUS } from 'helpers/pipelines';
 import Sicon from 'libs/Sicon/Sicon';
 const DynamicMap = dynamic(() => import('libs/Map/Map'), { ssr: false })
 import {containerService} from 'helpers/container2_service';
 import model_data from 'models/model_data';
 
-/**
- * 
- * @param {Object} state 
- */
-// DEPRECATED
-// function typeDataImportStatus(state) {
-//     return state.not_started 
-//         ? 'Not downloaded' 
-//         : state.in_progress 
-//             ? 'Downloading now'
-//             : state.completed
-//                 ? 'Already downloaded'
-//                 : '-'
-// }
 
-// DEPRECATED
-// function typeDataReadStatus(state) {
-//     return state.not_started 
-//         ? 'Not processed' 
-//         : state.in_progress 
-//             ? 'In progress now'
-//             : state.completed
-//                 ? 'Already processed'
-//                 : '-'
-// }
-
-const JOB_STATUS = {
-    not_started: 0,
-    in_progress: 1,
-    completed: 2,
-    failed: 3
-}
-const INIT_JOB_STATUS = pipeline_manifest._JOB_LIST.reduce((init_state, jobId) => {
-    init_state[jobId] = JOB_STATUS.not_started;
-    return init_state;
-}, {})
 
 function getPart(str) {
     const pos = str.indexOf(' ');
@@ -87,7 +52,8 @@ function typeContainerChanges(containersSnapShot) {
 }
 
 export default function PipelineModal(props) {
-    const [jobStatus, setJobStatus] = useState(INIT_JOB_STATUS)
+    const [jobStatus, setJobStatus] = useState({})
+    const [jobDisabled, setJobDisabled] = useState({})
     const [watchingContainer, setWatchingContainer] = useState(null);
     const [isBlocked, setUIBlocked] = useState(false);
     const _pipelineManifestRef = useRef();
@@ -96,7 +62,7 @@ export default function PipelineModal(props) {
 
     // To be good this callback depends on _containers
     const synchronizeState = useCallback(() => {
-        // List of files that the application needs to monitor in order to understand what happened to the task
+         // List of files that the application needs to monitor in order to understand what happened to the task
         const fileChecks = _pipelineManifestRef.current.files;
         const fileChecksRequest = fileChecks.map(checkProps => ({
             type: 'get_file',
@@ -115,21 +81,9 @@ export default function PipelineModal(props) {
                 // TODO get container that belong to the active Job type
                 const activeContainers = containersBelongsToTheModel.filter(containerProps => !!containerProps.labels['task.type']);
 
-                if (true) {
-                    console.warn('activeContainers:')
-                    console.dir(activeContainers);
-                    // TODO: Disabled
-                    // setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].short_id : null)
-                    setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].id : null)
-                }
-
-                
-                const _executingTasks = activeContainers.reduce((state, containerProps) => {
-                    state[getPart(containerProps.labels['task.type'])] = JOB_STATUS.in_progress;
-                    return state;
-                }, {
-                    ...INIT_JOB_STATUS
-                });
+                console.warn('activeContainers:')
+                console.dir(activeContainers);
+                setWatchingContainer(activeContainers.length > 0 ? activeContainers[0].id : null)
 
                 const fileCheckReports = fileChecks.reduce((report, checkProps, i) => {
                     if (!report.hasOwnProperty(checkProps.stage_id)) report[checkProps.stage_id] = {};
@@ -137,42 +91,40 @@ export default function PipelineModal(props) {
                     return report;
                 }, {})
 
-                // console.log('[synchronizeState]')
-                // console.dir([_executingTasks, fileCheckReports])
-                
-                setJobStatus(curJobStatus => {
-                    const nextJobStatus = Object.entries(_executingTasks)
-                        .reduce((nextJobStatus, [jobId, curStatus]) => {
-                            if (curStatus !== JOB_STATUS.in_progress) {
-                                if (fileCheckReports[jobId].started) {
-                                    if (fileCheckReports[jobId].completed) {
-                                        nextJobStatus[jobId] = JOB_STATUS.completed        
-                                    } else {
-                                        nextJobStatus[jobId] = JOB_STATUS.failed;
-                                    }
+                const _executingTasks = activeContainers.reduce(
+                    (state, containerProps) => {
+                        state[getPart(containerProps.labels['task.type'])] = JOB_STATUS.in_progress;
+                        return state;
+                    }, 
+                    {..._pipelineManifestRef.current.init_job_status}
+                );
+
+                const nextJobStatus = Object.entries(_executingTasks)
+                    .reduce((_nextJobStatus, [jobId, curStatus]) => {
+                        if (curStatus !== JOB_STATUS.in_progress) {
+                            if (fileCheckReports.hasOwnProperty(jobId) && fileCheckReports[jobId].started) {
+                                if (fileCheckReports[jobId].completed) {
+                                    _nextJobStatus[jobId] = JOB_STATUS.completed        
                                 } else {
-                                    nextJobStatus[jobId] = JOB_STATUS.not_started
+                                    _nextJobStatus[jobId] = JOB_STATUS.failed;
                                 }
                             } else {
-                                nextJobStatus[jobId] = JOB_STATUS.in_progress;
+                                _nextJobStatus[jobId] = JOB_STATUS.not_started
                             }
+                        } else {
+                            _nextJobStatus[jobId] = JOB_STATUS.in_progress;
+                        }
 
-                            return nextJobStatus;
-                        }, {});
+                        return _nextJobStatus;
+                    }, {});
 
-                    // console.log('[synchronizeState] nextJobStatus: %s, curJobStatus %s, _executingTasks: %s', 
-                    //     JSON.stringify(nextJobStatus), 
-                    //     JSON.stringify(curJobStatus),
-                    //     JSON.stringify(_executingTasks),
-                        
-                    // );
-                    // console.log('fileCheckReports');
-                    // console.dir(fileCheckReports);
-
-                    return nextJobStatus;
-                })
+                console.log('[synchronizeState]')
+                console.dir([_executingTasks, fileCheckReports])
+                
+                setJobStatus(nextJobStatus)
+                //  TODO setJobDisabledStatuses
             })
-    });
+    }, [setJobStatus]);
 
     const containerListChangeHandler = useCallback((allContainers, removedContainer) => {
         console.log('[container_list_change3]')
@@ -184,11 +136,12 @@ export default function PipelineModal(props) {
 
     useEffect(() => {
         console.warn('[INIT PipelineDialog]');
+        
         if (!_pipelineManifestRef.current) {
             _pipelineManifestRef.current = compilePipelineManifest(pipeline_manifest, props.model);
-            console.dir(_pipelineManifestRef.current);
+            setJobStatus(_pipelineManifestRef.current.init_job_status)
         }
-
+        
         _containersRef.current = containerService._state;
         synchronizeState();
 
@@ -200,8 +153,6 @@ export default function PipelineModal(props) {
 
 
     useEffect(() => {
-        // console.log('Job statsu schanged');
-        // console.dir(jobStatus);
         const jobStatusHash = Object.values(jobStatus).map(code => code + '').join('')
 
         if (_prevJobStatusRef.current && _prevJobStatusRef.current !== jobStatusHash) {
@@ -209,7 +160,16 @@ export default function PipelineModal(props) {
         }
 
         _prevJobStatusRef.current = jobStatusHash;
-    }, [jobStatus]);
+
+        const jobIds = Object.keys(jobStatus);
+
+        setJobDisabled(jobIds.length > 0
+            ? jobIds.reduce((state, jobId, i) => {
+                state[jobId] = jobIds[i - 1] ? jobStatus[jobIds[i - 1]] !== JOB_STATUS.completed : null;
+                return state;
+            }, {})
+            : {})
+    }, [jobStatus, setJobDisabled]);
 
     const startJobHandler = useCallback((e) => {
         const jobId = e.target.dataset.job;
@@ -273,6 +233,7 @@ export default function PipelineModal(props) {
         console.log('[watchingContainer] %s', watchingContainer);
     }, [watchingContainer]);
 
+    // ???
     const onStartHandler = useCallback(() => {
         setTimeout(()=> {
             synchronizeState();
@@ -331,10 +292,9 @@ export default function PipelineModal(props) {
                     <h4>Status</h4>
                     <h4>Artifacts</h4>
                     <h4>Actions</h4>
-                    {pipeline_manifest._JOB_LIST.map((jobId, i) => {
-                        const isDisabled = pipeline_manifest._JOB_LIST[i - 1] ? jobStatus[pipeline_manifest._JOB_LIST[i - 1]] !== JOB_STATUS.completed : null;
-                        const className = isDisabled ? S.disabled : '';
-
+                    {Object.keys(jobStatus).map((jobId, i) => {
+                        const className = jobDisabled[jobId] ? S.disabled : '';
+                        
                         return (<>
                             <div className={className}>{i + 1}</div>
                             <div className={className}>{pipeline_manifest[jobId].title || 'unknown'}</div>

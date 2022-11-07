@@ -15,8 +15,15 @@ const CONTAINER_CONF = {
     },
 }
 
+const BASE_MODEL_LIST = ['dataimport', 'pretreatment', 'dataread', 'posttreatment', 'OptimalFarmsRepartition'];
 export const pipeline_manifest = {
-    _JOB_LIST: ['dataimport', 'pretreatment', 'dataread', 'posttreatment', 'OptimalFarmsRepartition'],
+    _JOB_LIST: (model) => {
+        // NutrientImpact should only be available to algae!
+        const list = [...BASE_MODEL_LIST];
+        if (model.type === 'Algae') list.push('NutrientImpact');
+        return list;
+    },
+    
     // [stage_id]: props
     dataimport: {
         title: 'Import datasets',
@@ -79,8 +86,6 @@ export const pipeline_manifest = {
         },
         dir: (model) => `/media/share/data/${model.id}/_pretreated`
     },
-
-    // TODO `/_dataread/${model.dataread_id}` -> `/_dataread`
     
     dataread: {
         title: 'Run model simulation',
@@ -172,31 +177,56 @@ export const pipeline_manifest = {
             },
         },
         dir: (model) => `/media/share/data/${model.id}/_farmdistribution`
-    }
+    },
+    // _nutrientimpact
+    NutrientImpact: {
+
+    },
+}
+
+export const JOB_STATUS = {
+    not_started: 0,
+    in_progress: 1,
+    completed: 2,
+    failed: 3
 }
 
 export function compilePipelineManifest(manifest, simulationModel) {
+    
+    const jobs = manifest._JOB_LIST(simulationModel);
     // Return s the list of containers and files to check
-    return Object.entries(manifest).reduce((state, [stageName, stageProps]) => {
-        if (stageName.startsWith('_')) {
-            // Skip all manifest properties that start with an underscore
+    return {
+        jobs,
+
+        init_job_status: jobs.reduce((state, jobId) => {
+            state[jobId] = JOB_STATUS.not_started;
             return state;
-        }
-
-        return Object.entries(stageProps.status).reduce((state, [checkName, checkProps]) => {
-
-            if (checkProps.action === CHECK_ACTIONS.checkFile) {
-                state.files.push({
-                    path: checkProps.path(simulationModel),
-                    stage_id: stageName,
-                    check_id: checkName
-                })
-            }
-
+        }, {}),
+        
+        init_job_disable_status: jobs.reduce((state, jobId, index) => {
+            state[jobId] = index > 0; // <is step disabled>
             return state;
-        }, state);
+        }, {}),
 
-    }, {
-        files: []
-    })
+        files: Object.entries(manifest)
+            .reduce((state, [stageName, stageProps]) => {
+                if (stageName.startsWith('_') || !stageProps.status) {
+                    // Skip all manifest properties that start with an underscore
+                    return state;
+                }
+                
+        
+                return Object.entries(stageProps.status).reduce((state, [checkName, checkProps]) => {
+                    if (checkProps.action === CHECK_ACTIONS.checkFile) {
+                        state.push({
+                            path: checkProps.path(simulationModel),
+                            stage_id: stageName,
+                            check_id: checkName
+                        })
+                    }
+        
+                    return state;
+                }, state);
+            }, [])
+    }
 }
