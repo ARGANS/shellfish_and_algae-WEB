@@ -240,8 +240,10 @@ export default function PipelineModal(props) {
         }, 1000);
     }, [])
 
-    const showMapHandler = useCallback(() => {
-        const resource_link = '/api/v2/file?path=' + pipeline_manifest.posttreatment.dir(props.model) + '/';
+    const showMapHandler = useCallback(e => {
+        const jobId = e.target.dataset.job;
+        const dir = pipeline_manifest[jobId === 'posttreatment' ? 'posttreatment' : 'NutrientImpactPosttreatment'].dir(props.model)
+        const resource_link = '/api/v2/file?path=' + dir + '/';
 		
         addComponent(<Dialog key={Math.random()} dialogKey={'MapDialog1'}>
             <DialogHeader title="Map">
@@ -311,8 +313,11 @@ export default function PipelineModal(props) {
                                 ])}
                             </div>
                             <div className={className}>
-                                {jobStatus[jobId] === JOB_STATUS.completed && jobId === 'posttreatment' && (
-                                    <button className="btn __small btn-primary roffset-d" onClick={showMapHandler}>Show map</button>
+                                {jobStatus[jobId] === JOB_STATUS.completed && (jobId === 'posttreatment' || jobId === 'NutrientImpactPosttreatment') && (
+                                    <button 
+                                        className="btn __small btn-primary roffset-d" 
+                                        onClick={showMapHandler} 
+                                        data-job={jobId}>Show map</button>
                                 )}
                                 {jobStatus[jobId] === JOB_STATUS.not_started ? (
                                     <button 
