@@ -180,7 +180,37 @@ export const pipeline_manifest = {
     },
     // _nutrientimpact
     NutrientImpact: {
-
+        title: 'Nutrient impact',
+        status: {
+            started: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_nutrientimpact/start.mark`
+            },
+            completed: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_nutrientimpact/end.mark`
+            }
+        },
+        container: {
+            Image: 'ac-dataread/runtime',
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `INPUT_SOURCE=/media/share/data/${model.id}/_pretreated`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_nutrientimpact`,
+                'INPUT_MODEL_PROPERTIES_JSON='+ JSON.stringify(model.body),
+                'RUN_SIMULATION_WITH_FARMS=1',
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Labels: {
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the NutrientImpact task has been completed.',
+                'task.model.id': '{{model_id}}',
+                'task.model.type': '{{model_type}}',
+                // has an impact on tracking pipeline tasks!
+                'task.type': 'NutrientImpact',
+                'task.user': '{{user_username}}'
+            },
+        },
+        dir: (model) => `/media/share/data/${model.id}/_nutrientimpact`,
     },
 }
 
