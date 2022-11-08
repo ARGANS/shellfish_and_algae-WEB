@@ -20,7 +20,10 @@ export const pipeline_manifest = {
     _JOB_LIST: (model) => {
         // NutrientImpact should only be available to algae!
         const list = [...BASE_MODEL_LIST];
-        if (model.type === 'Algae') list.push('NutrientImpact');
+        if (model.type === 'Algae') {
+            list.push('NutrientImpact');
+            list.push('NutrientImpactPosttreatment');
+        }
         return list;
     },
     
@@ -178,7 +181,6 @@ export const pipeline_manifest = {
         },
         dir: (model) => `/media/share/data/${model.id}/_farmdistribution`
     },
-    // _nutrientimpact
     NutrientImpact: {
         title: 'Nutrient impact',
         status: {
@@ -212,6 +214,37 @@ export const pipeline_manifest = {
         },
         dir: (model) => `/media/share/data/${model.id}/_nutrientimpact`,
     },
+    NutrientImpactPosttreatment: {
+        title: 'Nutrient impact posttreatment',
+        status: {
+            started: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_nutrientimpactPosttreatment/start.mark`
+            },
+            completed: {
+                action: CHECK_ACTIONS.checkFile,
+                path: (model) => `/media/share/data/${model.id}/_nutrientimpactPosttreatment/end.mark`
+            }
+        },
+        container: {
+            ...CONTAINER_CONF,
+            Env: (model) => ([
+                `SOURCE_DIR=/media/share/data/${model.id}/_nutrientimpact`,
+                `INPUT_DESTINATION=/media/share/data/${model.id}/_nutrientimpactPosttreatment`,
+                'PYTHONDONTWRITEBYTECODE=1',
+            ]),
+            Image: 'ac-posttreatment/runtime',
+            Labels: {
+                'container.action:termination.notification.link': 'mailto:{{user_email}}?subject=Shellfish and Algae platform: model {{model_id}}&body=This email is just to let you know that the NutrientImpactPosttreatment task has been completed.',
+                'task.model.id': '{{model_id}}',
+                'task.model.type': '{{model_type}}',
+                // has an impact on tracking pipeline tasks!
+                'task.type': 'NutrientImpactPosttreatment',
+                'task.user': '{{user_username}}'
+            },
+        },
+        dir: (model) => `/media/share/data/${model.id}/_nutrientimpactPosttreatment`,
+    }
 }
 
 export const JOB_STATUS = {
