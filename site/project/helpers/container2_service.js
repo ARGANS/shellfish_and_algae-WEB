@@ -47,12 +47,21 @@ export const containerService = new (class {
             this.emitter.emit('container_list_change', cloneArray(this._state), null)
         });
 
-        this._evtSource = new EventSource('/api/v2/stream/events/container');
+        const EVENTS_CONTAINER_ENDPOINT = '/api/v2/stream/events/container';
+        this._evtSource = new EventSource(EVENTS_CONTAINER_ENDPOINT);
 
         this._evtSource.onmessage = (e) => {
-            const response = JSON.parse(e.data)
-            console.log('SSE Response')
-            console.dir(response)
+            let response;
+            try {
+                response = JSON.parse(e.data)
+                console.log('SSE Response %s')
+                console.dir(response)
+            } catch (error) {
+                console.log('ParseError  %s', EVENTS_CONTAINER_ENDPOINT)
+                console.dir(error)
+                return;
+            }
+            
             const containerModel = this.constructor.transformContainerEventToContainerModel(response)
 
             let mutator;
