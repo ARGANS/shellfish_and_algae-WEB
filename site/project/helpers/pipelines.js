@@ -169,6 +169,7 @@ export const pipeline_manifest = {
             Env: (model) => ([
                 `INPUT_SOURCE=/media/share/data/${model.id}/_posttreatment`,
                 `INPUT_DESTINATION=/media/share/data/${model.id}/_farmdistribution`,
+                'INPUT_MODEL_PROPERTIES_JSON='+ JSON.stringify(model.body),
                 'PYTHONDONTWRITEBYTECODE=1',
             ]),
             Labels: {
