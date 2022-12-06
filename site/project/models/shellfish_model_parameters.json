@@ -1,7 +1,7 @@
 {
     "species": {
         "section_name": "Shellfish Species",
-        "section_description": "blabla",
+        "section_description": "Species-specific parameter values",
         "parameters_descriptions": {
             "CR_max"    : ["Maximum cleranace rate", "l/hr/g DST"],
             "CR_grad"   : ["Gradient of clearance rate with temperature",""],
@@ -34,7 +34,7 @@
         "defaults": {
             "M_edulis": {
                 "name": "Mytilus edulis ",
-                "description": "long blabla",
+                "description": "Default paramater values for Mytilus edulis.",
                 "parameters": {
                     "CR_max"    :4.825 ,
                     "CR_grad"   :0.013 ,
@@ -67,7 +67,7 @@
             },
             "C_gigas": {
                 "name": "Crassostrea gigas",
-                "description": "long blabla",
+                "description": "Default paramater values for Crassostrea gigas",
                 "parameters": {
                     "CR_max"    :2.6325 ,
                     "CR_grad"   :0.0113 ,
@@ -100,7 +100,7 @@
             },
             "P_maximus": {
                 "name": "Pecten maximus",
-                "description": "long blabla",
+                "description": "Default paramater values for Pecten maximus",
                 "parameters": {
                     "CR_max"    :2.6325 ,
                     "CR_grad"   :0.0113 ,
@@ -138,7 +138,7 @@
 
     "farm": {
         "section_name": "Farm definition",
-        "section_description": "blabla",
+        "section_description": "Farm setup parameters defining horizontal and vertical extent, and the density of macroalgae within the farm.",
         "parameters_descriptions": {
             "y_farm"            : ["width of farm perpendicular to flow direction"    , "m"],
             "density_SF_farm"        : ["fraction of farm area occupied by shellfish"          , ""],
@@ -148,8 +148,8 @@
         "options_descriptions": {},
         "defaults": {
             "default": {
-                "name": "blabla",
-                "description": "long blabla",
+                "name": "Default values for farm parameters",
+                "description": "Farm setup parameters defining horizontal and vertical extent, and the density of macroalgae within the farm.",
                 "parameters": {
                     "y_farm"            : 1000,
                     "density_SF_farm"   : 0.04,
@@ -168,6 +168,8 @@
             "ESELORG":["Energy content of chlorophyll-associated organic matter","J/mg dry weight"],
             "Assimilation_efficiency":["Assimilation efficiency of organic matter consumption",""],
             "Bioavailable_detrital_fraction":["Fraction of REMORG (i.e. detrital organics represented by POC in the model) that are bioavailable",""],
+            "POC_data":["POC_data",""],
+            "PHYC_data":["PHYC_data",""],
             "Von_Karman"  : ["Von Kármán constant"                                   , ""],
             "min_lon"     : ["Minimum longitude"                                     , "degrees east"],
             "max_lon"     : ["Maximum longitude"                                     , "degrees east"],
@@ -223,7 +225,7 @@
                     "maximum_bathymetry": -30,
                     "farms_separated_by": 10,
                     "surface": 1,
-                    "minimum_production": 10000,
+                    "minimum_production": 1000,
                     "external_mask_file": ""
                 },
                 "options": {}

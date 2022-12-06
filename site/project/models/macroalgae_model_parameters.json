@@ -234,7 +234,7 @@
                     "maximum_bathymetry": -30,
                     "farms_separated_by": 10,
                     "surface": 1,
-                    "minimum_production": 10000,
+                    "minimum_production": 1000,
                     "external_mask_file": ""
                 },
                 "options": {}
