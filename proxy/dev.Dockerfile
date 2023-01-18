@@ -30,9 +30,11 @@ COPY ./proxy/start.sh .
 COPY ./proxy/dev.template.nginx.conf /etc/nginx/conf.d/default.conf
 # Parameterization of the nginx configuration file
 ARG NODE_HOST
-RUN echo "TTTT $NODE_HOST"
+ARG VM_HOST
 ENV NODE_HOST=$NODE_HOST
-RUN sed -i "s/\${NODE_HOST}/$NODE_HOST/g" /etc/nginx/conf.d/default.conf
+ENV VM_HOST=$VM_HOST
+RUN sed -i "s/\${NODE_HOST}/$NODE_HOST/g" /etc/nginx/conf.d/default.conf && \
+    sed -i "s/\${VM_HOST}/$VM_HOST/g" /etc/nginx/conf.d/default.conf
 
 COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/
 COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/

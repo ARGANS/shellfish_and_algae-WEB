@@ -24,32 +24,9 @@ function start {
 		fi
 	fi
 
-	# if [[ "$1" != 'int' && "$1" != 'dev' ]]; then
-	# 	# Verifying the creation of certificate files
-	# 	if [[ -f "$PROD_PRIVATE_KEY" && -f "$PROD_PUBLIC_CRT" ]]; then
-	# 		cp $PROD_PRIVATE_KEY proxy/certs.prod/private.key
-	# 		cp $PROD_PUBLIC_CRT proxy/certs.prod/public.crt
-	# 	else
-	# 		return 1 2>/dev/null
-    #  		exit 1
-	# 	fi
-	# fi
-
 	docker_up "$DC_FLAG" "$ENV_PATH"
 	sleep 5s
 	docker_ps "$DC_FLAG" "$ENV_PATH"
-	
-
-	# if [[ "$1" == 'int' ]]; then
-	# 	docker exec -it nextapp-smos npm run update
-	# 	docker exec -it nextapp-smos sh
-	# elif [[ "$1" == 'dev' ]]; then
-	# 	sleep 5s
-	# 	source proxy/tests/test.dev.sh 
-	# else 
-	# 	sleep 5s
-	# 	source proxy/tests/test.prod.sh 
-	# fi
 }
 
 function logs {
