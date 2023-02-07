@@ -27,6 +27,7 @@ services:
     environment:
       - ALGAE_DATASETS_LINK=${ALGAE_DATASETS_LINK}
       - SHELLFISH_DATASETS_LINK=${SHELLFISH_DATASETS_LINK}
+      - NEXT_PUBLIC_SIGNUP_FORM_RECIPIENTS=${SIGNUP_FORM_RECIPIENTS}
     entrypoint: ["/bin/sh","-c"]
     command: 
       - |

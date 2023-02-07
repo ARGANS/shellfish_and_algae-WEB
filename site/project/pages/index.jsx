@@ -53,7 +53,7 @@ function IndexPage(props) {
             <div className="bcontainer __flex-row __align-center introheader-btns">
                 <div className="flex-size-fill"></div>
                 <div className="flex-size-own">
-                    <button className="btn btn-secondary">Request of login</button>
+                    <button className="btn btn-secondary" onClick={() => router.push('/signup')}>Request of login</button>
                     <button className="btn btn-primary" onClick={() => router.push('/service')}>Sign in</button>
                 </div>
             </div>

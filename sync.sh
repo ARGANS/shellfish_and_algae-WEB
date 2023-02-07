@@ -30,7 +30,7 @@ function action__copy {
 }
 
 function action__rebuild {
-    local commands="/profils/$USER/docker-compose -f $DESTINATION_DIR/misc/proxy.docker-compose.yml -f $DESTINATION_DIR/misc/prod.dashboard.docker-compose.yml -f $DESTINATION_DIR/misc/prod.site.docker-compose.yml --env-file=$DESTINATION_DIR/misc/sim.env up --build -d acsite"
+    local commands="/profils/$USER/docker-compose -f $DESTINATION_DIR/misc/proxy.docker-compose.yml -f $DESTINATION_DIR/misc/prod.dashboard.docker-compose.yml -f $DESTINATION_DIR/misc/prod.site.docker-compose.yml --env-file=$DESTINATION_DIR/misc/prod.env up --build -d acsite"
 
     ssh "$USER@$HOST_WEB" "$commands"
 }

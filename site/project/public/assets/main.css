@@ -209,3 +209,16 @@ details[open] > summary::before {
 		transform:rotate(359deg)
 	}
 }
+
+.notification {
+	margin: 1rem 0;
+	padding: 1rem;
+	border: 1px solid;
+}
+
+.notification.is-success {
+	background-color: #25ff2545;
+	color: #2c863e;
+}
+
+.notification.is-warning {}
