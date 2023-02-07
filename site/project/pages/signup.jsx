@@ -97,7 +97,7 @@ function SignupPage(props) {
                 <label>Username:</label>
                 <input className="" type="text" name="Username" required/>
 
-                <button type="submit" className="btn btn-primary">Create</button>
+                <button type="submit" className="btn btn-primary">Request</button>
               </form>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default SignupPage;
 export async function getStaticProps(context) {
   return {
     props: {
-      emailList: process.env?.NEXT_PUBLIC_SIGNUP_FORM_RECIPIENTS || "nmaltsev@argans.eu",
+      emailList: process.env?.NEXT_PUBLIC_SIGNUP_FORM_RECIPIENTS || "nmaltsev@argans.eu,quentin.jutard@acri-st.fr,pbryere@argans.eu",
     },
   };
 }
