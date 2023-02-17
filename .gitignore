@@ -3,3 +3,4 @@ dashboard/dshbrd.db
 log.txt
 site/project/models/algae_datasets.json
 site/project/models/shellfish_datasets.json
+misc/certbot_www/*

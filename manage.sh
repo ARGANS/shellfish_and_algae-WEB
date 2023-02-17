@@ -19,9 +19,16 @@ function start {
 
 	if [[ "$1" == 'prod' ]]; then
 		if [[ ! -f /profils/nmaltsev/dshbrd_prod.db ]]; then
-			cp ./dashboard/dshbrd.db ~/dshbrd_prod.db
+			# cp ./dashboard/dshbrd.db ~/dshbrd_prod.db
+			cp ./dashboard/repo/main.db ~/dshbrd_prod.db
 			echo "DB created"
 		fi
+	else
+		if [[ ! -f ./dashboard/dshbrd.db ]]; then
+			cp ./dashboard/repo/main.db ./dashboard/dshbrd.db
+			echo "DB created"
+		fi
+		echo TODO
 	fi
 
 	docker_up "$DC_FLAG" "$ENV_PATH"

@@ -35,9 +35,14 @@ ENV NODE_HOST=$NODE_HOST
 ENV VM_HOST=$VM_HOST
 RUN sed -i "s/\${NODE_HOST}/$NODE_HOST/g" /etc/nginx/conf.d/default.conf && \
     sed -i "s/\${VM_HOST}/$VM_HOST/g" /etc/nginx/conf.d/default.conf
+RUN mkdir -p /etc/nginx/conf.d/certs/213-166-43-12.sslip.io && \
+    mkdir -p /etc/nginx/conf.d/certs/euraquamod.argans.eu
 
-COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/
-COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/
+COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/213-166-43-12.sslip.io
+COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/213-166-43-12.sslip.io
+COPY --from=init /opt/processing/public.crt /etc/nginx/conf.d/certs/euraquamod.argans.eu
+COPY --from=init /opt/processing/private.key /etc/nginx/conf.d/certs/euraquamod.argans.eu
+RUN chmod -R 777 /etc/nginx/conf.d/certs
 
 
 ARG WITH_UTILS

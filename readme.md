@@ -26,3 +26,12 @@ The user is able to download tiff files of a number of interest variables:
 ```
 docker-compose -f ./misc/proxy.docker-compose.yml -f ./misc/prod.dashboard.docker-compose.yml -f ./misc/prod.site.docker-compose.yml --env-file=./misc/sim.env up --build -d acsite
 ```
+
+# TESTS
+1. https://localhost:4443
+
+2.
+```
+echo "123" > misc/certbot_www/test1.html
+curl http://localhost:6080/.well-known/acme-challenge/test1.html
+```

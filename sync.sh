@@ -47,7 +47,7 @@ function help {
     echo './sync.sh dump'
     echo './sync.sh copy'
     echo './sync.sh rebuild'
-    echo './sync.sh rebuild_worldw'
+    echo './sync.sh rebuild_world'
 }
 
 case $1 in

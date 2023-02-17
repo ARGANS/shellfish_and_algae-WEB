@@ -24,7 +24,7 @@ services:
       - acsite
     volumes:
       - site_out:/usr/share/nginx/html/
-      - ./certbot/www:/var/www/certbot
+      - ./certbot_www:/var/www/certbot:ro
 
 networks:
   ac_net:
